@@ -1,3 +1,31 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
+theme = "PaperMod"
+
+[params]
+# Define the color scheme (white, blue, black variations)
+color_scheme = "light"
+accent_color = "#0000FF"  # blue color
+background_color = "#FFFFFF"  # white background
+text_color = "#000000"  # black text
+custom_css = ["css/custom.css"]
+mainMenu = ["About", "Projects", "Experience"]
+
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 1
+
+[[menu.main]]
+identifier = "projects"
+name = "Projects"
+url = "/projects/"
+weight = 2
+
+[[menu.main]]
+identifier = "experience"
+name = "Experience"
+url = "/experience/"
+weight = 3

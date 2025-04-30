@@ -1,0 +1,18 @@
+body {
+    background-color: #ffffff; /* white background */
+    color: #000000; /* black text */
+  }
+  
+  .navbar {
+    background-color: #0000FF; /* blue navbar */
+  }
+  
+  .footer {
+    background-color: #000000; /* black footer */
+    color: #ffffff; /* white text on footer */
+  }
+  
+  .button {
+    background-color: #0000FF; /* blue buttons */
+    color: #ffffff; /* white text */
+  }
