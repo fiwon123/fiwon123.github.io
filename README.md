@@ -2,7 +2,7 @@
 
 Welcome to my personal portfolio website, built with [Hugo](https://gohugo.io/) and the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme.
 
-## 🔍 About This Site
+## 🔍 About
 
 This site showcases my experience, projects, and background focused on:
 - My new journey
