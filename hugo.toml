@@ -1,31 +1,45 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://fiwon123.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Felipe Inoue'
 theme = "PaperMod"
 
 [params]
-# Define the color scheme (white, blue, black variations)
-color_scheme = "light"
-accent_color = "#0000FF"  # blue color
-background_color = "#FFFFFF"  # white background
-text_color = "#000000"  # black text
-custom_css = ["css/custom.css"]
-mainMenu = ["About", "Projects", "Experience"]
+    # Define the color scheme (white, blue, black variations)
+    defaultTheme = "auto"
+    ShowReadingTime = true
+    ShowShareButtons = false
+    ShowPostNavLinks = true
+    ShowCodeCopyButtons = true
+    ShowBreadCrumbs = false
+    ShowWordCount = false
+    ShowToc = true
+    ShowFooter = true
+    disableScrollToTop = false
+    DateFormat = "Jan 2, 2006"
 
-[[menu.main]]
-identifier = "about"
-name = "About"
-url = "/about/"
-weight = 1
 
-[[menu.main]]
-identifier = "projects"
-name = "Projects"
-url = "/projects/"
-weight = 2
+    author = "Felipe Inoue"
+    description = "Tooling Developer · Automation · Developer Experience"
+    favicon = "favicon.ico"
+    hideFooter = false
+    hideCopyright = false
 
-[[menu.main]]
-identifier = "experience"
-name = "Experience"
-url = "/experience/"
-weight = 3
+[menu]
+
+    [[menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about/"
+        weight = 1
+
+    [[menu.main]]
+        identifier = "projects"
+        name = "Projects"
+        url = "/projects/"
+        weight = 2
+
+    [[menu.main]]
+        identifier = "experience"
+        name = "Experience"
+        url = "/experience/"
+        weight = 3

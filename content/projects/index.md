@@ -5,12 +5,10 @@ draft: false
 ---
 # My Projects
 
-Here are some of the tools and projects I’ve worked on:
+Game Projects: https://fiwon123.itch.io/
+
+Here are some of the tools and projects I’ve worked on at current moment:
 
 ### 1. **Hugo Portfolio Site**
 - **Description**: Built a personal portfolio using Hugo to showcase my skills, projects, and experience.
 - **Tech**: Hugo, GitHub Actions, GitHub Pages.
-
-### 2. **Python CLI Formatter**
-- **Description**: Created a CLI tool in Python to automatically format files and maintain code consistency.
-- **Tech**: Python, Typer, GitHub Actions.
