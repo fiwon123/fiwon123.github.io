@@ -1,29 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Felipe Inoue</title>
-    <link>https://fiwon123.github.io/</link>
-    <description>Recent content on Felipe Inoue</description>
+    <title>About Me on Felipe Inoue</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content in About Me on Felipe Inoue</description>
     <generator>Hugo -- 0.147.0</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate>
-    <atom:link href="https://fiwon123.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>About Me</title>
-      <link>https://fiwon123.github.io/about/</link>
-      <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
-      <guid>https://fiwon123.github.io/about/</guid>
-      <description>&lt;h1 id=&#34;about-me&#34;&gt;About Me&lt;/h1&gt;
-&lt;p&gt;I&amp;rsquo;m Indie Game Developer 5+ experiences that is looking to transition from game development to tool developer role.
-For a long time I&amp;rsquo;ve been wondering for a long time what I&amp;rsquo;d like to do as a professional and now I&amp;rsquo;m looking for new experiences with a focus in developer experience and tools as I liked to automate and create a few scripts beside helping the team with documentation in how I implement a feature, find a solution and also guide in how to use a tool for example.
-I&amp;rsquo;m studying more about programming for CLI Tools, Automation and Plugins focusing in help developers to code faster, debug better and have a good quality code.
-To end, I&amp;rsquo;m focusing a little more about Data Structure and Algorithms to develop better solutions when creating tools.&lt;/p&gt;</description>
-    </item>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Experience</title>
-      <link>https://fiwon123.github.io/experience/</link>
+      <link>http://localhost:1313/experience/</link>
       <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
-      <guid>https://fiwon123.github.io/experience/</guid>
+      <guid>http://localhost:1313/experience/</guid>
       <description>&lt;h1 id=&#34;my-experience&#34;&gt;My Experience&lt;/h1&gt;
 &lt;h3 id=&#34;game-developer---unity3d--oct2022---jul2024&#34;&gt;Game Developer - Unity3D | Oct/2022 - Jul/2024&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Little Leo Games&lt;/strong&gt;&lt;/p&gt;
@@ -44,9 +33,9 @@ Happy to be here. Making games for fun and seeing people having fun.&lt;/p&gt;
     </item>
     <item>
       <title>Projects</title>
-      <link>https://fiwon123.github.io/projects/</link>
+      <link>http://localhost:1313/projects/</link>
       <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
-      <guid>https://fiwon123.github.io/projects/</guid>
+      <guid>http://localhost:1313/projects/</guid>
       <description>&lt;h1 id=&#34;my-projects&#34;&gt;My Projects&lt;/h1&gt;
 &lt;p&gt;Game Projects: &lt;a href=&#34;https://fiwon123.itch.io/&#34;&gt;https://fiwon123.itch.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Here are some of the tools and projects I’ve worked on at current moment:&lt;/p&gt;
