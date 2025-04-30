@@ -49,6 +49,7 @@ I helped the company fixing issues and improving mobile game's performance using
 
 ### Game Developer - Unity3D | Oct/2020 - May/2023
 **Unicamp LARCOM**
+
 I helped in development of a 3D VR educational game using Unity 3D. A few experiences gained during the process:
 
 - Export to WebGL and Mobile platforms.
