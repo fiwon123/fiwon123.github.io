@@ -4,8 +4,8 @@ title = 'Felipe Inoue'
 theme = "PaperMod"
 
 [params]
-    # Define the color scheme (white, blue, black variations)
-    defaultTheme = "auto"
+    disableThemeToggle = false
+    defaultTheme = "light"
     ShowReadingTime = true
     ShowShareButtons = false
     ShowPostNavLinks = true
@@ -16,8 +16,6 @@ theme = "PaperMod"
     ShowFooter = true
     disableScrollToTop = false
     DateFormat = "Jan 2, 2006"
-
-
     author = "Felipe Inoue"
     description = "Tooling Developer · Automation · Developer Experience"
     favicon = "favicon.ico"

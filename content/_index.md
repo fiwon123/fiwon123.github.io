@@ -1,16 +1,21 @@
 ---
 title: "About Me"
-date: '2025-04-30T00:46:33-03:00'
+date: "2025-04-30T00:46:33-03:00"
 draft: false
 ---
+
 # About Me
 
-I'm Indie Game Developer 5+ experiences that is looking to transition from game development to tool developer role.
-For a long time I've been wondering for a long time what I'd like to do as a professional and now I'm looking for new experiences with a focus in developer experience and tools as I liked to automate and create a few scripts beside helping the team with documentation in how I implement a feature, find a solution and also guide in how to use a tool for example.
-I'm studying more about programming for CLI Tools, Automation and Plugins focusing in help developers to code faster, debug better and have a good quality code.
-To end, I'm focusing a little more about Data Structure and Algorithms to develop better solutions when creating tools.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I'm an Indie Game Developer 5+ experiences that is looking for transitioning from game development to backend and tool developer roles, focusing on languages such as Go, Python, React, or/and TypeScript.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I noticed an interest in helping developers while automating some processes to speed up development, documenting solutions at work, or just thinking about a good solution.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With my learning and real-world experience, I want to build good systems that can help developers to concentrate in their goals and let tools to handle recurring problems.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is my professional path I want to follow as I achieve my personal goals, which is related to everything I have learned so far.
 
 ### My Skills
-- **Languages**: C#, Python, Go, TypeScript
-- **Tools**: GitHub Actions
-- **Areas of Focus**: Code editor plugins, CI/CD, Automation, Tooling
+
+- **Languages**: C#, Python, C/C++, Go, React, TypeScript
+- **Developer Tools**: Git, Docker, VS Code, Visual Studio, Rider
+- **Database**: Postgres, Redis
