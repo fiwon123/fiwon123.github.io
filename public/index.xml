@@ -1,49 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>About Me on Felipe Inoue</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content in About Me on Felipe Inoue</description>
-    <generator>Hugo -- 0.147.0</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Experience</title>
-      <link>http://localhost:1313/experience/</link>
-      <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
-      <guid>http://localhost:1313/experience/</guid>
-      <description>&lt;h1 id=&#34;my-experience&#34;&gt;My Experience&lt;/h1&gt;
-&lt;h3 id=&#34;game-developer---unity3d--oct2022---jul2024&#34;&gt;Game Developer - Unity3D | Oct/2022 - Jul/2024&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;Little Leo Games&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Everything as indie game developer :D
-I helped my friend with the Little Leo Games Team to release this awesome game Astrea: Six-Sided Oracles working as Unity Game Developer.
-Happy to be here. Making games for fun and seeing people having fun.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Port for Xbox.&lt;/li&gt;
-&lt;li&gt;Help to implement some important features as Steam and UI in-game.&lt;/li&gt;
-&lt;li&gt;Fix a lot of bugs.&lt;/li&gt;
-&lt;li&gt;Communicate with players to understand issues and get a better approach.&lt;/li&gt;
-&lt;li&gt;Plan with team all deliveries until the last deadline. ( Events/Release/Update game )&lt;/li&gt;
-&lt;li&gt;Learn how to mod games on Steam using BepInEx (plugin to mod Unity Games) and develop a few python scripts to help players to focus in programming MODs.&lt;/li&gt;
-&lt;li&gt;Help to release the game in other platform like GOG and Epic Games.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;game-developer---unity3d--nov2020---apr2023&#34;&gt;Game Developer - Unity3D | Nov/2020 - Apr/2023&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;VR Monkey&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Projects</title>
-      <link>http://localhost:1313/projects/</link>
-      <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
-      <guid>http://localhost:1313/projects/</guid>
-      <description>&lt;h1 id=&#34;my-projects&#34;&gt;My Projects&lt;/h1&gt;
-&lt;p&gt;Game Projects: &lt;a href=&#34;https://fiwon123.itch.io/&#34;&gt;https://fiwon123.itch.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Here are some of the tools and projects I’ve worked on at current moment:&lt;/p&gt;
-&lt;h3 id=&#34;1-hugo-portfolio-site&#34;&gt;1. &lt;strong&gt;Hugo Portfolio Site&lt;/strong&gt;&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Description&lt;/strong&gt;: Built a personal portfolio using Hugo to showcase my skills, projects, and experience.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Tech&lt;/strong&gt;: Hugo, GitHub Actions, GitHub Pages.&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
+    <title>Home on My Portfolio</title>
+    <link>//localhost:1313/</link>
+    <description>Recent content in Home on My Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© 2025 Felipe Inoue</copyright>
+    <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate><atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    
   </channel>
 </rss>

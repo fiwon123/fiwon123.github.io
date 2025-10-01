@@ -1,0 +1,16 @@
+disabled = false
+languageCode = "pt-BR"
+languageName = "Português (Brasil)"
+weight = 2
+title = "Meu Portfólio"
+
+
+[params]
+  displayName = "Português (Brasil)"
+  isoCode = "pt-BR"
+  rtl = false
+  dateFormat = "2 January 2006"
+  # logo = "img/logo.png"
+  # secondaryLogo = "img/secondary-logo.png"
+  # description = "My awesome website"
+  # copyright = "Copy, _right?_ :thinking_face:"
