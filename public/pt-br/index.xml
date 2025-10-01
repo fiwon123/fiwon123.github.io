@@ -9,5 +9,25 @@
     <copyright>© 2025 Felipe Inoue</copyright>
     <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate><atom:link href="//localhost:1313/pt-br/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>Experiências</title>
+      <link>//localhost:1313/pt-br/experiences/</link>
+      <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
+      
+      <guid>//localhost:1313/pt-br/experiences/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Projetos</title>
+      <link>//localhost:1313/pt-br/projects/</link>
+      <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
+      
+      <guid>//localhost:1313/pt-br/projects/</guid>
+      <description></description>
+      
+    </item>
+    
   </channel>
 </rss>
