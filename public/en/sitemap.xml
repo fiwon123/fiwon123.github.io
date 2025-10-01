@@ -3,51 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>//localhost:1313/experiences/</loc>
+    <loc>/experiences/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="//localhost:1313/pt-br/experiences/"
+      href="/pt-br/experiences/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="//localhost:1313/experiences/"
+      href="/experiences/"
     />
   </url>
   <url>
-    <loc>//localhost:1313/</loc>
+    <loc>/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="//localhost:1313/pt-br/"
+      href="/pt-br/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="//localhost:1313/"
+      href="/"
     />
   </url>
   <url>
-    <loc>//localhost:1313/projects/</loc>
+    <loc>/projects/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="//localhost:1313/pt-br/projects/"
+      href="/pt-br/projects/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="//localhost:1313/projects/"
+      href="/projects/"
     />
   </url>
 </urlset>
