@@ -18,5 +18,5 @@ Here are some of the tools and projects I’ve worked or I'm currently working o
 
 ### **Game Jams**
 
-- **Description**: My 25+ Game Jams: https://itch.io/c/1112919/my-game-jams
+- **Description**: My 25+ Game Jams: [Link](https://itch.io/c/1112919/my-game-jams)
 - **Tech**: Unity 3D, Game Maker, Pico8, and more...
