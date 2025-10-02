@@ -3,51 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>http://localhost:1313/experiences/</loc>
+    <loc>https://localhost:1313/experiences/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="http://localhost:1313/pt-br/experiences/"
+      href="https://localhost:1313/pt-br/experiences/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="http://localhost:1313/experiences/"
+      href="https://localhost:1313/experiences/"
     />
   </url>
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://localhost:1313/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="http://localhost:1313/pt-br/"
+      href="https://localhost:1313/pt-br/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="http://localhost:1313/"
+      href="https://localhost:1313/"
     />
   </url>
   <url>
-    <loc>http://localhost:1313/projects/</loc>
+    <loc>https://localhost:1313/projects/</loc>
     <lastmod>2025-04-30T00:46:33-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
       rel="alternate"
       hreflang="pt-BR"
-      href="http://localhost:1313/pt-br/projects/"
+      href="https://localhost:1313/pt-br/projects/"
     />
     <xhtml:link
       rel="alternate"
       hreflang="en"
-      href="http://localhost:1313/projects/"
+      href="https://localhost:1313/projects/"
     />
   </url>
 </urlset>

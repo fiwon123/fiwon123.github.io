@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Home on My Portfolio</title>
-    <link>http://localhost:1313/</link>
+    <link>https://localhost:1313/</link>
     <description>Recent content in Home on My Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© 2025 Felipe Inoue</copyright>
-    <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Apr 2025 00:46:33 -0300</lastBuildDate><atom:link href="https://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Experiences</title>
-      <link>http://localhost:1313/experiences/</link>
+      <link>https://localhost:1313/experiences/</link>
       <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
       
-      <guid>http://localhost:1313/experiences/</guid>
+      <guid>https://localhost:1313/experiences/</guid>
       <description></description>
       
     </item>
     
     <item>
       <title>Projects</title>
-      <link>http://localhost:1313/projects/</link>
+      <link>https://localhost:1313/projects/</link>
       <pubDate>Wed, 30 Apr 2025 00:46:33 -0300</pubDate>
       
-      <guid>http://localhost:1313/projects/</guid>
+      <guid>https://localhost:1313/projects/</guid>
       <description></description>
       
     </item>

@@ -4,7 +4,7 @@ date: "2025-04-30T00:46:33-03:00"
 draft: false
 ---
 
-I'm an Indie Game Developer 5+ experiences that is looking for transitioning from game development to backend and tool developer roles, focusing on languages such as Go, Python, React, or/and TypeScript.
+I'm an Indie Game Developer 5+ experiences that is looking for transitioning from game development to backend and tooling developer roles, focusing on languages such as Go, Python, React, or/and TypeScript.
 
 I noticed an interest in helping developers while automating some processes to speed up development, documenting solutions at work, or just thinking about a good solution.
 
