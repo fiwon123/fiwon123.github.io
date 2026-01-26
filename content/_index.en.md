@@ -14,6 +14,6 @@ This is my professional path I want to follow as I achieve my personal goals, wh
 
 ### My Skills
 
-**Languages**: C#, Python, C/C++, Go, React, TypeScript
-**Developer Tools**: Git, Docker, VS Code, Visual Studio, Rider
-**Database**: Postgres, Redis
+**Languages**: Go, Makefile, Bash, Python, C/C++ , React, TypeScript, C#
+**Developer Tools**: Git, Docker, VS Code, Visual Studio, Rider, GitHub Actions
+**Database**: Postgres, Redis, MySQL, MongoDB

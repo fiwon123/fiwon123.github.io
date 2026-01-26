@@ -14,6 +14,6 @@ Este é o caminho profissional que quero seguir à medida que alcanço meus obje
 
 ### Habilidades
 
-**Linguagens de Programação**: C#, Python, C/C++, Go, React, TypeScript
-**Ferramentas de desenvolvedor**: Git, Docker, VS Code, Visual Studio, Rider
-**Banco de Dados**: Postgres, Redis
+**Linguagens de Programação**: Go, Makefile, Bash, Python, C/C++ , React, TypeScript, C#
+**Ferramentas de desenvolvedor**: Git, Docker, VS Code, Visual Studio, Rider, GitHub Actions
+**Banco de Dados**: Postgres, Redis, MySQL, MongoDB
