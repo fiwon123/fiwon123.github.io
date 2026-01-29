@@ -6,6 +6,16 @@ draft: false
 
 Aqui estão algumas das ferramentas e projetos em que trabalhei ou estou trabalhando no momento:
 
+### **Cthrone** [Link](https://github.com/fiwon123/cthrone)
+
+- **Description**: Uma ferramenta interna de menssagem para comunicação entre dispositivos utilizando Websocket e Nats. 
+- **Tech**: Go
+- 
+### **Crower** [Link](https://github.com/fiwon123/crower)
+
+- **Description**: Uma ferramenta interna para criação e execução de comandos.
+- **Tech**: Go
+
 ### **Evolve Box**
 
 - **Descrição**: Uma simulação de vida simples em 2D usando sistema distribuído com websocket.
