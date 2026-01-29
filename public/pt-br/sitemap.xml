@@ -4,7 +4,7 @@
 
   <url>
     <loc>https://localhost:1313/pt-br/experiences/</loc>
-    <lastmod>2025-04-30T00:46:33-03:00</lastmod>
+    <lastmod>2025-10-01T09:29:49-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -20,7 +20,7 @@
   </url>
   <url>
     <loc>https://localhost:1313/pt-br/</loc>
-    <lastmod>2025-04-30T00:46:33-03:00</lastmod>
+    <lastmod>2026-01-28T21:47:31-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -36,7 +36,7 @@
   </url>
   <url>
     <loc>https://localhost:1313/pt-br/projects/</loc>
-    <lastmod>2025-04-30T00:46:33-03:00</lastmod>
+    <lastmod>2026-01-28T21:51:20-03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
