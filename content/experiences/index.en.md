@@ -1,6 +1,7 @@
 ---
 title: "Experiences"
 date: "2025-04-30T00:46:33-03:00"
+lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
