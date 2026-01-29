@@ -26,7 +26,7 @@ Aqui estão algumas das ferramentas e projetos em que trabalhei ou estou trabalh
 - **Descrição**: Criei um portfólio pessoal usando o Hugo para mostrar minhas habilidades, projetos e experiência.
 - **Tecnologias**: Hugo, GitHub Actions, GitHub Pages.
 
-### **Game Jams**
+### **Game Jams** [[Link](https://itch.io/c/1112919/my-game-jams)]
 
-- **Description**: Minhas 25+ Game Jams: [Link](https://itch.io/c/1112919/my-game-jams)
+- **Description**: Minhas 25+ Game Jams
 - **Tech**: Unity 3D, Game Maker, Pico8, e mais...
