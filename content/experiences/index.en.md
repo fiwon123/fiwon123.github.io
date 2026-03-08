@@ -5,9 +5,10 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-### Oct.2022 - Jul.2024
+### **Oct.2022 - Jul.2024**
 
-**Game Developer - Little Leo Games**
+    Company: Little Leo Games
+    Role:    Unity Game Developer 
 
 Everything as indie game developer :D
 I helped my friend with the Little Leo Games Team to release this awesome game Astrea: Six-Sided Oracles working as Unity Game Developer.
@@ -21,9 +22,10 @@ Happy to be here. Making games for fun and seeing people having fun.
 - Learn how to mod games on Steam using BepInEx (plugin to mod Unity Games) and develop a few python scripts to help players to focus in programming MODs.
 - Help to release the game in other platform like GOG and Epic Games.
 
-### Nov.2020 - Apr.2023
+### **Nov.2020 - Apr.2023**
 
-**Game Developer - VR Monkey**
+    Company: VR Monkey
+    Role:    Unity Game Developer 
 
 I worked primarily as a porting developer using Unity 3D. I helped the team progress with the build tool, worked on a platform switching tool, and gained a lot of experience in communicating/documenting/organizing projects for on-time delivery.
 
@@ -37,9 +39,10 @@ I worked primarily as a porting developer using Unity 3D. I helped the team prog
 - Use Trello/Hacknplan for task organization.
 - Develop VR games.
 
-### Jun.2020 - Aug.2023
+### **Jun.2020 - Aug.2023**
 
-**Game Developer - Ilex Games**
+    Company: Ilex Games
+    Role:    Unity Game Developer 
 
 I helped the company fixing issues and improving mobile game's performance using Unity 3D (outsourcing). Also I worked in a python script to get all dialogues from a game to be read from a dialogue tool.
 
@@ -50,9 +53,11 @@ I helped the company fixing issues and improving mobile game's performance using
 - Use of Git.
 - Implement a python script to get all dialogues to be read in a dialogue tool.
 
-### Oct.2020 - May.2023
+### **Oct.2020 - May.2023**
 
-**Game Developer - Unicamp LARCOM**
+    Company: Unicamp LARCOM   
+    Role:    Unity Game Developer
+    
 
 I helped in development of a 3D VR educational game using Unity 3D. A few experiences gained during the process:
 
