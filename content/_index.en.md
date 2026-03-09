@@ -5,7 +5,7 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-I'm an Indie Game Developer 5+ experiences that is looking for transitioning from game development to backend and tooling developer roles, focusing on languages such as Go, Python, React, or/and TypeScript.
+I'm an Indie Game Developer with over 5 years of experiences that is looking for transitioning from game development to backend and tooling developer roles, focusing on language Go and main technologies.
 
 I noticed an interest in helping developers while automating some processes to speed up development, documenting solutions at work, or just thinking about a good solution.
 
@@ -15,6 +15,6 @@ This is my professional path I want to follow as I achieve my personal goals, wh
 
 ### My Skills
 
-**Languages**: Go, Bash, Python, TypeScript, C/C++, C#  
-**Tools**: Git, Docker, GitHub Actions, React, Nginx, Make tool  
-**Database**: Postgres, Redis, MySQL, MongoDB
+**Languages**: Go, Python
+**Tools**: Git, Docker, GitHub Actions, Nginx, GNU Make 
+**Database**: Postgres, Redis
