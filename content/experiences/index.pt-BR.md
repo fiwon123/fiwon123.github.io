@@ -8,7 +8,7 @@ draft: false
 ### **Out.2022 - Jul.2024**
 
     Empresa: Little Leo Games
-    Cargo:    Desenvolvedor de jogos em Unity
+    Cargo:   Desenvolvedor de jogos em Unity
 
 Tudo como desenvolvedor de jogos independente :D
 Ajudei meu amigo da equipe Little Leo Games a lançar este jogo incrível, Astrea: Six-Sided Oracles, trabalhando como desenvolvedor de jogos Unity.
@@ -25,7 +25,7 @@ Estou feliz por estar aqui. Criar jogos por diversão e ver as pessoas se divert
 ### **Nov.2020 - Abr.2023**
 
     Empresa: VR Monkey 
-    Cargo:    Desenvolvedor de jogos em Unity
+    Cargo:   Desenvolvedor de jogos em Unity
 
 Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Ajudei a equipe a progredir com a ferramenta de compilação, trabalhei em uma ferramenta de troca de plataforma e ganhei muita experiência em comunicação/documentação/organização de projetos para entrega no prazo.
 
@@ -42,7 +42,7 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
 ### **Jun.2020 - Ago.2023**
 
     Empresa: Ilex Games   
-    Cargo:    Desenvolvedor de jogos em Unity
+    Cargo:   Desenvolvedor de jogos em Unity
 
 Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dispositivos móveis usando Unity 3D (terceirização). Também trabalhei em um script python para que todos os diálogos de um jogo fossem lidos por uma ferramenta de diálogo.
 
@@ -56,7 +56,7 @@ Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dis
 ### **Out.2020 - Mai.2023**
 
     Empresa: Unicamp LARCOM   
-    Cargo:    Desenvolvedor de jogos em Unity
+    Cargo:   Desenvolvedor de jogos em Unity
 
 Ajudei no desenvolvimento de um jogo educacional em 3D VR usando Unity 3D. Algumas experiências adquiridas durante o processo:
 
