@@ -15,6 +15,6 @@ Este é o caminho profissional que quero seguir à medida que alcanço meus obje
 
 ### Habilidades
 
-**Linguagens**: Go, Python
-**Ferramentas**: Git, Docker, GitHub Actions, Nginx, GNU Make  
+**Linguagens**: Go, Python \
+**Ferramentas**: Git, Docker, GitHub Actions, Nginx, GNU Make \
 **Banco de Dados**: Postgres, Redis

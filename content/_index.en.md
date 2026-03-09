@@ -15,6 +15,6 @@ This is my professional path I want to follow as I achieve my personal goals, wh
 
 ### My Skills
 
-**Languages**: Go, Python
-**Tools**: Git, Docker, GitHub Actions, Nginx, GNU Make 
+**Languages**: Go, Python \
+**Tools**: Git, Docker, GitHub Actions, Nginx, GNU Make \
 **Database**: Postgres, Redis
