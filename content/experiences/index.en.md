@@ -18,7 +18,7 @@ Happy to be here. Making games for fun and seeing people having fun.
 - Help to implement some important features as Steam and UI in-game.
 - Fix a lot of bugs.
 - Communicate with players to understand issues and get a better approach.
-- Plan with team all deliveries until the last deadline. ( Events/Release/Update game )
+- Plan with team all deliveries until the last deadline.
 - Learn how to mod games on Steam using BepInEx (plugin to mod Unity Games) and develop a few python scripts to help players to focus in programming MODs.
 - Help to release the game in other platform like GOG and Epic Games.
 
