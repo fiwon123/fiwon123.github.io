@@ -11,7 +11,7 @@ Aqui estão algumas das ferramentas e projetos em que trabalhei ou estou trabalh
 
 - {{< icon "github" >}} **Github**: [Link](https://github.com/fiwon123/eznit)
 - **Descrição**: Um gerenciador interno de arquivos, ajudando a armazenar arquivos relevantes para reuso em próximos projetos.
-- **Tech**: Go
+- **Tecnologias**: Go
 
 ### **Cthrone**
 
@@ -41,4 +41,19 @@ Aqui estão algumas das ferramentas e projetos em que trabalhei ou estou trabalh
 
 - {{< icon "itch-io" >}} **Itch.io**: [Link](https://fiwon123.itch.io/)
 - **Description**: A few game jams.
-- **Tech**: Unity 3D, Game Maker, Pico8, e mais...
+- **Tecnologias**: Unity 3D, Game Maker, Pico8, e mais...
+
+{{< gallery >}}
+  <img src="/gallery/1.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/2.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/3.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/4.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/5.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/6.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/7.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/8.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/9.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/10.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/11.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+  <img src="/gallery/12.png" class="grid-w50 md:grid-w33 xl:grid-w25" />
+{{< /gallery >}}
