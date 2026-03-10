@@ -8,37 +8,36 @@ draft: false
 Here are some of the tools and projects I’ve worked or I'm currently working on:
 
 ### **Eznit** 
-
-- **Github**: [Link](https://github.com/fiwon123/eznit)
+- {{< icon "github" >}} **Github**: [Link](https://github.com/fiwon123/eznit)
 - **Description**: An internal files management, helping developers to storage relevant files and reuse in other projects.
 - **Tech**: Go
 
 ### **Cthrone** 
 
-- **Github**: [Link](https://github.com/fiwon123/cthrone)
+- {{< icon "github" >}} **Github**: [Link](https://github.com/fiwon123/cthrone)
 - **Description**: An internal message tool for device communication using Websocket or Nats. 
 - **Tech**: Go
 
 ### **Crower** 
 
-- **Github**: [Link](https://github.com/fiwon123/crower)
+- {{< icon "github" >}} **Github**: [Link](https://github.com/fiwon123/crower)
 - **Description**: An internal command tool to create and execute commands.
 - **Tech**: Go
 
 ### **Evolve Box**
 
-- private project
+- {{< icon "github" >}} **Github**: private
 - **Description**: A simple life simulation 2D using distributed system with websocket.
 - **Tech**: Go, Typescript, Postgres, Next.js, React
 
 ### **Hugo Portfolio**
 
-- **Github**: [Link](https://github.com/fiwon123/fiwon123.github.io)
+- {{< icon "github" >}} **Github**: [Link](https://github.com/fiwon123/fiwon123.github.io)
 - **Description**: Built a personal portfolio using Hugo to showcase my skills, projects, and experience.
 - **Tech**: Hugo, GitHub Actions, GitHub Pages.
 
-### **Game Jams**  
+### **My Games**  
 
-- **Itch.io**: [Link](https://itch.io/c/1112919/my-game-jams)
-- **Description**: My 25+ Game Jams
+- {{< icon "itch-io" >}} **Itch.io**: [Link](https://fiwon123.itch.io/)
+- **Description**: Algumas game jams.
 - **Tech**: Unity 3D, Game Maker, Pico8, and more...
