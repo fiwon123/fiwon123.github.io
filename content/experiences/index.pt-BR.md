@@ -94,7 +94,7 @@ Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dis
 - Utilização do Git.
 - Implementar um script python para que todos os diálogos fossem lidos em uma ferramenta de diálogo.
 
-### **Out.2029 - Mai.2020**
+### **Out.2019 - Mai.2020**
 
 <div class="company">
   <img src="/companies/unicamp.png" alt="logo unicamp LARCOM"  class="company-image">
