@@ -7,29 +7,49 @@ draft: false
 
 ### **Out.2022 - Jul.2024**
 
-    Empresa: Little Leo Games
-    Cargo:   Desenvolvedor de jogos em Unity
+<div class="company">
+  <img src="/companies/little_leo_games.jpg" alt="logo little leo games" class="company-image">
+  <div class="company-content">
+    <b>Empresa:</b> 
+    <br>
+    Little Leo Games 
+    <br><br>
+    <b>Cargo:</b>
+    <br> 
+    Desenvolvedor de jogos em Unity
+  </div>
+</div>
 
-Tudo como desenvolvedor de jogos independente :D
-Ajudei meu amigo da equipe Little Leo Games a lançar este jogo incrível, Astrea: Six-Sided Oracles, trabalhando como desenvolvedor de jogos Unity.
+Tudo como desenvolvedor de jogos independente :D \
+Ajudei meu amigo da equipe Little Leo Games a lançar este jogo incrível, **Astrea: Six-Sided Oracles**, trabalhando como desenvolvedor de jogos Unity.
 Estou feliz por estar aqui. Criar jogos por diversão e ver as pessoas se divertindo.
 
-- Portar para Xbox.
-- Ajudar a implementar alguns recursos importantes, como Steam e interface do usuário no jogo.
+- Portar para {{< icon "xbox" >}} Xbox.
+- Ajudar a implementar alguns recursos importantes, como {{< icon "steam" >}} Steam e interface do usuário no jogo.
 - Corrigir muitos bugs.
 - Comunicar-me com os jogadores para entender os problemas e obter uma abordagem melhor.
 - Planejar com a equipe todas as entregas até o último prazo. (Eventos/Lançamento/Atualização do jogo)
-- Aprender a modificar jogos no Steam usando o BepInEx (plugin para modificar jogos Unity) e desenvolver alguns scripts python para ajudar os jogadores a se concentrarem na programação de MODs.
-- Ajudar a lançar o jogo em outras plataformas, como GOG e Epic Games.
+- Aprender a modificar jogos no {{< icon "steam" >}} Steam usando o BepInEx (plugin para modificar jogos Unity) e desenvolver alguns scripts python para ajudar os jogadores a se concentrarem na programação de MODs.
+- Ajudar a lançar o jogo em outras plataformas, como {{< icon "gog" >}} GOG e {{< icon "epic" >}} Epic Games.
 
 ### **Nov.2020 - Abr.2023**
 
-    Empresa: VR Monkey 
-    Cargo:   Desenvolvedor de jogos em Unity
+<div class="company">
+  <img src="/companies/vr_monkey.jpg" alt="logo vr monkey"  class="company-image">
+  <div class="company-content">
+    <b>Empresa:</b> 
+    <br>
+    VR Monkey
+    <br><br>
+    <b>Cargo:</b>
+    <br> 
+    Desenvolvedor de jogos em Unity
+  </div>
+</div>
 
 Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Ajudei a equipe a progredir com a ferramenta de compilação, trabalhei em uma ferramenta de troca de plataforma e ganhei muita experiência em comunicação/documentação/organização de projetos para entrega no prazo.
 
-- Portar para PSVR/PSVR2 e outros dispositivos de VR.
+- Portar para {{< icon "sony" >}} PSVR/PSVR2 e outros dispositivos de VR.
 - Criar ferramentas para ajudar no desenvolvimento.
 - Aprender mais sobre shaders e pipelines de renderização (URP e HDRP).
 - Otimizar/melhorar o desempenho.
@@ -41,8 +61,18 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
 
 ### **Jun.2020 - Ago.2023**
 
-    Empresa: Ilex Games   
-    Cargo:   Desenvolvedor de jogos em Unity
+<div class="company">
+  <img src="/companies/ilex_games.jpg" alt="logo ilex games"  class="company-image">
+  <div class="company-content">
+    <b>Empresa:</b> 
+    <br>
+    Ilex Games
+    <br><br>
+    <b>Cargo:</b>
+    <br> 
+    Desenvolvedor de jogos em Unity
+  </div>
+</div>
 
 Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dispositivos móveis usando Unity 3D (terceirização). Também trabalhei em um script python para que todos os diálogos de um jogo fossem lidos por uma ferramenta de diálogo.
 
@@ -55,8 +85,19 @@ Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dis
 
 ### **Out.2020 - Mai.2023**
 
-    Empresa: Unicamp LARCOM   
-    Cargo:   Desenvolvedor de jogos em Unity
+<div class="company">
+  <img src="/companies/unicamp.png" alt="logo unicamp LARCOM"  class="company-image">
+  <div class="company-content">
+    <b>Empresa:</b> 
+    <br>
+    Unicamp LARCOM   
+    <br><br>
+    <b>Cargo:</b>
+    <br> 
+    Desenvolvedor de jogos em Unity
+  </div>
+</div>
+
 
 Ajudei no desenvolvimento de um jogo educacional em 3D VR usando Unity 3D. Algumas experiências adquiridas durante o processo:
 
