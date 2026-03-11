@@ -70,7 +70,7 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
   <img src="/projects/gadgeteer.jpg"         class="grid-w30 xl:grid-w45" />
 {{< /gallery >}}
 
-### **Jun.2020 - Ago.2023**
+### **Jun.2020 - Ago.2020**
 
 <div class="company">
   <img src="/companies/ilex_games.jpg" alt="logo ilex games"  class="company-image">
@@ -94,7 +94,7 @@ Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dis
 - Utilização do Git.
 - Implementar um script python para que todos os diálogos fossem lidos em uma ferramenta de diálogo.
 
-### **Out.2020 - Mai.2023**
+### **Out.2029 - Mai.2020**
 
 <div class="company">
   <img src="/companies/unicamp.png" alt="logo unicamp LARCOM"  class="company-image">

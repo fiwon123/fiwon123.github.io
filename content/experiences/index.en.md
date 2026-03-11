@@ -73,7 +73,7 @@ I worked primarily as a porting developer using Unity 3D. I helped the team prog
   <img src="/projects/gadgeteer.jpg"         class="grid-w30 xl:grid-w45" />
 {{< /gallery >}}
 
-### **Jun.2020 - Aug.2023**
+### **Jun.2020 - Aug.2020**
 
 <div class="company">
   <img src="/companies/ilex_games.jpg" alt="logo ilex games"  class="company-image">
@@ -97,7 +97,7 @@ I helped the company fixing issues and improving mobile game's performance using
 - Use of Git.
 - Implement a python script to get all dialogues to be read in a dialogue tool.
 
-### **Oct.2020 - May.2023**
+### **Oct.2019 - May.2020**
 
 
 <div class="company">
