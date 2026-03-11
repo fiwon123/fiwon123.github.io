@@ -32,6 +32,8 @@ Estou feliz por estar aqui. Criar jogos por diversão e ver as pessoas se divert
 - Aprender a modificar jogos no {{< icon "steam" >}} Steam usando o BepInEx (plugin para modificar jogos Unity) e desenvolver alguns scripts python para ajudar os jogadores a se concentrarem na programação de MODs.
 - Ajudar a lançar o jogo em outras plataformas, como {{< icon "gog" >}} GOG e {{< icon "epic" >}} Epic Games.
 
+  <img src="/projects/astrea.jpg" width="100%"  />
+
 ### **Nov.2020 - Abr.2023**
 
 <div class="company">
@@ -58,6 +60,15 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
 - Usar TortoiseGit / Git Bash / Source Tree.
 - Utilizo o Trello/Hacknplan para organizar tarefas.
 - Desenvolver jogos de VR.
+
+{{< gallery >}}
+  <img src="/projects/nock.jpg" class="grid-w50" />
+  <img src="/projects/virtuoso.jpg" class="grid-w50" />
+  <img src="/projects/museum_multiverse.jpg" class="grid-w50" />
+  <img src="/projects/windlands2.jpg" class="grid-w50" />
+  <img src="/projects/yuki.jpg" class="grid-w50" />
+  <img src="/projects/gadgeteer.jpg" class="grid-w50" />
+{{< /gallery >}}
 
 ### **Jun.2020 - Ago.2023**
 
