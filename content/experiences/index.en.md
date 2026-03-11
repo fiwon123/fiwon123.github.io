@@ -33,7 +33,7 @@ Happy to be here. Making games for fun and seeing people having fun.
 - Learn how to mod games on {{< icon "steam" >}} Steam using BepInEx (plugin to mod Unity Games) and develop a few python scripts to help players to focus in programming MODs.
 - Help to release the game in other platform like {{< icon "gog" >}} GOG and  {{< icon "epic" >}} Epic Games.
 
-  <img src="/projects/astrea.jpg" width="100%"  />
+  <img src="/projects/astrea.jpg" width="80%"  />
 
 ### **Nov.2020 - Apr.2023**
 
@@ -65,12 +65,12 @@ I worked primarily as a porting developer using Unity 3D. I helped the team prog
 - Develop VR games.
 
 {{< gallery >}}
-  <img src="/projects/nock.jpg" class="grid-w50" />
-  <img src="/projects/virtuoso.jpg" class="grid-w50" />
-  <img src="/projects/museum_multiverse.jpg" class="grid-w50" />
-  <img src="/projects/windlands2.jpg" class="grid-w50" />
-  <img src="/projects/yuki.jpg" class="grid-w50" />
-  <img src="/projects/gadgeteer.jpg" class="grid-w50" />
+  <img src="/projects/nock.jpg"              class="grid-w30 xl:grid-w45" />
+  <img src="/projects/virtuoso.jpg"          class="grid-w30 xl:grid-w45" />
+  <img src="/projects/museum_multiverse.jpg" class="grid-w30 xl:grid-w45" />
+  <img src="/projects/windlands2.jpg"        class="grid-w30 xl:grid-w45" />
+  <img src="/projects/yuki.jpg"              class="grid-w30 xl:grid-w45" />
+  <img src="/projects/gadgeteer.jpg"         class="grid-w30 xl:grid-w45" />
 {{< /gallery >}}
 
 ### **Jun.2020 - Aug.2023**
