@@ -17,6 +17,7 @@ buildFuture = false
 
 enableEmoji = true
 [params]
+logo = "img/logo.png"
 [params.author]
   name = "Felipe Inoue"
   # email = "youremail@example.com"
