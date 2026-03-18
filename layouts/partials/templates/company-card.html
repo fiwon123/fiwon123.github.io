@@ -17,14 +17,14 @@
 {{- $labelCompany := index $p "labelCompany" -}}
 {{- $labelRole := index $p "labelRole" -}}
 {{- if not $labelCompany -}}
-  {{- if eq $lang "pt-BR" -}}
+  {{- if eq $lang "pt-br" -}}
     {{- $labelCompany = "Empresa" -}}
   {{- else -}}
     {{- $labelCompany = "Company" -}}
   {{- end -}}
 {{- end -}}
 {{- if not $labelRole -}}
-  {{- if eq $lang "pt-BR" -}}
+  {{- if eq $lang "pt-br" -}}
     {{- $labelRole = "Cargo" -}}
   {{- else -}}
     {{- $labelRole = "Role" -}}
