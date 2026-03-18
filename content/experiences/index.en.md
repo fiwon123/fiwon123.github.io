@@ -52,7 +52,7 @@ I worked primarily as a porting developer using Unity 3D. I helped the team prog
 - Use Trello/Hacknplan for task organization.
 - Develop VR games.
 
- {{< snippet "experiences" "vr-monkey" >}}
+ {{< snippet "vr-monkey" "experiences" >}}
 
 ### **Jun.2020 - Aug.2020**
 

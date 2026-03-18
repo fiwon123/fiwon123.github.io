@@ -50,7 +50,7 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
 - Utilizo o Trello/Hacknplan para organizar tarefas.
 - Desenvolver jogos de VR.
 
- {{< snippet "experiences" "vr-monkey" >}}
+{{< snippet "vr-monkey" "experiences" >}}
 
 ### **Jun.2020 - Ago.2020**
 
