@@ -1,0 +1,1 @@
+ Git, Docker, GitHub Actions, Nginx, GNU Make

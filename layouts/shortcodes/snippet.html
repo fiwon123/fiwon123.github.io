@@ -1,0 +1,11 @@
+{{- $name := .Get 0 -}}
+{{- $folder := .Get "folder" | default (.Get 1) -}}
+{{- $base := cond $folder (printf "snippets/%s/%s" $folder $name) (printf "snippets/%s" $name) -}}
+{{- $defaultPath := printf "%s.md" $base -}}
+
+{{- $result := try (readFile $defaultPath) -}}
+{{- if not $result.Err -}}
+  {{- $result.Value | $.Page.RenderString -}}
+{{- else -}}
+  {{- errorf "snippet %q not found at %q" $name $defaultPath -}}
+{{- end -}}

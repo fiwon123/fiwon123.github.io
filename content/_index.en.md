@@ -13,8 +13,11 @@ With my learning and real-world experience, I want to build good systems that ca
 
 This is my professional path I want to follow as I achieve my personal goals, which is related to everything I have learned so far.
 
+
 ### My Skills
 
-**Languages**: Go, Python \
-**Tools**: Git, Docker, GitHub Actions, Nginx, GNU Make \
-**Database**: Postgres, Redis
+**Languages**: {{< snippet "languages" "home" >}} \
+**Tools**: {{< snippet "tools" "home" >}} \
+**Database**: {{< snippet "database" "home" >}} 
+
+
