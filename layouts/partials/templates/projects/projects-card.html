@@ -1,0 +1,67 @@
+{{- $p := .Params -}}
+{{- $lang := .Page.Lang -}}
+
+{{- $icon := index $p "icon" | default "github" -}}
+{{- $source := index $p "source" -}}
+{{- $url := index $p "url" -}}
+{{- $description := index $p "description" -}}
+{{- $tech := index $p "tech" -}}
+{{- $privateRaw := index $p "private" | default "false" -}}
+{{- $private := in (slice "true" "1" "yes") (lower (printf "%v" $privateRaw)) -}}
+
+{{- if not $description -}}
+  {{- errorf "projects-card requires param 'description'" -}}
+{{- end -}}
+
+{{- if not $tech -}}
+  {{- errorf "projects-card requires param 'tech'" -}}
+{{- end -}}
+
+{{- if not $source -}}
+  {{- $sourceMap := dict "github" "Github" "itch-io" "Itch.io" -}}
+  {{- $source = index $sourceMap $icon | default "Source" -}}
+{{- end -}}
+
+{{- $labelDescription := index $p "labelDescription" -}}
+{{- $labelTech := index $p "labelTech" -}}
+{{- if not $labelDescription -}}
+  {{- if eq $lang "pt-br" -}}
+    {{- $labelDescription = "Descrição" -}}
+  {{- else -}}
+    {{- $labelDescription = "Description" -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $labelTech -}}
+  {{- if eq $lang "pt-br" -}}
+    {{- $labelTech = "Tecnologias" -}}
+  {{- else -}}
+    {{- $labelTech = "Tech" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $privateLabel := index $p "privateLabel" -}}
+{{- if not $privateLabel -}}
+  {{- if eq $lang "pt-br" -}}
+    {{- $privateLabel = " Privado" -}}
+  {{- else -}}
+    {{- $privateLabel = " Private" -}}
+  {{- end -}}
+{{- end -}}
+
+<ul>
+  <li>
+    <span class="inline-flex items-center gap-2">
+      <span class="inline-flex items-center">{{ partial "icon.html" $icon }}</span>
+      <strong>{{ $source }}:</strong>
+
+      {{- if and (not $private) $url -}}
+        <a href="{{ $url }}"> Link</a>
+      {{- else -}}
+        {{ $privateLabel }}
+      {{- end -}}
+    </span>
+
+  </li>
+  <li><strong>{{ $labelDescription }}:</strong> {{ $description }}</li>
+  <li><strong>{{ $labelTech }}:</strong> {{ $tech }}</li>
+</ul>

@@ -1,0 +1,13 @@
+{{- $p := .Params -}}
+{{- $lang := .Page.Lang -}}
+{{- $description := index $p "description" | default "github"  -}}
+
+{{- $params := dict
+  "icon" "itch-io"
+  "source" "Itch.io"
+  "url" "https://fiwon123.itch.io/"
+  "description" $description
+  "tech" "Unity 3D, Game Maker, Pico8..."
+-}}
+
+{{- partial "templates/projects/projects-card.html" (dict "Page" .Page "Site" .Site "Params" $params) -}}

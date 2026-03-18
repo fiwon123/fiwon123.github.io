@@ -1,7 +1,12 @@
 {{- $template := .Get "template" | default (.Get 0) -}}
+{{- $folder := .Get "folder" | default (.Get 1) -}}
 {{- if not $template -}}
   {{- errorf "tpl shortcode requires a template name. Example: {{< tpl template=\"company-card\" ... >}}" -}}
 {{- end -}}
 
 {{- $ctx := dict "Page" .Page "Site" .Site "Params" .Params -}}
-{{- partial (printf "templates/%s.html" $template) $ctx -}}
+{{- $partialPath := printf "templates/%s.html" $template -}}
+{{- if $folder -}}
+  {{- $partialPath = printf "templates/%s/%s.html" $folder $template -}}
+{{- end -}}
+{{- partial $partialPath $ctx -}}
