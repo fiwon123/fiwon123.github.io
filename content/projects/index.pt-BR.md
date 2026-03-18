@@ -27,7 +27,7 @@ Aqui estão algumas das ferramentas e projetos em que trabalhei ou estou trabalh
 ### **Crower** 
 
 {{< tpl 
-  template="eznit" 
+  template="crower" 
   folder="projects" 
   description="Uma ferramenta interna para criação e execução de comandos." 
 >}}
