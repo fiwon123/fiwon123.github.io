@@ -51,7 +51,7 @@ body::after {
 
 .home-animated-bg .rounded-full,
 body .rounded-full.h-36.w-36 {
-    box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.22), 0 12px 45px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 0, 0 12px 45px rgba(37, 99, 235, 0.35);
 }
 
 @keyframes home-blue-drift {
