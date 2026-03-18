@@ -1,0 +1,10 @@
+{{ define "main" }}
+  <div class="home-animated-bg">
+    {{ $partial := print "home/" .Site.Params.homepage.layout ".html" }}
+    {{ if templates.Exists (printf "partials/%s" $partial) }}
+      {{ partial $partial . }}
+    {{ else }}
+      {{ partial "home/profile.html" . }}
+    {{ end }}
+  </div>
+{{ end }}
