@@ -20,7 +20,6 @@
 
 /* Global: simple animated blue atmosphere for all pages. */
 body {
-    position: relative;
     isolation: isolate;
 }
 
@@ -31,6 +30,9 @@ body::after {
     inset: -20vmax;
     pointer-events: none;
     z-index: -1;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
 }
 
 body::before {
@@ -43,7 +45,7 @@ body::before {
 
 body::after {
     background-image: linear-gradient(120deg, rgba(59, 130, 246, 0.08) 0%, rgba(14, 116, 144, 0.06) 45%, rgba(30, 64, 175, 0.10) 100%);
-    mix-blend-mode: screen;
+    opacity: 0.75;
     animation: home-blue-breathe 14s ease-in-out infinite;
 }
 
