@@ -7,18 +7,13 @@ draft: false
 
 ### **Out.2022 - Jul.2024**
 
-<div class="company">
-  <img src="/companies/little_leo_games.jpg" alt="logo little leo games" class="company-image">
-  <div class="company-content">
-    <b>Empresa:</b> 
-    <br>
-    Little Leo Games 
-    <br><br>
-    <b>Cargo:</b>
-    <br> 
-    Desenvolvedor de jogos em Unity
-  </div>
-</div>
+{{< tpl 
+  template="company-card" 
+  company="little_leo_games" 
+  name="Little Leo Games" 
+  role="Desenvolvedor de jogos em Unity" 
+>}}
+
 
 Tudo como desenvolvedor de jogos independente :D \
 Ajudei meu amigo da equipe Little Leo Games a lançar este jogo incrível, **Astrea: Six-Sided Oracles**, trabalhando como desenvolvedor de jogos Unity.
@@ -36,18 +31,12 @@ Estou feliz por estar aqui. Criar jogos por diversão e ver as pessoas se divert
 
 ### **Nov.2020 - Abr.2023**
 
-<div class="company">
-  <img src="/companies/vr_monkey.jpg" alt="logo vr monkey"  class="company-image">
-  <div class="company-content">
-    <b>Empresa:</b> 
-    <br>
-    VR Monkey
-    <br><br>
-    <b>Cargo:</b>
-    <br> 
-    Desenvolvedor de jogos em Unity
-  </div>
-</div>
+{{< tpl 
+  template="company-card" 
+  company="vr_monkey" 
+  name="VR Monkey" 
+  role="Desenvolvedor de jogos em Unity" 
+>}}
 
 Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Ajudei a equipe a progredir com a ferramenta de compilação, trabalhei em uma ferramenta de troca de plataforma e ganhei muita experiência em comunicação/documentação/organização de projetos para entrega no prazo.
 
@@ -61,29 +50,16 @@ Trabalhei principalmente como desenvolvedor de portabilidade usando Unity 3D. Aj
 - Utilizo o Trello/Hacknplan para organizar tarefas.
 - Desenvolver jogos de VR.
 
-{{< gallery >}}
-  <img src="/projects/nock.jpg"              class="grid-w30 xl:grid-w45" />
-  <img src="/projects/virtuoso.jpg"          class="grid-w30 xl:grid-w45" />
-  <img src="/projects/museum_multiverse.jpg" class="grid-w30 xl:grid-w45" />
-  <img src="/projects/windlands2.jpg"        class="grid-w30 xl:grid-w45" />
-  <img src="/projects/yuki.jpg"              class="grid-w30 xl:grid-w45" />
-  <img src="/projects/gadgeteer.jpg"         class="grid-w30 xl:grid-w45" />
-{{< /gallery >}}
+ {{< snippet "experiences" "vr-monkey" >}}
 
 ### **Jun.2020 - Ago.2020**
 
-<div class="company">
-  <img src="/companies/ilex_games.jpg" alt="logo ilex games"  class="company-image">
-  <div class="company-content">
-    <b>Empresa:</b> 
-    <br>
-    Ilex Games
-    <br><br>
-    <b>Cargo:</b>
-    <br> 
-    Desenvolvedor de jogos em Unity
-  </div>
-</div>
+{{< tpl 
+  template="company-card" 
+  company="ilex_games" 
+  name="Ilex Games" 
+  role="Desenvolvedor de jogos em Unity" 
+>}}
 
 Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dispositivos móveis usando Unity 3D (terceirização). Também trabalhei em um script python para que todos os diálogos de um jogo fossem lidos por uma ferramenta de diálogo.
 
@@ -96,18 +72,12 @@ Ajudei a empresa a corrigir problemas e melhorar o desempenho dos jogos para dis
 
 ### **Out.2019 - Mai.2020**
 
-<div class="company">
-  <img src="/companies/unicamp.png" alt="logo unicamp LARCOM"  class="company-image">
-  <div class="company-content">
-    <b>Empresa:</b> 
-    <br>
-    Unicamp LARCOM   
-    <br><br>
-    <b>Cargo:</b>
-    <br> 
-    Desenvolvedor de jogos em Unity
-  </div>
-</div>
+{{< tpl 
+  template="company-card" 
+  company="unicamp" 
+  name="Unicamp LARCOM" 
+  role="Desenvolvedor de jogos em Unity" 
+>}}
 
 
 Ajudei no desenvolvimento de um jogo educacional em 3D VR usando Unity 3D. Algumas experiências adquiridas durante o processo:

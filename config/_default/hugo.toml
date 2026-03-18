@@ -3,7 +3,7 @@
 # https://blowfish.page/docs/getting-started/
 
 enableGitInfo = true
-theme = "blowfish"
+# theme = "blowfish"
 baseURL = "https://localhost:1313"
 defaultContentLanguage = "en"
 

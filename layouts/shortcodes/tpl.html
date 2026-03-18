@@ -1,0 +1,7 @@
+{{- $template := .Get "template" | default (.Get 0) -}}
+{{- if not $template -}}
+  {{- errorf "tpl shortcode requires a template name. Example: {{< tpl template=\"company-card\" ... >}}" -}}
+{{- end -}}
+
+{{- $ctx := dict "Page" .Page "Site" .Site "Params" .Params -}}
+{{- partial (printf "templates/%s.html" $template) $ctx -}}

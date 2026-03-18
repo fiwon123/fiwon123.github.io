@@ -1,0 +1,45 @@
+{{- $p := .Params -}}
+{{- $lang := .Page.Lang -}}
+
+{{- $companySlug := index $p "company" -}}
+{{- $companyName := index $p "name" | default $companySlug -}}
+{{- $role := index $p "role" | default "" -}}
+{{- $logo := index $p "logo" -}}
+
+{{- if not $companySlug -}}
+  {{- errorf "company-card requires param 'company' (slug). Example: company=\"vr_monkey\"" -}}
+{{- end -}}
+
+{{- if not $logo -}}
+  {{- $logo = printf "%s.jpg" $companySlug -}}
+{{- end -}}
+
+{{- $labelCompany := index $p "labelCompany" -}}
+{{- $labelRole := index $p "labelRole" -}}
+{{- if not $labelCompany -}}
+  {{- if eq $lang "pt-BR" -}}
+    {{- $labelCompany = "Empresa" -}}
+  {{- else -}}
+    {{- $labelCompany = "Company" -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $labelRole -}}
+  {{- if eq $lang "pt-BR" -}}
+    {{- $labelRole = "Cargo" -}}
+  {{- else -}}
+    {{- $labelRole = "Role" -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="company">
+  <img src="/companies/{{ $logo }}" alt="logo {{ $companyName | lower }}" class="company-image">
+  <div class="company-content">
+    <b>{{ $labelCompany }}:</b>
+    <br>
+    {{ $companyName }}
+    <br><br>
+    <b>{{ $labelRole }}:</b>
+    <br>
+    {{ $role }}
+  </div>
+</div>

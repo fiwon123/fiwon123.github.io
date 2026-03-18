@@ -16,7 +16,7 @@ This is my professional path I want to follow as I achieve my personal goals, wh
 
 ### My Skills
 
-**Languages**: {{< snippet "languages" "home" >}} \
+**Languages**: {{< snippet "languages" "home">}} \
 **Tools**: {{< snippet "tools" "home" >}} \
 **Database**: {{< snippet "database" "home" >}} 
 
