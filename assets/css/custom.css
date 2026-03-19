@@ -49,10 +49,6 @@ body::after {
     animation: home-blue-breathe 14s ease-in-out infinite;
 }
 
-.home-animated-bg .rounded-full,
-body .rounded-full.h-36.w-36 {
-    box-shadow: 0 0, 0 12px 45px rgba(37, 99, 235, 0.35);
-}
 
 @keyframes home-blue-drift {
     0% {
