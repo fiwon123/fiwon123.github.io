@@ -5,9 +5,9 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-I'm an Indie Game Developer with over 5 years of experiences that is looking for transitioning from game development to backend and tooling developer roles, focusing on language Go and main technologies.
+I'm an Game Developer with over 5 years of experiences that is looking for transitioning from game development to backend developer roles, focusing on language Go and main technologies.
 
-I noticed an interest in helping developers while automating some processes to speed up development, documenting solutions at work, or just thinking about a good solution.
+While working, where I've earned experiences with other developers, I noticed an interest in automating process by documenting, creating tools or even thinking in solutions to avoid futures problems.
 
 With my learning and real-world experience, I want to build good systems that can help developers to concentrate in their goals and let tools to handle recurring problems.
 

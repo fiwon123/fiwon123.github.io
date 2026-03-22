@@ -5,9 +5,9 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-Sou um desenvolvedor de jogos indie com mais de 5 anos de experiência e estou buscando a transição do desenvolvimento de jogos para funções de backend e desenvolvedor de ferramentas, focando na linguagem Go e suas tecnologias.
+Sou um desenvolvedor de jogos com mais de 5 anos de experiência e estou buscando a transição do desenvolvimento de jogos para funções de backend e desenvolvedor de ferramentas, focando na linguagem Go e suas tecnologias.
 
-Notei um interesse em ajudar os desenvolvedores enquanto automatizava alguns processos para acelerar o desenvolvimento, documentando soluções no trabalho ou apenas pensando em uma boa solução.
+Durante o trabalho, onde obtive experiências junto com outros desenvolvedores, acabei notando um interesse em automatizar processos seja documentando, criando ferramentas ou ainda pensando em soluções para evitar problema futuros.
 
 Com meu aprendizado e experiência no mundo real, quero construir bons sistemas que possam ajudar os desenvolvedores a se concentrarem em seus objetivos e deixar que as ferramentas lidem com problemas recorrentes.
 
