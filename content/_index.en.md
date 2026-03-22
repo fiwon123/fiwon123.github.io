@@ -9,9 +9,9 @@ I'm an Game Developer with over 5 years of experiences that is looking for trans
 
 While working, where I've earned experiences with other developers, I noticed an interest in automating process by documenting, creating tools or even thinking in solutions to avoid futures problems.
 
-With my learning and real-world experience, I want to build good systems that can help developers to concentrate in their goals and let tools to handle recurring problems.
+With my learning and experiences, I want to build good systems that can help developers to concentrate in their goals and let tools to handle recurring problems.
 
-This is my professional path I want to follow as I achieve my personal goals, which is related to everything I have learned so far.
+This is my professional path I want to follow as I achieve my personal objectives, which is related to everything I have learned so far.
 
 
 ### My Skills
