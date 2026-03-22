@@ -5,7 +5,7 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-I'm an Game Developer with over 5 years of experiences that is looking for transitioning from game development to backend developer roles, focusing on language Go and main technologies.
+I'm Game Developer with over 5 years of experiences that is looking for transitioning from game development to backend developer roles, focusing on language Go and main technologies.
 
 While working, where I've earned experiences with other developers, I noticed an interest in automating process by documenting, creating tools or even thinking in solutions to avoid futures problems.
 

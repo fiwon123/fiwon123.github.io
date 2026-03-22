@@ -5,7 +5,7 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-Sou um desenvolvedor de jogos com mais de 5 anos de experiência e estou buscando a transição do desenvolvimento de jogos para funções de backend, focando na linguagem Go e suas tecnologias.
+Sou Desenvolvedor de Jogos com mais de 5 anos de experiência e estou buscando a transição do desenvolvimento de jogos para funções de backend, focando na linguagem Go e suas tecnologias.
 
 Durante o trabalho, onde obtive experiências junto com outros desenvolvedores, acabei notando um interesse em automatizar processos seja documentando, criando ferramentas ou ainda pensando em soluções para evitar problema futuros.
 
