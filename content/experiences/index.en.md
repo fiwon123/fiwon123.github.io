@@ -5,88 +5,90 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-### **Oct.2022 - Jul.2024**
-
+### **Oct. 2022 - Jul. 2024**
 
 {{< tpl 
   template="company-card" 
   company="little_leo_games" 
   name="Little Leo Games" 
-  role="Unity Game Developer" 
+  role="Unity Developer" 
 >}}
 
-Everything as indie game developer :D \
-I helped my friend with the Little Leo Games Team to release this awesome game **Astrea: Six-Sided Oracles** working as Unity Game Developer.
-Happy to be here. Making games for fun and seeing people having fun.
+Worked as part of an indie team on **Astrea: Six-Sided Oracles**, contributing to gameplay systems, platform releases, and post-launch support.
 
+- Ported the game to {{< icon "xbox" >}} Xbox  
+- Implemented key features including UI systems and {{< icon "steam" >}} Steam integration  
+- Fixed gameplay and production bugs across development and release stages  
+- Communicated with players to identify issues and improve fixes  
+- Planned and coordinated delivery tasks with the team until release  
+- Worked with {{< icon "steam" >}} Steam modding using BepInEx and developed Python scripts to support mod workflows  
+- Supported releases on {{< icon "gog" >}} GOG and {{< icon "epic" >}} Epic Games  
 
-- Port for {{< icon "xbox" >}} Xbox.
-- Help to implement some important features as {{< icon "steam" >}} Steam and UI in-game.
-- Fix a lot of bugs.
-- Communicate with players to understand issues and get a better approach.
-- Plan with team all deliveries until the last deadline.
-- Learn how to mod games on {{< icon "steam" >}} Steam using BepInEx (plugin to mod Unity Games) and develop a few python scripts to help players to focus in programming MODs.
-- Help to release the game in other platform like {{< icon "gog" >}} GOG and  {{< icon "epic" >}} Epic Games.
+<img src="/projects/astrea.jpg" width="80%"  />
 
-  <img src="/projects/astrea.jpg" width="80%"  />
+---
 
-### **Nov.2020 - Apr.2023**
-
+### **Nov. 2020 - Apr. 2023**
 
 {{< tpl 
   template="company-card" 
   company="vr_monkey" 
   name="VR Monkey" 
-  role="Unity Game Developer" 
+  role="Unity Developer (VR)" 
 >}}
 
-I worked primarily as a porting developer using Unity 3D. I helped the team progress with the build tool, worked on a platform switching tool, and gained a lot of experience in communicating/documenting/organizing projects for on-time delivery.
+Worked as a porting and tools developer focused on VR titles, improving cross-platform compatibility, build pipelines, and internal development tools.
 
-- Port to {{< icon "sony" >}} PSVR/PSVR2 and other VR devices.
-- Create tools to help in development.
-- Learn more about shaders and rendering pipelines (URP and HDRP).
-- Optimize/Improve performance.
-- Organize code.
-- Document past implementations and troubleshooting.
-- Use TortoiseGit / Git Bash / Source Tree.
-- Use Trello/Hacknplan for task organization.
-- Develop VR games.
+- Ported VR games to {{< icon "sony" >}} PSVR / PSVR2 and other VR platforms  
+- Developed internal tools to improve build and platform switching workflows  
+- Worked with shaders and rendering pipelines (URP / HDRP)  
+- Optimized performance and memory usage across VR projects  
+- Maintained and organized codebases for production stability  
+- Documented systems and troubleshooting processes for team use  
+- Used Git workflows (TortoiseGit, Git Bash, SourceTree)  
+- Managed tasks using Trello and HacknPlan  
+- Contributed to VR gameplay development  
 
- {{< snippet "vr-monkey" "experiences" >}}
+{{< snippet "vr-monkey" "experiences" >}}
 
-### **Jun.2020 - Aug.2020**
+---
+
+### **Jun. 2020 - Aug. 2020**
 
 {{< tpl 
   template="company-card" 
   company="ilex_games" 
   name="Ilex Games" 
-  role="Unity Game Developer" 
+  role="Unity Developer" 
 >}}
 
-I helped the company fixing issues and improving mobile game's performance using Unity 3D (outsourcing). Also I worked in a python script to get all dialogues from a game to be read from a dialogue tool.
+Supported mobile game development and optimization in an outsourcing role, focusing on bug fixing, performance improvements, and automation.
 
-- Make improvements and adjustments.
-- Export to Mobile.
-- Standardize game UI.
-- Understand the logic/rules for continuity in the project.
-- Use of Git.
-- Implement a python script to get all dialogues to be read in a dialogue tool.
+- Fixed issues and improved performance in a Unity mobile game  
+- Adapted and prepared builds for mobile platforms  
+- Standardized UI and gameplay behavior across systems  
+- Collaborated using Git for version control  
+- Developed a Python script to extract and format game dialogue for a dialogue system  
+- Applied project rules and logic to ensure continuity across development  
 
-### **Oct.2019 - May.2020**
+---
 
+### **Oct. 2019 - May. 2020**
 
 {{< tpl 
   template="company-card" 
   company="unicamp" 
   name="Unicamp LARCOM" 
-  role="Unity Game Developer" 
+  role="Unity Developer (VR)" 
 >}}
 
-I helped in development of a 3D VR educational game using Unity 3D. A few experiences gained during the process:
+Contributed to the development of a 3D VR educational game using Unity, focusing on gameplay systems and backend integration.
 
-- Export to WebGL and Mobile platforms.
-- Implement VR technology features.
-- Use rest API for sending and receiving data from server.
-- Experience using C# and programming logic for games.
-- Use Git.
-- Use 3D Assets.
+- Developed VR interaction features  
+- Exported builds to WebGL and mobile platforms  
+- Integrated REST APIs for data exchange with server systems  
+- Worked with C# and core game programming logic  
+- Used Git for version control  
+- Implemented and managed 3D assets within the project  
+
+---

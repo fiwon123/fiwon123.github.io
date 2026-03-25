@@ -5,17 +5,10 @@ lastmod: "2025-06-10T14:00:00-03:00"
 draft: false
 ---
 
-Sou Desenvolvedor de Jogos com mais de 5 anos de experiência e estou buscando a transição do desenvolvimento de jogos para funções de backend, focando na linguagem Go e suas tecnologias.
+Sou um Desenvolvedor de Jogos com mais de 5 anos de experiência, atualmente em transição para áreas de backend e desenvolvimento de ferramentas, com foco em Go, Python e Node.js.
 
-Durante o trabalho, onde obtive experiências junto com outros desenvolvedores, acabei notando um interesse em automatizar processos seja documentando, criando ferramentas ou ainda pensando em soluções para evitar problema futuros.
+Ao longo da minha carreira, trabalhei em colaboração com equipes de desenvolvimento em diversos projetos, onde desenvolvi um forte interesse por automação, criação de ferramentas e construção de sistemas que melhoram fluxos de trabalho e reduzem tarefas repetitivas. Isso me levou a focar em soluções que aumentam a eficiência, confiabilidade e escalabilidade dos processos de desenvolvimento.
 
-Com meu aprendizado e experiências, quero construir bons sistemas que possam ajudar os desenvolvedores a se concentrarem em seus objetivos e deixar que as ferramentas lidem com problemas recorrentes.
+Gosto de transformar processos complexos ou repetitivos em sistemas simples e fáceis de manter, ajudando equipes a se concentrarem na entrega de funcionalidades em vez de tarefas manuais.
 
-Este é o caminho profissional que quero seguir à medida que alcanço meus objetivos pessoais, que estão relacionados a tudo que aprendi até agora.
-
-### Habilidades
-
-**Linguagens**:  {{< snippet "languages" "home" >}} \
-**Ferramentas**: {{< snippet "tools" "home" >}} \
-**Banco de Dados**: {{< snippet "database" "home" >}} 
-
+No momento, busco oportunidades em backend ou desenvolvimento de ferramentas, onde eu possa combinar minha experiência em desenvolvimento de jogos com backend para construir sistemas eficientes e escaláveis.
