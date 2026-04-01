@@ -62,7 +62,7 @@ Worked as a porting and tools developer focused on VR titles, improving cross-pl
   role="Unity Developer" 
 >}}
 
-Supported mobile game development and optimization in an outsourcing role, focusing on bug fixing, performance improvements, and automation.
+Supported mobile game development and optimization, focusing on bug fixing, performance improvements, and automation.
 
 - Fixed issues and improved performance in a Unity mobile game  
 - Adapted and prepared builds for mobile platforms  

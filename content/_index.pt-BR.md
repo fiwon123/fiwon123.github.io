@@ -16,6 +16,3 @@ Gosto de transformar processos <br>
 complexos ou repetitivos em sistemas simples e fáceis de manter, <br> 
 ajudando equipes a se concentrarem na entrega de funcionalidades <br>
 em vez de tarefas manuais.
-
-No momento, busco oportunidades em backend ou desenvolvimento de ferramentas, <br> 
-onde eu possa combinar minha experiência em desenvolvimento de jogos com backend para construir sistemas eficientes e escaláveis.

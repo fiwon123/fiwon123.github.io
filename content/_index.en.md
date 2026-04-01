@@ -14,6 +14,3 @@ where I developed a strong interest in building  tools, automation, and systems.
 
 I enjoy turning complex or repetitive processes into simple and maintainable systems <br>
 that help developers focus on delivering features rather than managing manual tasks.
-
-I am currently seeking backend or developer tools roles where <br>
-I can combine my game development background with backend engineering to build impactful systems and scalable infrastructure.
