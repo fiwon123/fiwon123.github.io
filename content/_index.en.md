@@ -10,7 +10,10 @@ currently transitioning into backend and developer tools engineering. <br>
 
 Throughout my career,  <br>
 I’ve worked closely with developers across multiple projects,  <br>
-where I developed a strong interest in building  tools, automation, and systems.
+where I developed a strong interest in building  tools, automation, and <br> 
+systems.
 
-I enjoy turning complex or repetitive processes into simple and maintainable systems <br>
-that help developers focus on delivering features rather than managing manual tasks.
+I enjoy turning complex or repetitive processes <br> 
+into simple and maintainable systems that<br>
+help developers focus on delivering features rather than<br>
+managing manual tasks.
