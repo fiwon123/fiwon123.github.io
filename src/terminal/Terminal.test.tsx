@@ -7,12 +7,15 @@ import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Terminal, type TerminalProps } from './Terminal'
+import { TerminalProvider } from './TerminalProvider'
 
 function renderTerminal(props: TerminalProps = {}) {
   render(
     <ThemeProvider>
       <LanguageProvider>
-        <Terminal {...props} />
+        <TerminalProvider>
+          <Terminal {...props} />
+        </TerminalProvider>
       </LanguageProvider>
     </ThemeProvider>,
   )

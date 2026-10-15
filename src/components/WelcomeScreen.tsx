@@ -1,21 +1,29 @@
 import { useId } from 'react'
 
 import { useT } from '../i18n/hooks'
+import { useTerminal } from '../terminal/hooks'
 
 import styles from './WelcomeScreen.module.css'
 
 /**
- * The opening surface of terminal mode, in place of the hero.
+ * The commands a visitor can run, in the order the `help` output lists them.
+ * `clear` is left out: clearing an empty scrollback from a chip is noise.
+ */
+const COMMANDS = ['about', 'experience', 'projects', 'skills', 'contact', 'help'] as const
+
+/**
+ * The opening surface of terminal mode, below the console.
  *
  * It carries `id="top"` (so the brand link and back-to-top still resolve) and the
- * page's only `h1`, which is why terminal mode renders it *instead of* the hero
- * rather than above it — the same introduction twice reads as a mistake.
+ * page's only `h1`, and it stays put while a command's section renders below it —
+ * replacing it would take the heading and the anchor with it.
  *
- * The portrait lives here too: the hero owns it in browse mode, and without it
- * terminal mode dropped the photo entirely.
+ * The command chips are the way to run a command from outside the console; they
+ * call the same `run` the input form does, so the output lands in the scrollback.
  */
 export function WelcomeScreen() {
   const t = useT()
+  const { run } = useTerminal()
   const titleId = useId()
 
   return (
@@ -34,6 +42,15 @@ export function WelcomeScreen() {
             {t.hero.greeting}
           </h1>
           <p className={styles.body}>{t.view.welcomeBody}</p>
+          <ul className={styles.commands} aria-label={t.view.commandsLabel}>
+            {COMMANDS.map((name) => (
+              <li key={name}>
+                <button type="button" className={styles.chip} onClick={() => run(name)}>
+                  {name}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

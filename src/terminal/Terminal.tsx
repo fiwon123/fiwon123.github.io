@@ -1,31 +1,26 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 
-import { useLanguage, useT } from '../i18n/hooks'
-import { runCommand, type TerminalLine } from './commands'
+import { useT } from '../i18n/hooks'
 import { EMPTY_HISTORY, nextEntry, previousEntry, pushEntry } from './history'
-import { parseCommand } from './parser'
+import { useTerminal } from './hooks'
 
 import styles from './Terminal.module.css'
-
-interface Entry {
-  id: number
-  command: string
-  lines: TerminalLine[]
-  unknown?: boolean
-}
 
 export interface TerminalProps {
   /** Focus the input on mount — entering terminal mode should be ready to type. */
   autoFocus?: boolean
 }
 
+/**
+ * The console. It renders the shared scrollback and owns only the input line and
+ * its history — the output and the section it opens live in the provider, so a
+ * command can also be issued from the welcome screen's chips.
+ */
 export function Terminal({ autoFocus = false }: TerminalProps) {
   const t = useT()
-  const { locale } = useLanguage()
+  const { entries, run } = useTerminal()
   const [input, setInput] = useState('')
   const [history, setHistory] = useState(EMPTY_HISTORY)
-  const [entries, setEntries] = useState<Entry[]>([])
-  const nextId = useRef(0)
   const screenRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
@@ -43,35 +38,9 @@ export function Terminal({ autoFocus = false }: TerminalProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const raw = input
-    const parsed = parseCommand(raw)
     setHistory((state) => pushEntry(state, raw))
     setInput('')
-    if (parsed.kind === 'empty') return
-    if (parsed.kind === 'unknown') {
-      setEntries((prev) => [
-        ...prev,
-        {
-          id: nextId.current++,
-          command: raw.trim(),
-          lines: [{ text: `${t.terminal.unknown}: ${parsed.word}` }],
-          unknown: true,
-        },
-      ])
-      return
-    }
-    if (parsed.name === 'clear') {
-      setEntries([])
-      return
-    }
-    const lines = runCommand(parsed.name, t, locale)
-    setEntries((prev) => [
-      ...prev,
-      {
-        id: nextId.current++,
-        command: parsed.name,
-        lines,
-      },
-    ])
+    run(raw)
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -93,10 +62,12 @@ export function Terminal({ autoFocus = false }: TerminalProps) {
   return (
     <section className={styles.terminal} aria-label={t.terminal.label}>
       <div className={styles.inner}>
-        <header className={styles.headerRow}>
-          <h2 className={styles.title}>{t.terminal.label}</h2>
+        <div className={styles.headerRow}>
+          {/* Not a heading: the console sits above the welcome, and the page's one
+              h1 lives there — an h2 here would precede it. */}
+          <p className={styles.title}>{t.terminal.label}</p>
           <p className={styles.hint}>{t.terminal.hint}</p>
-        </header>
+        </div>
 
         <div ref={screenRef} className={styles.screen}>
           <div className={styles.log} role="log" aria-live="polite">
@@ -117,7 +88,13 @@ export function Terminal({ autoFocus = false }: TerminalProps) {
                           : undefined
                     return (
                       <div key={index} className={className}>
-                        {line.text}
+                        {line.command ? (
+                          <>
+                            <span className={styles.command}>{line.command}</span> {line.text}
+                          </>
+                        ) : (
+                          line.text
+                        )}
                       </div>
                     )
                   })}

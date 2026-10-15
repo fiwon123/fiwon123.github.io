@@ -79,12 +79,10 @@ main {
   padding: 0 var(--space-4) var(--space-12);
 }
 
-/* Terminal mode owns the viewport: the welcome screen and the terminal are the
-   content, so the reading column (and its padding) does not apply. */
+/* Terminal mode is full-bleed: the sticky console band spans the viewport while
+   the welcome and the section below it centre themselves. The reading column
+   (and its padding) is applied by those blocks, not here. */
 main.terminal-shell {
   max-width: none;
   padding: 0;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
 }

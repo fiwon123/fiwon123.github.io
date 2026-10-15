@@ -64,6 +64,7 @@ export const en = {
     prompt: 'visitor@felipeinoue ~ $',
     welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
+    helpTitle: 'Available commands',
     commands: {
       help: 'List the available commands',
       about: 'Who I am and what I do',
@@ -79,6 +80,7 @@ export const en = {
     toBrowse: 'Browse normally',
     welcomeBody:
       'This page also runs as a terminal. Type a command to read my work — `about`, `experience`, `projects`, `skills`, `contact` — or switch back to the conventional page.',
+    commandsLabel: 'Commands',
   },
   footer: {
     rights: 'All rights reserved.',

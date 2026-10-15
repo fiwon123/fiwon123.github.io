@@ -1,21 +1,22 @@
 .terminal {
+  /* A compact band pinned below the header: short enough to leave room for the
+     section below, tall enough to read a few answers. */
+  position: sticky;
+  top: 0;
+  z-index: 5;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 }
 
 .inner {
   max-width: 960px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  flex: 1;
+  gap: 0.5rem;
 }
 
 .headerRow {
@@ -28,7 +29,8 @@
 
 .title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .hint {
@@ -55,11 +57,13 @@
   font-size: 0.95rem;
   line-height: 1.5;
   padding: 0.75rem;
+  /* Fixed height, so the page below does not jump as output grows, and the
+     console scrolls internally instead of stretching the page. */
+  height: clamp(15rem, 38vh, 22rem);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  flex: 1;
 }
 
 .welcome {
@@ -83,6 +87,14 @@
 }
 
 .lineAccent {
+  font-weight: 600;
+}
+
+/* The command name inside `help` output: the part a visitor can actually type. */
+.command {
+  display: inline-block;
+  min-width: 12ch;
+  color: var(--color-accent);
   font-weight: 600;
 }
 
@@ -147,6 +159,18 @@
 @media (prefers-reduced-motion: reduce) {
   .cursor {
     animation: none;
+  }
+}
+
+/* On a phone the on-screen keyboard already eats the viewport, so a pinned
+   console is unusable: let it scroll away and give the section the room. */
+@media (max-width: 47.99rem) {
+  .terminal {
+    position: static;
+  }
+
+  .screen {
+    height: clamp(12rem, 32vh, 18rem);
   }
 }
 

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
@@ -93,27 +93,45 @@ describe('the switch', () => {
   })
 })
 
-describe('commands answer in the terminal', () => {
+const log = () => screen.getByRole('log')
+
+describe('commands print and open their section', () => {
   it.each([
     ['about', () => about.en[0], 'about'],
     ['experience', () => experience[0].company, 'experience'],
     ['projects', () => projects[0].name, 'projects'],
     ['skills', () => skills[0].label.en, 'skills'],
     ['contact', () => contact[0].url, 'contact'],
-  ])('%s prints its answer into the scrollback', (command, expected, id) => {
+  ])('%s prints into the scrollback and opens its section', (command, expected, id) => {
     renderApp()
     submitCommand(command)
-    // The answer is in the terminal, and the section it names stayed unrendered.
-    expect(screen.getByText(expected(), { exact: false })).toBeTruthy()
-    expect(document.getElementById(id)).toBeNull()
+    // The answer is in the console, and the section it names now renders below.
+    expect(within(log()).getByText(expected(), { exact: false })).toBeTruthy()
+    expect(document.getElementById(id)).toBeTruthy()
   })
 
-  it('clears the scrollback without leaving the terminal', () => {
+  it('shows only the section the last navigation command opened', () => {
+    renderApp()
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id)).toBeNull()
+    }
+    submitCommand('about')
+    expect(document.getElementById('about')).toBeTruthy()
+    for (const id of ['experience', 'projects', 'skills', 'contact']) {
+      expect(document.getElementById(id)).toBeNull()
+    }
+    submitCommand('projects')
+    expect(document.getElementById('projects')).toBeTruthy()
+    expect(document.getElementById('about')).toBeNull()
+  })
+
+  it('clears the scrollback and returns to the welcome', () => {
     renderApp()
     submitCommand('about')
-    expect(screen.getByText(about.en[0])).toBeTruthy()
+    expect(document.getElementById('about')).toBeTruthy()
     submitCommand('clear')
     expect(screen.queryByText(about.en[0])).toBeNull()
+    expect(document.getElementById('about')).toBeNull()
     expect(terminalInput()).toBeTruthy()
   })
 
@@ -123,16 +141,25 @@ describe('commands answer in the terminal', () => {
     expect(screen.getByText(`${en.terminal.unknown}: nonsense`)).toBeTruthy()
     expect(terminalInput()).toBeTruthy()
   })
+})
 
-  it('renders the page sections only in browse, never beside the terminal', () => {
+describe('command chips', () => {
+  const chips = () => screen.getByRole('list', { name: en.view.commandsLabel })
+
+  it('lists the runnable commands outside the console', () => {
     renderApp()
-    for (const id of SECTION_IDS) {
-      expect(document.getElementById(id)).toBeNull()
-    }
-    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
-    for (const id of SECTION_IDS) {
-      expect(document.getElementById(id)).toBeTruthy()
-    }
+    expect(
+      within(chips())
+        .getAllByRole('button')
+        .map((button) => button.textContent),
+    ).toEqual(['about', 'experience', 'projects', 'skills', 'contact', 'help'])
+  })
+
+  it('runs a command when a chip is clicked', () => {
+    renderApp()
+    fireEvent.click(within(chips()).getByRole('button', { name: 'about' }))
+    expect(within(log()).getByText(about.en[0])).toBeTruthy()
+    expect(document.getElementById('about')).toBeTruthy()
   })
 })
 
@@ -176,7 +203,7 @@ describe('deep links', () => {
 })
 
 describe('document structure', () => {
-  it('gives each id to exactly one element, in both modes', () => {
+  it('gives each id to exactly one element', () => {
     // `<main id="about">` and the About `<section id="about">` used to collide,
     // which sent every #about link to the top of the page.
     renderApp()
@@ -185,6 +212,9 @@ describe('document structure', () => {
     for (const id of SECTION_IDS) {
       expect(document.querySelectorAll(`#${id}`).length).toBe(0)
     }
+    // The command's section joins the page — exactly once.
+    submitCommand('about')
+    expect(document.querySelectorAll('#about').length).toBe(1)
     fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
     for (const id of ['content', 'top', ...SECTION_IDS]) {
       expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)

@@ -65,6 +65,7 @@ export const ptBR: Strings = {
     prompt: 'visitante@felipeinoue ~ $',
     welcome: 'Bem-vindo. Digite `help` para listar os comandos.',
     unknown: 'comando não encontrado',
+    helpTitle: 'Comandos disponíveis',
     commands: {
       help: 'Lista os comandos disponíveis',
       about: 'Quem sou eu e o que faço',
@@ -80,6 +81,7 @@ export const ptBR: Strings = {
     toBrowse: 'Navegar normalmente',
     welcomeBody:
       'Esta página também funciona como um terminal. Digite um comando para conhecer meu trabalho — `about`, `experience`, `projects`, `skills`, `contact` — ou volte para a página convencional.',
+    commandsLabel: 'Comandos',
   },
   footer: {
     rights: 'Todos os direitos reservados.',

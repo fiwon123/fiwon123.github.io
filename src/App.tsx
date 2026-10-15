@@ -6,17 +6,15 @@ import { Header } from './components/Header'
 import { ParticleBackground } from './components/ParticleBackground'
 import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
 import { SkipLink } from './components/SkipLink'
-import { WelcomeScreen } from './components/WelcomeScreen'
+import { isSectionId } from './lib/commandSections'
 import { prefersReducedMotion } from './lib/reveal'
 import { useViewMode } from './lib/useViewMode'
 import { nextViewMode } from './lib/viewMode'
-import { Terminal } from './terminal/Terminal'
-
-const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
+import { TerminalMode } from './terminal/TerminalMode'
 
 function sectionFromHash(): string | null {
-  const id = window.location.hash.slice(1)
-  return SECTION_IDS.includes(id) ? id : null
+  const id = window.location.hash.replace(/^#/, '')
+  return isSectionId(id) ? id : null
 }
 
 /**
@@ -66,11 +64,7 @@ function App() {
       <Header view={view} onToggleView={toggleView} />
       <main id="content" className={terminal ? 'terminal-shell' : undefined}>
         {terminal ? (
-          <>
-            {/* In place of the hero: it carries #top and the page's only h1. */}
-            <WelcomeScreen />
-            <Terminal autoFocus />
-          </>
+          <TerminalMode />
         ) : (
           <>
             <Hero />

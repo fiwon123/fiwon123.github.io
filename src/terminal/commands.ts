@@ -1,11 +1,16 @@
 import { about, contact, experience, projects, skills } from '../content'
 import type { Strings } from '../i18n'
 import type { Locale } from '../types'
-import type { CommandName } from './parser'
+import { COMMAND_NAMES, type CommandName } from './parser'
 
 export interface TerminalLine {
   text: string
   tone?: 'muted' | 'accent'
+  /**
+   * A command name to render ahead of `text`, highlighted. Set by `help` so the
+   * commands a visitor can type stand out from their descriptions.
+   */
+  command?: string
 }
 
 /**
@@ -17,12 +22,12 @@ export function runCommand(name: CommandName, t: Strings, locale: Locale): Termi
   switch (name) {
     case 'help':
       return [
-        { text: t.terminal.commands.help, tone: 'accent' },
-        ...(
-          ['help', 'about', 'experience', 'projects', 'skills', 'contact', 'clear'] as const
-        ).flatMap<TerminalLine>((command) => [
-          { text: `  ${command.padEnd(11)} ${t.terminal.commands[command]}`, tone: 'muted' },
-        ]),
+        { text: t.terminal.helpTitle, tone: 'accent' },
+        ...COMMAND_NAMES.map<TerminalLine>((command) => ({
+          text: t.terminal.commands[command],
+          tone: 'muted',
+          command,
+        })),
       ]
 
     case 'about':
