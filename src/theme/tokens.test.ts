@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
+import { PARTICLE_ALPHA } from '../lib/particles'
 import { AA_NORMAL, contrastRatio, parseHex, type Rgb } from './contrast'
 import { PRESETS } from './presets'
 
@@ -170,6 +171,47 @@ describe('overlay chrome', () => {
         glyph,
         `${preset}/${mode}: overlay glyph = ${glyph.toFixed(2)}:1 (needs ${AA_NORMAL})`,
       ).toBeGreaterThanOrEqual(AA_NORMAL)
+    },
+  )
+})
+
+/**
+ * The particle background draws `--color-accent` over `--color-bg` at
+ * `PARTICLE_ALPHA`. Sections are transparent — body text sits directly on the
+ * page colour — so a dot behind a glyph is a real change to the background that
+ * text is measured against. Computed here rather than eyeballed, exactly like
+ * the scrim above.
+ *
+ * The worst case across the six palettes is alpha 0.230 (paper/light): beyond
+ * that, `--color-fg-muted` drops under 4.5:1. 0.16 is what ships, so the gate
+ * has room to spare and `PARTICLE_ALPHA` cannot be raised in isolation.
+ *
+ * `throughParticle` is source-over: what a particle does to the page colour
+ * underneath it.
+ */
+function throughParticle(page: Rgb, particle: Rgb, alpha: number): Rgb {
+  const mix = (over: number, below: number) => Math.round(over * alpha + below * (1 - alpha))
+  return { r: mix(particle.r, page.r), g: mix(particle.g, page.g), b: mix(particle.b, page.b) }
+}
+
+describe('particle background over the page', () => {
+  it('draws below the measured contrast budget', () => {
+    expect(PARTICLE_ALPHA).toBeGreaterThan(0)
+    expect(PARTICLE_ALPHA).toBeLessThan(0.23)
+  })
+
+  it.each(palettes)(
+    '$preset/$mode keeps WCAG AA when a particle sits behind text',
+    ({ preset, mode, colors }) => {
+      const page = parseHex(colors['--color-bg'])
+      const behind = throughParticle(page, parseHex(colors['--color-accent']), PARTICLE_ALPHA)
+      for (const foreground of ['--color-fg', '--color-fg-muted']) {
+        const ratio = contrastRatio(parseHex(colors[foreground]), behind)
+        expect(
+          ratio,
+          `${preset}/${mode}: ${foreground} over a particle-blended background = ${ratio.toFixed(2)}:1 (needs ${AA_NORMAL})`,
+        ).toBeGreaterThanOrEqual(AA_NORMAL)
+      }
     },
   )
 })
