@@ -121,7 +121,9 @@ src/
   theme/           # Presets, contrast, tokens, fonts, context/provider/hooks
   test/            # Entry/build/asset tests
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
-scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-fonts.py, sandbox scripts)
+docs/screenshots/  # Committed README images + how to regenerate them
+scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-fonts.py,
+                   #   repo-stats.mjs, screenshots.mjs, sandbox scripts)
 .opencode/         # Agent definitions, instructions, skills, gitignored session memory
 ```
 
@@ -137,25 +139,27 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 - **Build**: `npm run build`
 - **Repo stats**: `npm run stats` (or `make stats`) — refreshes the committed
   `src/content/repoStats.json` from the GitHub API (needs an authenticated `gh`)
+- **Screenshots**: `make screenshots` — rebuilds and captures the README images
+  into `docs/screenshots/` with a real headless Chrome (see that directory's
+  README); refuses to write a capture it cannot trust
 - **Sandbox**: `make dev-up` / `make dev-log` / `make opencode` / `make dev-down`
   (needs Docker; `make check-sandbox` validates the config without it)
 
 ## Status
 
 - **Done**: v1.0 — the Hugo site rewritten as React + TS + Vite, live at
-  felipeinoue.com. v1.1 in progress on `dev`.
-- **In progress**: milestone `v1.1 — Polish & Sandbox` — sandbox (#15), branding
-  (#14) and the image lightbox (#16) are merged; the sandbox uid fix (#25) landed.
+  felipeinoue.com.
+- **In progress**: milestone `v1.1 — Polish & Sandbox`. Merged to `dev` so far:
+  branding (#14), the dev sandbox (#15) and its uid fix (#25), the image lightbox
+  (#16), scroll-reveal (#17), the particle background (#18) and its visibility
+  fix (#33), the terminal-first view (#19), and repository cards (#20).
 
 ## Backlog
 
 Build order for the rest of `v1.1`; each item is a GitHub issue already filed.
 
-1. `#17` — scroll-reveal motion + back-to-top
-2. `#19` — terminal-first view mode (welcome screen + commands reveal sections)
-3. `#18` — optimized particle background
-4. `#20` — repository cards from a build-time snapshot + store links
-5. `#21` — v1.1 stability pass (accessibility, performance, docs)
+1. `#21` — v1.1 stability pass (accessibility, performance, docs), folding in the
+   skip link (#30)
 
 Milestone tracking lives on GitHub (milestone `v1.1 — Polish & Sandbox`, issue #2).
 After `v1.1` is released, the plan is to add new projects and possibly a new
@@ -186,5 +190,13 @@ land on a base that already looks finished.
   (`src/content/repoStats.json`, refreshed by `npm run stats`). The site never calls
   the GitHub API from the browser; a private, missing, or not-yet-collected repo
   falls back to the static project card.
+- **The skip link is the first focusable element** in the DOM, ahead of the header,
+  and targets `<main id="content">` — the page's one main landmark. A test asserts
+  it precedes the nav and that its `href` resolves to exactly one element, because
+  a skip link that exists only as CSS and a translated string (which is how it went
+  missing once) is invisible to every role-based test.
+- **README images are committed, not generated on the fly**, and are reproduced by
+  `make screenshots` (`scripts/screenshots.mjs`). The harness refuses to write a
+  capture that did not render, so a blank image can never be committed silently.
 - **`.opencode/memory/` is gitignored** — it holds per-machine session state and
   must never be committed.

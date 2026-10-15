@@ -58,6 +58,9 @@ preview: ## Preview the production build locally
 stats: ## Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
 	npm run stats
 
+screenshots: build ## Capture the README screenshots into docs/screenshots/ (needs Chrome)
+	npm run screenshots
+
 clean: ## Remove build output and tool caches
 	rm -rf dist node_modules/.tmp node_modules/.vite
 

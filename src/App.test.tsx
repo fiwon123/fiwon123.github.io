@@ -182,4 +182,50 @@ describe('document structure', () => {
     renderApp()
     expect(screen.getAllByText(en.hero.greeting).length).toBe(1)
   })
+
+  it('exposes the footer as the contentinfo landmark, with no hardcoded label', () => {
+    // A top-level <footer> is already `contentinfo`; the `aria-label="Footer"`
+    // that used to sit on it was an English string in a bilingual page.
+    renderApp()
+    const footer = screen.getByRole('contentinfo')
+    expect(footer.getAttribute('aria-label')).toBeNull()
+  })
+})
+
+describe('the skip link', () => {
+  const skipLink = () => screen.getByRole('link', { name: en.a11y.skipToContent })
+
+  it('is the first focusable element and points at the main landmark', () => {
+    renderApp()
+    const first = document.querySelector(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )
+    expect(first).toBe(skipLink())
+    expect(skipLink().getAttribute('href')).toBe('#content')
+  })
+
+  it('resolves its target to exactly one element, and that element is <main>', () => {
+    renderApp()
+    const href = skipLink().getAttribute('href') ?? ''
+    const targets = document.querySelectorAll(href)
+    expect(targets).toHaveLength(1)
+    expect(targets[0].tagName.toLowerCase()).toBe('main')
+  })
+
+  it('precedes the navigation in tab order', () => {
+    localStorage.setItem(VIEW_KEY, 'browse')
+    renderApp()
+    const link = skipLink()
+    const nav = screen.getByRole('navigation', { name: en.a11y.mainNav })
+    // FOLLOWING on the nav means the nav comes after the link in the document.
+    const relation = link.compareDocumentPosition(nav)
+    expect(relation & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('is rendered in both views', () => {
+    renderApp()
+    expect(skipLink()).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
+    expect(skipLink()).toBeTruthy()
+  })
 })
