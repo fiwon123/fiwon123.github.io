@@ -100,20 +100,6 @@
   padding-left: 1.25rem;
 }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.thumb {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-}
-
 .group {
   margin-bottom: 1rem;
 }
