@@ -2,19 +2,27 @@ import { Terminal } from './Terminal'
 import { TerminalContent } from './TerminalContent'
 import { TerminalProvider } from './TerminalProvider'
 
+import styles from './TerminalMode.module.css'
+
 /**
- * Terminal mode: a compact, sticky console over the content area a command names.
+ * Terminal mode: a compact console beside the content it drives.
  *
- * The console and the content share one provider, so a command run from either
- * the input line or the welcome's chips lands in the same scrollback and opens
- * the same section. The content area keeps the photo and the name (and with them
- * the page's one `h1` and its `#top` anchor) in every state.
+ * The console sits in its own column (to the right on a wide screen, below the
+ * content on a narrow one) so it never covers what a command shows. Console and
+ * content share one provider, so a command run from either the input line or the
+ * welcome's chips lands in the same scrollback and opens the same section.
  */
 export function TerminalMode() {
   return (
     <TerminalProvider>
-      <Terminal autoFocus />
-      <TerminalContent />
+      <div className={styles.shell}>
+        <div className={styles.reading}>
+          <TerminalContent />
+        </div>
+        <div className={styles.console}>
+          <Terminal autoFocus />
+        </div>
+      </div>
     </TerminalProvider>
   )
 }

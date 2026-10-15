@@ -75,7 +75,7 @@ function App() {
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
       <Header view={view} onToggleView={toggleView} />
-      <main id="content" className={terminal ? 'terminal-shell' : undefined}>
+      <main id="content">
         {terminal ? (
           <TerminalMode />
         ) : (

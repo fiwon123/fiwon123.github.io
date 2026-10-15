@@ -1,17 +1,13 @@
 .terminal {
-  /* A compact band pinned below the header: short enough to leave room for the
-     section below, tall enough to read a few answers. */
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  /* A card in its own column, not a full-width band: the shell owns the column
+     and its stickiness, so the console only has to look like one surface. */
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   background: var(--color-surface);
+  overflow: hidden;
 }
 
 .inner {
-  max-width: 960px;
-  margin: 0 auto;
   padding: 0.75rem 1rem;
   width: 100%;
   display: flex;
@@ -162,13 +158,9 @@
   }
 }
 
-/* On a phone the on-screen keyboard already eats the viewport, so a pinned
-   console is unusable: let it scroll away and give the section the room. */
-@media (max-width: 47.99rem) {
-  .terminal {
-    position: static;
-  }
-
+/* On a phone the on-screen keyboard already eats the viewport, so the console
+   keeps a shorter screen and leaves the reading column the room. */
+@media (max-width: 60rem) {
   .screen {
     height: clamp(12rem, 32vh, 18rem);
   }

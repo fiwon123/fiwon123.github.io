@@ -173,15 +173,40 @@ describe('commands print and open their section', () => {
     expect(chips()).toBeTruthy()
   })
 
-  it('keeps the photo, the one h1 and the #top anchor while a section shows', () => {
+  it('keeps one h1 and the #top anchor in a section that shows without the photo', () => {
     renderApp()
     submitCommand('experience')
     expect(document.getElementById('experience')).toBeTruthy()
-    expect(screen.getByRole('img', { name: en.hero.avatarAlt })).toBeTruthy()
+    // The identity travels with the welcome and about, not every section — but the
+    // page still carries its one h1 and one #top anchor.
+    expect(screen.queryByRole('img', { name: en.hero.avatarAlt })).toBeNull()
     const headings = document.querySelectorAll('h1')
     expect(headings).toHaveLength(1)
     expect(headings[0]?.textContent).toBe(en.hero.greeting)
     expect(document.querySelectorAll('#top')).toHaveLength(1)
+  })
+
+  it('shows the photo and name with the welcome and the about section only', () => {
+    renderApp()
+    const avatar = () => screen.queryByRole('img', { name: en.hero.avatarAlt })
+    expect(avatar()).toBeTruthy()
+    submitCommand('about')
+    expect(document.getElementById('about')).toBeTruthy()
+    expect(avatar()).toBeTruthy()
+    submitCommand('projects')
+    expect(document.getElementById('projects')).toBeTruthy()
+    expect(avatar()).toBeNull()
+  })
+
+  it('places the reading column before the console in the document', () => {
+    // The narrow-screen stack is content-first, so the content precedes the
+    // console in DOM order; the wide layout rearranges them only with grid areas.
+    renderApp()
+    const top = document.getElementById('top')
+    expect(top).toBeTruthy()
+    expect(
+      top!.compareDocumentPosition(terminalInput()) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 
   it('answers an unknown command without moving or breaking the page', () => {

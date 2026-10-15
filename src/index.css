@@ -78,11 +78,3 @@ main {
   margin: 0 auto;
   padding: 0 var(--space-4) var(--space-12);
 }
-
-/* Terminal mode is full-bleed: the sticky console band spans the viewport while
-   the welcome and the section below it centre themselves. The reading column
-   (and its padding) is applied by those blocks, not here. */
-main.terminal-shell {
-  max-width: none;
-  padding: 0;
-}
