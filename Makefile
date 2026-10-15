@@ -15,7 +15,7 @@ COMPOSE ?= docker compose
 OPENCODE_ARGS ?=
 OPENCODE_INSTALL_URL ?= https://opencode.ai/install
 
-.PHONY: help check fmt lint typecheck test dev build preview clean \
+.PHONY: help check check-sandbox fmt lint typecheck test dev build preview clean \
         preflight dev-up dev-down dev-log dev-build dev-shell dev-opencode \
         dev-opencode-auto dev-restart reset shell opencode opencode-auto \
         opencode-version opencode-upgrade setup-host
@@ -25,8 +25,11 @@ help: ## List available targets
 
 # --- host targets ------------------------------------------------------------
 
-check: ## Full local gate: format-check, lint, type-check, test, build
+check: check-sandbox ## Full local gate: sandbox config, format-check, lint, type-check, test, build
 	npm run check
+
+check-sandbox: ## Static checks for the dev sandbox config (needs no Docker)
+	@python3 scripts/check-sandbox.py
 
 fmt: ## Format all files in place
 	npm run fmt
