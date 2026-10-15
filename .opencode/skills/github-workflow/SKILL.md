@@ -9,7 +9,7 @@ metadata:
 
 ### Scope
 
-This skill is the command cookbook. The authority for *policy* — branch model,
+This skill is the command cookbook. The authority for _policy_ — branch model,
 milestones, what closes an issue, the release procedure — is
 `.opencode/instructions/workflow.md`. When the two disagree, `workflow.md`
 wins; fix this file rather than following it.
@@ -28,15 +28,15 @@ Every change is tracked on GitHub: **issue → branch → PR → merge**.
 
 Match the label to the commit type:
 
-| Commit type | GitHub label |
-|-------------|--------------|
-| `feat`      | `enhancement` |
-| `fix`       | `bug` |
-| `chore`     | `chore` |
-| `refactor`  | `refactor` |
+| Commit type | GitHub label    |
+| ----------- | --------------- |
+| `feat`      | `enhancement`   |
+| `fix`       | `bug`           |
+| `chore`     | `chore`         |
+| `refactor`  | `refactor`      |
 | `docs`      | `documentation` |
-| `test`      | `test` |
-| `ci`        | `ci` |
+| `test`      | `test`          |
+| `ci`        | `ci`            |
 
 Create the label if it does not exist yet:
 
@@ -48,15 +48,15 @@ gh label create <name> --color <hex> --description "<description>"
 
 Use the format: `<type>/<issue-number>-<slug>`
 
-| Type | Use Case | Example |
-|------|----------|---------|
-| `feat` | New features | `feat/42-document-chunking` |
-| `fix` | Bug fixes | `fix/17-auth-token-expiry` |
-| `refactor` | Code refactoring | `refactor/31-search-service` |
-| `docs` | Documentation | `docs/15-api-reference` |
-| `test` | Adding tests | `test/19-document-upload` |
-| `chore` | Tooling/maintenance | `chore/13-ci-workflow` |
-| `ci` | CI/CD changes | `ci/14-faster-builds` |
+| Type       | Use Case            | Example                      |
+| ---------- | ------------------- | ---------------------------- |
+| `feat`     | New features        | `feat/42-document-chunking`  |
+| `fix`      | Bug fixes           | `fix/17-auth-token-expiry`   |
+| `refactor` | Code refactoring    | `refactor/31-search-service` |
+| `docs`     | Documentation       | `docs/15-api-reference`      |
+| `test`     | Adding tests        | `test/19-document-upload`    |
+| `chore`    | Tooling/maintenance | `chore/13-ci-workflow`       |
+| `ci`       | CI/CD changes       | `ci/14-faster-builds`        |
 
 ### Commit Messages
 
@@ -71,6 +71,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 Examples:
+
 - `feat: add document chunking endpoint`
 - `fix: resolve auth token expiry issue`
 - `refactor: extract search logic into service`
@@ -161,6 +162,7 @@ gh pr merge <pr-number> --squash --delete-branch
 ### Issue References
 
 Reference issues in commits and PRs:
+
 - `fix: resolve timeout (#42)`
 - `Closes #42`
 - `Fixes #42`

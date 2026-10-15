@@ -18,7 +18,7 @@ the issue and PR assigned, labeled, linked, and commented at each milestone.
 
 Write multi-line bodies with `--body-file -` and a **quoted** heredoc; never pass
 them inline to `--body "..."`. In an inline body the shell expands backticks and
-`$(...)` *before* `gh` sees the text, so fenced code blocks, `Closes #N`, and
+`$(...)` _before_ `gh` sees the text, so fenced code blocks, `Closes #N`, and
 command examples silently mangle or execute. A quoted `<<'EOF'` heredoc passes
 the text through literally.
 
@@ -39,33 +39,33 @@ The same applies to `gh pr create`, `gh issue comment`, and `gh pr comment`.
 
 Every change must be traceable end-to-end:
 
-| From | To | How |
-|------|-----|-----|
-| Branch | Issue | Branch name includes issue number: `feat/42-skill-timeout` |
-| PR | Issue | `Closes #<issue-number>` in PR body — links only; see the note below |
-| PR | Milestone | `gh pr edit <pr-number> --milestone "<milestone-name>"` |
-| Issue | Milestone | `gh issue edit <issue-number> --milestone "<milestone-name>"` |
-| Commit | Issue | Conventional commit with issue context |
+| From   | To        | How                                                                  |
+| ------ | --------- | -------------------------------------------------------------------- |
+| Branch | Issue     | Branch name includes issue number: `feat/42-skill-timeout`           |
+| PR     | Issue     | `Closes #<issue-number>` in PR body — links only; see the note below |
+| PR     | Milestone | `gh pr edit <pr-number> --milestone "<milestone-name>"`              |
+| Issue  | Milestone | `gh issue edit <issue-number> --milestone "<milestone-name>"`        |
+| Commit | Issue     | Conventional commit with issue context                               |
 
 No orphaned branches, PRs, or issues. Every piece of work is linked.
 
 > **`Closes #N` does not close the issue on a `dev` merge.** GitHub auto-closes
-> a linked issue only when the PR merges into the repository's *default* branch,
+> a linked issue only when the PR merges into the repository's _default_ branch,
 > which is `main`. Feature PRs merge into `dev`, so `Closes #N` gives you the
 > cross-reference and nothing more. The issue is closed explicitly in step 6
 > with `gh issue close`.
 
 ### Label mapping (commit type → GitHub label)
 
-| Commit type | GitHub label |
-|-------------|--------------|
-| `feat`      | `enhancement` |
-| `fix`       | `bug` |
-| `chore`     | `chore` |
-| `refactor`  | `refactor` |
+| Commit type | GitHub label    |
+| ----------- | --------------- |
+| `feat`      | `enhancement`   |
+| `fix`       | `bug`           |
+| `chore`     | `chore`         |
+| `refactor`  | `refactor`      |
 | `docs`      | `documentation` |
-| `test`      | `test` |
-| `ci`        | `ci` |
+| `test`      | `test`          |
+| `ci`        | `ci`            |
 
 > If the label does not exist on the repo, create it first:
 > `gh label create <name> --color <hex> --description "<description>"`
@@ -82,18 +82,18 @@ No orphaned branches, PRs, or issues. Every piece of work is linked.
 
 Post these comments automatically — no user prompting required:
 
-| # | Milestone | Target | Template |
-|---|-----------|--------|----------|
-| 1 | Issue created | issue | `Starting work on this — Milestone: <milestone-name>` |
-| 2 | PR opened | issue | `PR opened: #<pr-number>` |
-| 3 | PR opened | PR | Summary of changes + `Closes #<issue-number>` |
-| 4 | Merged to dev | issue | `Merged into dev — ready for release` |
-| 5 | Merged to dev | PR | `Merged into dev — thanks!` |
-| 6 | Merged to dev | issue | **Close it** — `gh issue close <issue-number>`, see step 6 |
-| 7 | dev → main PR opened | issue | `Release PR opened: #<pr-number>` |
-| 8 | CI passed | issue | `CI passed — ready to merge to main` |
-| 9 | Merged to main | issue | `Released in <commit-sha>` |
-| 10 | Merged to main | PR | `Released — thanks!` |
+| #   | Milestone            | Target | Template                                                   |
+| --- | -------------------- | ------ | ---------------------------------------------------------- |
+| 1   | Issue created        | issue  | `Starting work on this — Milestone: <milestone-name>`      |
+| 2   | PR opened            | issue  | `PR opened: #<pr-number>`                                  |
+| 3   | PR opened            | PR     | Summary of changes + `Closes #<issue-number>`              |
+| 4   | Merged to dev        | issue  | `Merged into dev — ready for release`                      |
+| 5   | Merged to dev        | PR     | `Merged into dev — thanks!`                                |
+| 6   | Merged to dev        | issue  | **Close it** — `gh issue close <issue-number>`, see step 6 |
+| 7   | dev → main PR opened | issue  | `Release PR opened: #<pr-number>`                          |
+| 8   | CI passed            | issue  | `CI passed — ready to merge to main`                       |
+| 9   | Merged to main       | issue  | `Released in <commit-sha>`                                 |
+| 10  | Merged to main       | PR     | `Released — thanks!`                                       |
 
 ### 1. Plan
 
@@ -231,6 +231,7 @@ gh pr create \
   - **Comment on the issue**: `gh issue comment <issue-number> --body "CI passed — ready to merge to main"`
 - **Ask user to confirm merge**: "CI passed. Ready to merge dev to main?"
 - Only merge after user confirms:
+
   ```bash
   gh pr merge <pr-number> --squash
   ```
@@ -240,11 +241,12 @@ gh pr create \
   from the remote — which breaks Dependabot (`target-branch: dev`), any
   lockfile-upgrade automation that fetches `origin/dev`, and every future PR's
   base. `--delete-branch` belongs to step 6, for feature branches only.
+
 - After merging:
   - **Comment on the issue**: `gh issue comment <issue-number> --body "Released in <commit-sha>"`
   - **Comment on the PR**: `gh pr comment <pr-number> --body "Released — thanks!"`
 - **Merge `main` back into `dev`** — a squash merge leaves `dev` and `main`
-  diverged at the old merge-base, so the *next* release PR would re-list every
+  diverged at the old merge-base, so the _next_ release PR would re-list every
   file from this one:
   ```bash
   git checkout dev

@@ -22,14 +22,14 @@ machine and is never committed or pushed.
 
 Keep each fact in exactly one tier, or it drifts between them:
 
-- **`global.md`** — *tracked work*: active issues, milestones, the current task,
+- **`global.md`** — _tracked work_: active issues, milestones, the current task,
   and the decisions that affect what to do next. Changes constantly.
-- **`lessons.md`** — *durable lessons*: reusable, cross-session takeaways — a
+- **`lessons.md`** — _durable lessons_: reusable, cross-session takeaways — a
   footgun that cost time, the command that actually works, the reason a design
   decision was made. Slow-moving, capped, and worth re-reading.
-- **`current.md`** — *this session*: what was just done, what is next, and
+- **`current.md`** — _this session_: what was just done, what is next, and
   anything the user must confirm. Trimmed at every session end.
-- **`archive/`** — *history*: the last three session summaries. Read-only.
+- **`archive/`** — _history_: the last three session summaries. Read-only.
 
 ## When to read
 
@@ -60,7 +60,7 @@ Keep each fact in exactly one tier, or it drifts between them:
 The tiers stay useful only if they stay small, so offload downward instead of
 letting any one tier grow:
 
-- when `global.md` approaches its cap, move the *durable lessons* it has
+- when `global.md` approaches its cap, move the _durable lessons_ it has
   accumulated into `lessons.md` and keep only the tracked work in `global.md`;
 - when `lessons.md` approaches its cap, merge duplicates and drop lessons the
   codebase or workflow now enforces — a rule that is codified is no longer a

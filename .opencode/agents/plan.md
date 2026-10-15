@@ -40,6 +40,7 @@ Steps: <ordered list of implementation steps>
 
 You may only spawn these read-only subagents via the Task tool — your `task`
 permission allows exactly these two and denies everything else:
+
 - **explore**: For codebase exploration and search
 - **reviewer**: For code review (read-only)
 

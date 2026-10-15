@@ -59,7 +59,7 @@ backend/tests/
 A test that truncates, drops, or rewrites tables acts on whatever
 `DATABASE_URL` points at. Guard it:
 
-- before any destructive operation, assert the connected database's *name*
+- before any destructive operation, assert the connected database's _name_
   matches the test database (e.g. `SELECT current_database()` equals
   `<project>_test`) and abort otherwise;
 - never point the destructive suite at a connection string that production also
@@ -145,10 +145,10 @@ Do **not** run the full audit for every change. It covers every route, and
 nearly all of them are routes the change did not touch. Verifying one button
 does not require photographing the whole app.
 
-| When | What |
-|---|---|
+| When               | What                                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | **While you work** | Targeted: only the affected screen(s), at the viewport that matters, in **both themes**. This is the iteration loop. |
-| **Before the PR** | The full scripted audit, once, as the regression net. |
+| **Before the PR**  | The full scripted audit, once, as the regression net.                                                                |
 
 The expensive thing runs once per feature, not once per edit. If a targeted
 capture shows a problem, fix it and re-capture **the same targeted set** — do
@@ -156,14 +156,14 @@ not escalate to the full audit to check one button.
 
 ### Which artifact the change needs
 
-Not every change needs every artifact. Choose by what the change *is*:
+Not every change needs every artifact. Choose by what the change _is_:
 
-| The change is… | Take | Why |
-|---|---|---|
-| Layout, colour, copy, spacing, typography, a static state | **screenshot** | A still shows it completely. |
-| Anything temporal — transition, hover reveal, menu open, toast, streaming response, scroll behaviour | **screenshot + video** | A still genuinely *cannot* show motion. This is the one case where a screenshot is insufficient rather than merely less convenient. |
-| A long page, or a sequence that would otherwise be many frames | **screenshot + GIF** | One file instead of N. |
-| Motion reviewed for smoothness or timing | **video** (GIF if a summary will do) | Video is the precise artifact, the GIF the cheap one. |
+| The change is…                                                                                       | Take                                 | Why                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Layout, colour, copy, spacing, typography, a static state                                            | **screenshot**                       | A still shows it completely.                                                                                                        |
+| Anything temporal — transition, hover reveal, menu open, toast, streaming response, scroll behaviour | **screenshot + video**               | A still genuinely _cannot_ show motion. This is the one case where a screenshot is insufficient rather than merely less convenient. |
+| A long page, or a sequence that would otherwise be many frames                                       | **screenshot + GIF**                 | One file instead of N.                                                                                                              |
+| Motion reviewed for smoothness or timing                                                             | **video** (GIF if a summary will do) | Video is the precise artifact, the GIF the cheap one.                                                                               |
 
 **Why the GIF is not a nicety.** The Read tool renders images, GIFs, and PDFs
 — it does **not** render WebM. Motion recorded only as video is unreviewable,
@@ -186,4 +186,4 @@ not a red X.
 
 - **Both themes, every time.** A change verified only in light mode is unverified.
 - **Re-capture after fixing.** A fix is not verified until it has been looked at again.
-- Report what you *see*. If you have not looked, say so.
+- Report what you _see_. If you have not looked, say so.
