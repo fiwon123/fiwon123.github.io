@@ -37,6 +37,11 @@ export const en = {
     source: 'Source',
     link: 'Link',
     private: 'Private',
+    stars: 'Stars',
+    updated: 'Updated',
+    games: 'Games',
+    site: 'Site',
+    trailer: 'Trailer',
   },
   theme: {
     label: 'Theme',

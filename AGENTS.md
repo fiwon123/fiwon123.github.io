@@ -66,6 +66,7 @@ npm install           # Install dependencies
 npm run dev           # Start dev server (http://localhost:5173)
 npm run build         # Build for production (outputs dist/)
 npm run preview       # Preview production build
+npm run stats         # Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
 npm run lint          # Lint with oxlint
 npm run fmt           # Format with oxfmt
 npm run fmt:check     # Check formatting
@@ -80,6 +81,7 @@ make build            # npm run build
 make test             # npm run test
 make fmt              # npm run fmt
 make lint             # npm run lint
+make stats            # npm run stats
 make help             # Show Makefile targets
 ```
 

@@ -38,6 +38,11 @@ export const ptBR: Strings = {
     source: 'Fonte',
     link: 'Link',
     private: 'Privado',
+    stars: 'Estrelas',
+    updated: 'Atualizado',
+    games: 'Jogos',
+    site: 'Site',
+    trailer: 'Trailer',
   },
   theme: {
     label: 'Tema',

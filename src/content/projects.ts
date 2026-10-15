@@ -12,6 +12,7 @@ export const projects: Project[] = [
     tech: ['Go'],
     source: 'github',
     url: 'https://github.com/fiwon123/eznit',
+    repo: 'fiwon123/eznit',
   },
   {
     id: 'cthrone',
@@ -24,6 +25,7 @@ export const projects: Project[] = [
     tech: ['Go'],
     source: 'github',
     url: 'https://github.com/fiwon123/cthrone',
+    repo: 'fiwon123/cthrone',
   },
   {
     id: 'crower',
@@ -36,6 +38,7 @@ export const projects: Project[] = [
     tech: ['Go'],
     source: 'github',
     url: 'https://github.com/fiwon123/crower',
+    repo: 'fiwon123/crower',
   },
   {
     id: 'evolve-box',
@@ -58,6 +61,7 @@ export const projects: Project[] = [
     tech: ['TypeScript', 'React', 'Vite', 'GitHub Actions', 'GitHub Pages'],
     source: 'github',
     url: 'https://github.com/fiwon123/fiwon123.github.io',
+    repo: 'fiwon123/fiwon123.github.io',
   },
   {
     id: 'games',

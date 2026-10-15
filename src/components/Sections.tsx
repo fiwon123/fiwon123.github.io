@@ -2,6 +2,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 
 import { about, contact, experience, projects, skills } from '../content'
 import { useLanguage, useT } from '../i18n/hooks'
+import { formatUpdated, statFor } from '../lib/repoStats'
 import { useReveal } from '../lib/useReveal'
 import { BrandIcon } from './BrandIcon'
 import { Gallery } from './Gallery'
@@ -28,6 +29,33 @@ function RevealArticle({ className, ...rest }: ComponentPropsWithoutRef<'article
 
 function revealClass(className: string | undefined, revealed: boolean): string {
   return [className, 'reveal', revealed && 'reveal-visible'].filter(Boolean).join(' ')
+}
+
+/**
+ * The build-time repository facts for a card whose project names a `repo`:
+ * primary language, stars, and the month of the last push. Renders nothing when
+ * the snapshot has no entry, so a private, missing, or not-yet-collected repo
+ * keeps the static card rather than showing a broken one.
+ */
+function RepoFacts({ repo }: { repo: string | undefined }) {
+  const t = useT()
+  const { locale } = useLanguage()
+  const stat = statFor(repo)
+  if (!stat) return null
+  return (
+    <p className={styles.meta}>
+      {stat.language && `${stat.language} · `}
+      <span className={styles.srOnly}>{t.labels.stars} </span>
+      <span aria-hidden="true">★</span> {stat.stars}
+      {stat.pushedAt && (
+        <>
+          {' · '}
+          {t.labels.updated}{' '}
+          <time dateTime={stat.pushedAt}>{formatUpdated(stat.pushedAt, locale)}</time>
+        </>
+      )}
+    </p>
+  )
 }
 
 export function Hero() {
@@ -97,7 +125,26 @@ export function Experience() {
               <ul className={styles.list}>
                 {entry.highlights[locale].map((highlight, index) => (
                   <li key={index}>
-                    <InlineMarkup text={highlight} />
+                    <InlineMarkup text={highlight} platforms={entry.platforms} />
+                  </li>
+                ))}
+              </ul>
+            )}
+            {entry.games && entry.games.length > 0 && (
+              <ul className={styles.games} aria-label={t.labels.games}>
+                {entry.games.map((game) => (
+                  <li key={game.name} className={styles.game}>
+                    <span className={styles.gameName}>{game.name}</span>
+                    {game.site && (
+                      <a href={game.site} aria-label={`${game.name} — ${t.labels.site}`}>
+                        {t.labels.site}
+                      </a>
+                    )}
+                    {game.trailer && (
+                      <a href={game.trailer} aria-label={`${game.name} — ${t.labels.trailer}`}>
+                        {t.labels.trailer}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -134,6 +181,7 @@ export function Projects() {
                 <span className={styles.meta}>{t.labels.private}</span>
               )}
             </header>
+            <RepoFacts repo={project.repo} />
             <p>{project.description[locale]}</p>
             {project.gallery && project.gallery.length > 0 && (
               <Gallery images={project.gallery} title={project.name} />

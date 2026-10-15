@@ -32,6 +32,15 @@ export const experience: ExperienceEntry[] = [
         'Lançamento em {gog} GOG e {epic} Epic Games',
       ],
     },
+    platforms: [
+      { name: 'steam', url: 'https://store.steampowered.com/app/1755830/Astrea_SixSided_Oracles/' },
+      {
+        name: 'xbox',
+        url: 'https://www.xbox.com/en-US/games/store/astrea-six-sided-oracles/9PB4BBK7C5J9',
+      },
+      { name: 'gog', url: 'https://www.gog.com/en/game/astrea_sixsided_oracles' },
+      { name: 'epic', url: 'https://store.epicgames.com/p/astrea-six-sided-oracles-33c949' },
+    ],
     gallery: ['/projects/astrea.jpg'],
     tech: ['Unity', 'C#', 'BepInEx', 'Python'],
   },
@@ -64,6 +73,38 @@ export const experience: ExperienceEntry[] = [
         'Fluxos com Git (TortoiseGit, Git Bash, SourceTree); tarefas no Trello e HacknPlan',
       ],
     },
+    games: [
+      {
+        name: 'Nock',
+        site: 'https://nock.game/',
+        trailer: 'https://www.youtube.com/watch?v=IRILqp3Og9k',
+      },
+      {
+        name: 'Virtuoso',
+        site: 'https://virtuoso-vr.com/',
+        trailer: 'https://www.youtube.com/watch?v=KspO4huy7ek',
+      },
+      {
+        name: 'Museum Multiverse',
+        site: 'https://hessvacio.com/pages/museummultiverse.html',
+        trailer: 'https://www.youtube.com/watch?v=MF46EPlngic',
+      },
+      {
+        name: 'Windlands 2',
+        site: 'https://www.psytecgames.com/press/windlands2-presskit',
+        trailer: 'https://www.youtube.com/watch?v=308qTj-oEJg',
+      },
+      {
+        name: 'Yuki',
+        site: 'https://yukivrgame.com/',
+        trailer: 'https://www.youtube.com/watch?v=M1Bo_CRD1zU',
+      },
+      {
+        name: 'Gadgeteer',
+        site: 'https://metanautlabs.com/projects/gadgeteer/',
+        trailer: 'https://www.youtube.com/watch?v=c3LJWGcCqD4',
+      },
+    ],
     gallery: [
       '/projects/nock.jpg',
       '/projects/virtuoso.jpg',
