@@ -1,11 +1,16 @@
-import { about, contact, projects, skills } from '../content'
+import { about, contact, experience, projects, skills } from '../content'
 import type { Strings } from '../i18n'
 import type { Locale } from '../types'
-import type { CommandName } from './parser'
+import { COMMAND_NAMES, type CommandName } from './parser'
 
 export interface TerminalLine {
   text: string
   tone?: 'muted' | 'accent'
+  /**
+   * A command name to render ahead of `text`, highlighted. Set by `help` so the
+   * commands a visitor can type stand out from their descriptions.
+   */
+  command?: string
 }
 
 /**
@@ -17,16 +22,31 @@ export function runCommand(name: CommandName, t: Strings, locale: Locale): Termi
   switch (name) {
     case 'help':
       return [
-        { text: t.terminal.commands.help, tone: 'accent' },
-        ...(
-          ['help', 'about', 'projects', 'skills', 'contact', 'clear'] as const
-        ).flatMap<TerminalLine>((command) => [
-          { text: `  ${command.padEnd(9)} ${t.terminal.commands[command]}`, tone: 'muted' },
-        ]),
+        { text: t.terminal.helpTitle, tone: 'accent' },
+        ...COMMAND_NAMES.map<TerminalLine>((command) => ({
+          text: t.terminal.commands[command],
+          tone: 'muted',
+          command,
+        })),
       ]
 
     case 'about':
       return about[locale].map((paragraph) => ({ text: paragraph }))
+
+    case 'experience':
+      return experience.flatMap<TerminalLine>((entry) => {
+        const lines: TerminalLine[] = [
+          { text: `${entry.company} — ${entry.role[locale]}`, tone: 'accent' },
+          { text: `  ${entry.period[locale]}`, tone: 'muted' },
+        ]
+        if (entry.games && entry.games.length > 0) {
+          lines.push({
+            text: `  ${t.labels.games}: ${entry.games.map((g) => g.name).join(', ')}`,
+            tone: 'muted',
+          })
+        }
+        return lines
+      })
 
     case 'projects':
       return projects.flatMap<TerminalLine>((project) => [

@@ -1,43 +1,10 @@
-:root {
-  font-family: var(--font-sans);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  color: var(--color-fg);
-  background: var(--color-bg);
-}
-
-h1,
-h2,
-h3 {
-  line-height: 1.2;
-  text-wrap: balance;
-}
-
-a {
-  color: var(--color-accent);
-}
-
-/* Scroll reveal. The hidden state is scoped to `html.js`, which main.tsx adds at
-   boot: if the bundle never runs, the class is absent and the content is simply
-   visible. Content hidden behind a script that did not run is a bug, not a
-   missing animation — the same reason the hook itself fails open. */
+/* Reveal classes are applied by the library (and parsed by tests). */
 html.js .reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
   transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
 }
 
 html.js .reveal-visible {
@@ -45,56 +12,59 @@ html.js .reveal-visible {
   transform: none;
 }
 
+/* Keep the reveal a no-op for users who prefer reduced motion, and for print. */
 @media (prefers-reduced-motion: reduce) {
   html.js .reveal {
-    opacity: 1;
-    transform: none;
     transition: none;
+    transform: none;
+    opacity: 1 !important;
   }
 }
 
 @media print {
   html.js .reveal {
-    opacity: 1;
-    transform: none;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Skip link: off-screen until focused. No ::focus-within here — it must be
+   focusable via its own :focus, and tests assert its href and tab order. */
 .skip-link {
   position: absolute;
   left: -9999px;
-  top: 0;
-  z-index: 100;
-  padding: var(--space-2) var(--space-4);
-  color: var(--color-accent-contrast);
-  background: var(--color-accent);
-  border-radius: var(--radius);
+  top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  text-decoration: none;
+  z-index: 1000;
 }
 
 .skip-link:focus {
-  left: var(--space-4);
-  top: var(--space-4);
-}
-
-.hero {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  align-items: start;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: var(--space-12) var(--space-4) var(--space-8);
-}
-
-.hero-greeting {
-  margin: 0;
-  font-size: var(--step-1);
-  color: var(--color-fg-muted);
-}
-
-.hero-headline {
-  margin: 0;
-  font-size: var(--step-3);
+  left: 1rem;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .hero-stack {

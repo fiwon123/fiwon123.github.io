@@ -1,0 +1,91 @@
+.content {
+  min-width: 0;
+}
+
+/* The reading column already carries the page gutter, so a section's own side
+   padding would double it and push the section out of line with the identity
+   that sits beside it in the welcome and the about state. */
+.content > section {
+  padding-inline: 0;
+}
+
+.identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.text {
+  flex: 1 1 240px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--step-3);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.body {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--color-fg-muted);
+}
+
+.commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--color-accent);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The greeting stays in the document for a section that does not show the
+   identity, so the page keeps exactly one `h1` in every state. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

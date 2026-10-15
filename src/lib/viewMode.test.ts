@@ -8,7 +8,6 @@ import {
   LEGACY_TERMINAL_KEY,
   nextViewMode,
   readViewMode,
-  sectionForCommand,
   VIEW_KEY,
 } from './viewMode'
 
@@ -87,19 +86,5 @@ describe('readViewMode', () => {
 
   it('does not treat a corrupt legacy value as a mode', () => {
     expect(readViewMode(storage({ [LEGACY_TERMINAL_KEY]: 'yes' }))).toBe(DEFAULT_VIEW)
-  })
-})
-
-describe('sectionForCommand', () => {
-  it('maps the section commands to their ids', () => {
-    expect(sectionForCommand('about')).toBe('about')
-    expect(sectionForCommand('projects')).toBe('projects')
-    expect(sectionForCommand('skills')).toBe('skills')
-    expect(sectionForCommand('contact')).toBe('contact')
-  })
-
-  it('maps nothing for help and clear, which must not move the page', () => {
-    expect(sectionForCommand('help')).toBeNull()
-    expect(sectionForCommand('clear')).toBeNull()
   })
 })

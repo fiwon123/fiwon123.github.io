@@ -1,10 +1,10 @@
-import type { CommandName } from '../terminal/parser'
-
 /**
- * The two presentations of the site.
+ * The two presentations of the site, and the key that remembers the choice.
  *
- * `terminal` leads with the welcome screen and the terminal, and hides the header
- * navigation; commands reveal sections. `browse` is the conventional page.
+ * `terminal` shows the console over the welcome: every command answers in the
+ * scrollback and, when it names one, opens that section in place of the welcome.
+ * `browse` is the conventional page, reached with the switch in the header; it
+ * is also where a `#section` deep link lands.
  *
  * Pure and storage-shaped: the storage object is a parameter so the parsing and
  * the migration are testable without a browser, exactly like `reveal.ts`.
@@ -54,26 +54,4 @@ export function readViewMode(storage: ViewStorage | undefined): ViewMode {
     // Storage can throw (Safari private mode, disabled cookies); fail to default.
   }
   return DEFAULT_VIEW
-}
-
-/**
- * The section a command opens, or null for commands that only talk.
- *
- * `help` and `clear` must not move the page — the acceptance criterion is
- * explicit — and an unknown command never reaches here.
- */
-export function sectionForCommand(name: CommandName): string | null {
-  switch (name) {
-    case 'about':
-      return 'about'
-    case 'projects':
-      return 'projects'
-    case 'skills':
-      return 'skills'
-    case 'contact':
-      return 'contact'
-    case 'help':
-    case 'clear':
-      return null
-  }
 }
