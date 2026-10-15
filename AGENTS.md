@@ -19,6 +19,7 @@ Visitors can explore content via an interactive terminal or conventional navigat
 - Frontend: React 19 + TypeScript 6 + Vite 8
 - Linting/Formatting: oxlint 1.81.0 + oxfmt 0.73.0
 - Testing: Vitest 5 + @testing-library/react
+- Fonts: self-hosted Space Grotesk + JetBrains Mono (SIL OFL 1.1)
 - Deployment: GitHub Pages (static)
 - Development: Node.js 22, npm
 
@@ -36,15 +37,17 @@ GitHub Pages (felipeinoue.com)
 
 ```
 src/
-  components/     # UI components (Header, Footer, Sections, Preferences)
+  components/      # UI components (Header, Footer, Sections, Preferences, Logo, BrandIcon)
   content/         # Typed bilingual content (about, experience, projects, skills, contact)
   i18n/            # Language context/provider/hooks + dictionaries
   lib/             # Shared utilities/hooks
+  assets/icons/    # Brand marks (masked with currentColor)
   terminal/        # Interactive terminal (parser, history, commands, UI)
-  theme/           # Theme presets, contrast, tokens, context/provider/hooks
-  test/            # Entry/build tests
+  theme/           # Theme presets, contrast, tokens, fonts, context/provider/hooks
+  test/            # Entry/build/asset tests
   types.ts         # Shared types
-public/            # Static assets (copied to dist)
+public/            # Static assets (avatar, self-hosted fonts, favicon, images)
+scripts/           # Asset tooling (fetch-fonts.py)
 ```
 
 ## Development Commands
