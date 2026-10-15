@@ -84,5 +84,6 @@ export const ptBR: Strings = {
     close: 'Fechar',
     nextImage: 'Próxima imagem',
     previousImage: 'Imagem anterior',
+    backToTop: 'Voltar ao topo',
   },
 }

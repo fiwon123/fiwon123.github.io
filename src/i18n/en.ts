@@ -83,6 +83,7 @@ export const en = {
     close: 'Close',
     nextImage: 'Next image',
     previousImage: 'Previous image',
+    backToTop: 'Back to top',
   },
 }
 

@@ -1,3 +1,4 @@
+import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
@@ -26,6 +27,7 @@ function App() {
         <Contact />
       </main>
       <Footer />
+      <BackToTop />
     </>
   )
 }
