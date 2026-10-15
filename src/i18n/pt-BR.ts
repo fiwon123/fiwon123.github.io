@@ -21,6 +21,7 @@ export const ptBR: Strings = {
     greeting: 'Olá, eu sou Felipe Inoue',
     headline: 'Backend e ferramentas para desenvolvedores',
     stack: 'Go · Python · TypeScript · Docker',
+    avatarAlt: 'Retrato de Felipe Inoue',
   },
   sections: {
     about: 'Sobre',

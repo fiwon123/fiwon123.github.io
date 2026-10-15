@@ -10,10 +10,21 @@ the tag `archive/hugo`; the rewrite is in progress on the `dev` branch.
 ## Development
 
 ```bash
-npm install     # install dependencies
-npm run dev     # start the dev server
-make check      # format-check, lint, type-check, test, build
+npm install          # install dependencies
+npm run dev          # start the dev server
+make check           # format-check, lint, type-check, test, build
+python3 scripts/fetch-fonts.py   # refresh the self-hosted webfonts
 ```
+
+## Assets
+
+- `public/avatar/felipeinoue-512.jpg` — the hero portrait, downloaded from the
+  GitHub profile. Re-download it when the profile photo changes:
+  `curl -fsSL "https://github.com/fiwon123.png?size=512" -o public/avatar/felipeinoue-512.jpg`
+- `public/fonts/` — self-hosted Space Grotesk and JetBrains Mono (SIL OFL 1.1);
+  see `public/fonts/README.md`.
+- `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
+  active theme colour.
 
 ## Documentation
 

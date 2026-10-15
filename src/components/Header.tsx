@@ -1,4 +1,5 @@
 import { useT } from '../i18n/hooks'
+import { Logo } from './Logo'
 import { Preferences } from './Preferences'
 
 import styles from './Header.module.css'
@@ -18,7 +19,8 @@ export function Header({ terminalVisible, onToggleTerminal }: HeaderProps) {
   return (
     <header className={styles.header}>
       <a className={styles.brand} href="#top">
-        Felipe Inoue
+        <Logo />
+        <span>Felipe Inoue</span>
       </a>
 
       <nav aria-label={t.a11y.mainNav}>
