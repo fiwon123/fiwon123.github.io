@@ -1,11 +1,10 @@
 /**
  * The two presentations of the site, and the key that remembers the choice.
  *
- * `terminal` shows the welcome screen and the terminal and nothing else: every
- * command answers in the scrollback, and the page sections are not rendered.
+ * `terminal` shows the console over the welcome: every command answers in the
+ * scrollback and, when it names one, opens that section in place of the welcome.
  * `browse` is the conventional page, reached with the switch in the header; it
- * is also where a `#section` deep link lands, because that is the only mode the
- * sections exist in.
+ * is also where a `#section` deep link lands.
  *
  * Pure and storage-shaped: the storage object is a parameter so the parsing and
  * the migration are testable without a browser, exactly like `reveal.ts`.

@@ -36,20 +36,33 @@ function App() {
 
   const terminal = view === 'terminal'
 
+  // A `#section` deep link lands on the conventional page and scrolls to the
+  // section. It acts on the hash present at mount and on a later, *real* change
+  // of the hash — never on a mere re-render, so an explicit "Show terminal" is
+  // not overridden by a hash that is still in the address bar.
   useEffect(() => {
-    const sync = () => {
-      if (view === 'terminal' && sectionFromHash()) {
-        setView('browse')
-        requestAnimationFrame(() => {
-          const id = sectionFromHash()
-          if (id) openSection(id)
-        })
-      }
+    const openDeepLink = () => {
+      const id = sectionFromHash()
+      if (!id) return
+      setView('browse')
+      requestAnimationFrame(() => {
+        const landed = sectionFromHash()
+        if (landed) openSection(landed)
+      })
     }
-    sync()
-    window.addEventListener('hashchange', sync)
-    return () => window.removeEventListener('hashchange', sync)
-  }, [view, setView])
+    // A `hashchange` that repeats the current hash is not a navigation (some
+    // environments dispatch one for a programmatic set); ignore it so it cannot
+    // flip the view under the visitor.
+    let last = window.location.hash
+    const onHashChange = () => {
+      if (window.location.hash === last) return
+      last = window.location.hash
+      openDeepLink()
+    }
+    openDeepLink()
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [setView])
 
   function toggleView() {
     setView(nextViewMode(view))

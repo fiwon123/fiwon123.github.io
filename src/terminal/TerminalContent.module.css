@@ -1,9 +1,9 @@
-.welcome {
+.content {
   background: var(--color-bg);
 }
 
-/* Matches the terminal block it sits above, so the two read as one surface. */
-.inner {
+/* Matches the console above it, so the two read as one surface. */
+.identity {
   max-width: 960px;
   margin: 0 auto;
   padding: var(--space-8) var(--space-4);
@@ -44,8 +44,6 @@
   color: var(--color-fg-muted);
 }
 
-/* The commands a visitor can run, as clickable chips — the same commands the
-   `help` output lists and highlights inside the console. */
 .commands {
   display: flex;
   flex-wrap: wrap;
@@ -76,7 +74,7 @@
 }
 
 @media (max-width: 40rem) {
-  .inner {
+  .identity {
     padding: var(--space-6) var(--space-4);
   }
 }

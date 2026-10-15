@@ -91,6 +91,26 @@ describe('the switch', () => {
     expect(terminalInput()).toBeTruthy()
     expect(localStorage.getItem(VIEW_KEY)).toBe('terminal')
   })
+
+  it('keeps terminal mode when the URL still carries a section hash', async () => {
+    // Regression: the deep-link effect used to force browse whenever a section
+    // hash was present, so "Show terminal" bounced straight back to browse.
+    localStorage.setItem(VIEW_KEY, 'browse')
+    window.location.hash = '#about'
+    try {
+      renderApp()
+      expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
+
+      fireEvent.click(screen.getByRole('button', { name: en.view.toTerminal }))
+      expect(terminalInput()).toBeTruthy()
+      expect(localStorage.getItem(VIEW_KEY)).toBe('terminal')
+      // Let the pending deep-link frame run; it must not flip the view back.
+      await waitFor(() => expect(screen.getByRole('textbox')).toBeTruthy())
+      expect(screen.queryByRole('navigation', { name: en.a11y.mainNav })).toBeNull()
+    } finally {
+      window.location.hash = ''
+    }
+  })
 })
 
 const log = () => screen.getByRole('log')
@@ -133,6 +153,35 @@ describe('commands print and open their section', () => {
     expect(screen.queryByText(about.en[0])).toBeNull()
     expect(document.getElementById('about')).toBeNull()
     expect(terminalInput()).toBeTruthy()
+  })
+
+  it('replaces the welcome with the section, and clear brings the welcome back', () => {
+    renderApp()
+    const chips = () => screen.queryByRole('list', { name: en.view.commandsLabel })
+    expect(screen.getByText(en.view.welcomeBody)).toBeTruthy()
+    expect(chips()).toBeTruthy()
+
+    submitCommand('about')
+    // The introduction and the chips give way to the section — the section is
+    // not stacked under a permanent welcome.
+    expect(screen.queryByText(en.view.welcomeBody)).toBeNull()
+    expect(chips()).toBeNull()
+    expect(document.getElementById('about')).toBeTruthy()
+
+    submitCommand('clear')
+    expect(screen.getByText(en.view.welcomeBody)).toBeTruthy()
+    expect(chips()).toBeTruthy()
+  })
+
+  it('keeps the photo, the one h1 and the #top anchor while a section shows', () => {
+    renderApp()
+    submitCommand('experience')
+    expect(document.getElementById('experience')).toBeTruthy()
+    expect(screen.getByRole('img', { name: en.hero.avatarAlt })).toBeTruthy()
+    const headings = document.querySelectorAll('h1')
+    expect(headings).toHaveLength(1)
+    expect(headings[0]?.textContent).toBe(en.hero.greeting)
+    expect(document.querySelectorAll('#top')).toHaveLength(1)
   })
 
   it('answers an unknown command without moving or breaking the page', () => {
