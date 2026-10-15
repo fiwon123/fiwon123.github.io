@@ -13,6 +13,34 @@
       content="Felipe Inoue — backend and tooling developer. Projects, experience and skills."
     />
     <title>Felipe Inoue</title>
+    <!--
+      Apply the stored theme before first paint, so there is no flash of the
+      wrong palette. The keys and values mirror src/theme/presets.ts — keep
+      them in sync. Colours stay in CSS; this only sets two data attributes.
+    -->
+    <script>
+      ;(() => {
+        try {
+          const root = document.documentElement
+          const presets = ['studio', 'paper', 'terminal']
+          const modes = ['light', 'dark', 'system']
+          let preset = localStorage.getItem('portfolio.v1.theme')
+          let mode = localStorage.getItem('portfolio.v1.mode')
+          if (!presets.includes(preset)) preset = 'studio'
+          if (!modes.includes(mode)) mode = 'system'
+          const resolved =
+            mode === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : mode
+          root.dataset.theme = preset
+          root.dataset.mode = resolved
+        } catch {
+          /* first paint falls back to the :root palette */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
