@@ -1,5 +1,12 @@
 # AGENTS.md
 
+> **How to work in this repo.** The project's identity — what it is, who it is
+> for, the stack, architecture, settled decisions and constraints — lives in
+> [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md), which is the source of truth for it.
+> This file is the working guide: commands, conventions and gates. Where the two
+> state the same fact, `PROJECT_CONTEXT.md` owns it, and `make check-docs` fails
+> if they disagree — so update both together, or neither.
+
 ### Product
 
 ## Project Objective
@@ -109,6 +116,8 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 
 - **Assignee**: `fiwon123`
 - **Branch model**: `main` (release/deploy) ← `dev` (integration) ← feature branches `feat/<issue>-<slug>`
+- **Local gate**: `make check` = `make check-sandbox` + `make check-docs` + `npm run check`
+- **CI**: `ci.yml` runs on pull requests and pushes targeting `dev`; `pages.yml` deploys on push to `main`
 - **Issue-first**: Every change tracked via GitHub issue → branch → PR → merge
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `ci:`
 - **Bilingual content**: EN and PT-BR live in the same typed records (never separate files); `en.ts` is source of truth, `pt-BR.ts` typed `: Strings`
