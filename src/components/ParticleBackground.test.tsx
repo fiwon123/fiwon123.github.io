@@ -230,9 +230,9 @@ describe('ParticleBackground', () => {
     const clears = takeLog().filter((event) => event.kind === 'clear')
     expect(clears.length).toBeGreaterThan(0)
     for (const { w, h } of clears) {
-      // Largest particle (3.5px) + 2px margin: 5.5, well under a viewport edge.
-      expect(w).toBeLessThanOrEqual(5.5)
-      expect(h).toBeLessThanOrEqual(5.5)
+      // Largest particle (4.5px) + 2px margin: 6.5, well under a viewport edge.
+      expect(w).toBeLessThanOrEqual(6.5)
+      expect(h).toBeLessThanOrEqual(6.5)
     }
   })
 

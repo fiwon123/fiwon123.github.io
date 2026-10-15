@@ -146,10 +146,12 @@ describe('createField', () => {
       expect(Math.abs(field.vx[i])).toBeLessThanOrEqual(12)
       expect(Math.abs(field.vy[i])).toBeGreaterThanOrEqual(3)
       expect(Math.abs(field.vy[i])).toBeLessThanOrEqual(12)
-      expect(field.size[i]).toBeGreaterThanOrEqual(1.5)
-      expect(field.size[i]).toBeLessThanOrEqual(3.5)
+      expect(field.size[i]).toBeGreaterThanOrEqual(2)
+      expect(field.size[i]).toBeLessThanOrEqual(4.5)
       expect(field.factor[i]).toBeGreaterThan(0)
       expect(field.factor[i]).toBeLessThanOrEqual(1)
+      // The faintest dot still has to read: 0.65 x alpha, not 0.45 (#33).
+      expect(field.factor[i]).toBeGreaterThanOrEqual(0.65)
     }
   })
 })
@@ -202,8 +204,9 @@ describe('paint', () => {
     const rects = recorder.clearRects()
     expect(rects).toHaveLength(field.count)
     for (const { args } of rects) {
-      expect(args[2]).toBeLessThanOrEqual(5.5)
-      expect(args[3]).toBeLessThanOrEqual(5.5)
+      // Largest particle (4.5px) + 2px margin (#33 raised the size).
+      expect(args[2]).toBeLessThanOrEqual(6.5)
+      expect(args[3]).toBeLessThanOrEqual(6.5)
       // A whole-viewport clear at DPR 2 is the cost this design avoids.
       expect(args[2] * args[3]).toBeLessThan(100)
     }

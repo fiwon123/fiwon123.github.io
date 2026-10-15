@@ -18,7 +18,7 @@ export const PARTICLE_MAX = 90
 export const PARTICLE_MIN = 16
 
 /** One particle per this many CSS pixels of area, before the cap. */
-export const PARTICLE_AREA = 18000
+export const PARTICLE_AREA = 13000
 
 /** A canvas backing store at DPR 4 on a laptop is fill cost, not crispness. */
 export const MAX_DPR = 2
@@ -28,11 +28,13 @@ export const MAX_DPR = 2
  *
  * Measured across the six palettes, AA (4.5:1 for `--color-fg` *and*
  * `--color-fg-muted` against the blended background) survives up to alpha 0.230
- * — the worst case, paper/light; the others allow 0.288–0.402. 0.16 leaves
- * headroom for a future palette, and `tokens.test.ts` recomputes the worst case
- * per preset, so this constant cannot be raised in isolation.
+ * — the worst case, paper/light; the others allow 0.288–0.402.
+ *
+ * 0.16, the #18 value, was invisible in review. 0.20 is the corrected balance:
+ * it clears the cap with 0.03 to spare, and `tokens.test.ts` recomputes the worst
+ * case per preset, so this constant cannot be raised in isolation.
  */
-export const PARTICLE_ALPHA = 0.16
+export const PARTICLE_ALPHA = 0.2
 
 /** Used only when the tokens are unreadable (no stylesheet applied). */
 export const FALLBACK_COLOR = 'rgb(128 128 128)'
@@ -42,11 +44,17 @@ const MAX_SPEED = 12
 /** Slowest speed component, px/s: nothing may appear frozen. */
 const MIN_SPEED = 3
 
-const SIZE_MIN = 1.5
-const SIZE_MAX = 3.5
+const SIZE_MIN = 2
+const SIZE_MAX = 4.5
 
-/** Alpha variation per particle, as a fraction of PARTICLE_ALPHA. */
-const FACTOR_MIN = 0.45
+/**
+ * Alpha variation per particle, as a fraction of PARTICLE_ALPHA.
+ *
+ * The floor matters more than the ceiling for whether the layer reads at all:
+ * at 0.45 most particles drew near 0.07 and the field disappeared. 0.65 keeps
+ * the spread while the faintest dot stays perceivable.
+ */
+const FACTOR_MIN = 0.65
 const FACTOR_MAX = 1
 
 const TAU = Math.PI * 2
