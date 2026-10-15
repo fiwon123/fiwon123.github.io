@@ -135,6 +135,8 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 - **Type check**: `npm run typecheck`
 - **Format**: `npm run fmt` (check only: `npm run fmt:check`)
 - **Build**: `npm run build`
+- **Repo stats**: `npm run stats` (or `make stats`) — refreshes the committed
+  `src/content/repoStats.json` from the GitHub API (needs an authenticated `gh`)
 - **Sandbox**: `make dev-up` / `make dev-log` / `make opencode` / `make dev-down`
   (needs Docker; `make check-sandbox` validates the config without it)
 
@@ -180,5 +182,9 @@ land on a base that already looks finished.
 - **No secrets in the repo.** `.env`, `.env.*` and `.envrc` are ignored;
   `.env.example` holds placeholders only. GitHub credentials reach the sandbox by
   runtime interpolation (`GH_TOKEN` or `GITHUB_TOKEN`), never baked into the image.
+- **Repository facts are a committed build-time snapshot**
+  (`src/content/repoStats.json`, refreshed by `npm run stats`). The site never calls
+  the GitHub API from the browser; a private, missing, or not-yet-collected repo
+  falls back to the static project card.
 - **`.opencode/memory/` is gitignored** — it holds per-machine session state and
   must never be committed.

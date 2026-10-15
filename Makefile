@@ -16,7 +16,7 @@ OPENCODE_ARGS ?=
 OPENCODE_INSTALL_URL ?= https://opencode.ai/install
 
 .PHONY: help check check-sandbox check-docs fmt lint typecheck test dev build preview clean \
-        preflight dev-up dev-down dev-log dev-build dev-shell dev-opencode \
+        stats preflight dev-up dev-down dev-log dev-build dev-shell dev-opencode \
         dev-opencode-auto dev-restart reset shell opencode opencode-auto \
         opencode-version opencode-upgrade setup-host
 
@@ -54,6 +54,9 @@ build: ## Build the production bundle to dist/
 
 preview: ## Preview the production build locally
 	npm run preview
+
+stats: ## Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
+	npm run stats
 
 clean: ## Remove build output and tool caches
 	rm -rf dist node_modules/.tmp node_modules/.vite

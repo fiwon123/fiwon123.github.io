@@ -3,7 +3,7 @@ import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { about, projects, skills } from '../content'
+import { about, experience, projects, skills } from '../content'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { About, Contact, Experience, Hero, Projects, Skills } from './Sections'
 
@@ -146,5 +146,59 @@ describe('reveal class list', () => {
     expect(className).not.toMatch(/\s{2,}/)
     expect(className.trim()).toBe(className)
     expect(classesOf(container, 'section')[0].every((name) => name.length > 0)).toBe(true)
+  })
+})
+
+describe('repository facts and game links (#20)', () => {
+  it('shows build-time facts on a GitHub card and omits them elsewhere', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const cards = [...container.querySelectorAll('article')]
+    const cardFor = (name: string) =>
+      cards.find((card) => card.querySelector('h3')?.textContent === name)
+
+    const withFacts = cardFor('Portfolio')
+    expect(withFacts?.textContent).toContain('TypeScript')
+    expect(withFacts?.textContent).toContain('★')
+
+    // A private project has no snapshot entry: the card keeps its static form.
+    expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
+  })
+
+  it('renders a games list with a link per URL the entry carries', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Experience />)
+    const lists = [...container.querySelectorAll('ul[aria-label="Games"]')]
+    expect(lists).toHaveLength(1)
+
+    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
+    expect(games.length).toBeGreaterThan(0)
+    const linkCount = games.reduce(
+      (total, game) => total + (game.site ? 1 : 0) + (game.trailer ? 1 : 0),
+      0,
+    )
+    expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
+    expect(lists[0].querySelectorAll('a')).toHaveLength(linkCount)
+    // "Site" x6 is ambiguous in a screen reader's link list; each names its game.
+    const names = [...lists[0].querySelectorAll('a')].map((a) => a.getAttribute('aria-label') ?? '')
+    for (const game of games) {
+      expect(names.some((name) => name.includes(game.name))).toBe(true)
+    }
+  })
+
+  it('links store tokens that have a URL and leaves the rest as icons', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Experience />)
+    const astrea = experience.find((entry) => entry.id === 'little-leo-games')
+    const platforms = astrea?.platforms ?? []
+    expect(platforms.length).toBeGreaterThan(0)
+    for (const platform of platforms) {
+      expect(container.querySelector(`a[href="${platform.url}"]`), platform.name).not.toBeNull()
+    }
+    // {sony} on VR Monkey has no URL, so it stays an icon, not a dead link.
+    expect(container.querySelector('a[aria-label="PlayStation"]')).toBeNull()
   })
 })
