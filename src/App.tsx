@@ -1,6 +1,7 @@
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
+import { ParticleBackground } from './components/ParticleBackground'
 import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { prefersReducedMotion } from './lib/reveal'
@@ -39,6 +40,8 @@ function App() {
 
   return (
     <>
+      {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
+      <ParticleBackground />
       <Header view={view} onToggleView={toggleView} />
       {terminal && (
         <>

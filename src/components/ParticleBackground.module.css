@@ -1,0 +1,28 @@
+/* The layer itself: fixed to the viewport, behind the content, and never in the
+   way of a pointer or a screen reader.
+
+   `z-index: -1` puts it above the page colour (the body background paints first,
+   on the canvas) but behind every in-flow element, including the section
+   transforms the reveal applies.
+
+   The canvas is a replaced element, so `position: fixed; inset: 0` alone would
+   leave it at its intrinsic 300x150 — an absolutely positioned replaced element
+   resolves `width: auto` to its intrinsic width, not to the offsets. The explicit
+   100% box is what makes it fill the viewport; the bitmap inside it is sized in
+   JS, where the device pixel ratio is capped at 2. */
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* A decorative background has no business being printed. */
+@media print {
+  .layer {
+    display: none;
+  }
+}

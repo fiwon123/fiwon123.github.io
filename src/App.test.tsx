@@ -46,11 +46,15 @@ beforeEach(() => {
   // jsdom has no layout, so scrollIntoView does not exist at all; the app is
   // expected to call it, and the tests below assert on which element and how.
   Element.prototype.scrollIntoView = vi.fn()
+  // ParticleBackground bails out when getContext returns null — which is what
+  // jsdom does anyway, but its own method also logs "Not implemented" per call.
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
 })
 
 afterEach(() => {
   cleanup()
   localStorage.clear()
+  vi.restoreAllMocks()
 })
 
 describe('starting state', () => {
@@ -67,6 +71,17 @@ describe('starting state', () => {
     expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(screen.queryByText(en.view.welcomeBody)).toBeNull()
+  })
+
+  it('renders exactly one particle layer, decorative, in either view', () => {
+    renderApp()
+    const canvases = document.querySelectorAll('canvas')
+    expect(canvases).toHaveLength(1)
+    expect(canvases[0].getAttribute('aria-hidden')).toBe('true')
+    cleanup()
+    localStorage.setItem(VIEW_KEY, 'browse')
+    renderApp()
+    expect(document.querySelectorAll('canvas')).toHaveLength(1)
   })
 })
 
