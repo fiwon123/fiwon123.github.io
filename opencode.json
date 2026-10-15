@@ -1,0 +1,363 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md", "PROJECT_CONTEXT.md", ".opencode/instructions/*.md"],
+  "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.envrc": "deny",
+      "*.env.example": "allow"
+    },
+    "bash": {
+      "*": "ask",
+      "printenv*": "deny",
+      "env": "deny",
+      "env *": "deny",
+      "docker compose config*": "deny",
+      "docker-compose config*": "deny",
+      "docker * config*": "deny",
+      "docker * env": "deny",
+      "docker * env *": "deny",
+      "docker inspect*": "deny",
+      "*.env": "deny",
+      "*.envrc": "deny",
+      "* .env": "deny",
+      "* .envrc": "deny",
+      "*/.env": "deny",
+      "*/.envrc": "deny",
+      "* .env*": "deny",
+      "*/.env*": "deny",
+      "* .envrc*": "deny",
+      "*/.envrc*": "deny",
+      "*.env.*": "deny",
+      "* .env.*": "deny",
+      "*/.env.*": "deny"
+    },
+    "edit": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.envrc": "deny",
+      "*.env.example": "allow"
+    }
+  },
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "model": "opencode/big-pickle",
+      "permission": {
+        "edit": {
+          "*": "allow",
+          "*.env": "deny",
+          "*.env.*": "deny",
+          "*.envrc": "deny",
+          "*.env.example": "allow"
+        },
+        "bash": {
+          "*": "ask",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "git checkout*": "allow",
+          "git pull*": "allow",
+          "git push*": "allow",
+          "git add*": "allow",
+          "git commit*": "allow",
+          "gh issue*": "allow",
+          "gh pr create*": "allow",
+          "gh pr comment*": "allow",
+          "gh pr edit*": "allow",
+          "gh pr list*": "allow",
+          "gh pr view*": "allow",
+          "gh pr checks*": "allow",
+          "gh label*": "allow",
+          "gh pr merge*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        },
+        "task": {
+          "*": "deny",
+          "explore": "allow",
+          "reviewer": "allow",
+          "visual": "allow"
+        },
+        "skill": {
+          "*": "allow"
+        }
+      }
+    },
+    "plan": {
+      "mode": "primary",
+      "model": "opencode/mimo-v2.6-flash-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git log*": "allow",
+          "git diff*": "allow",
+          "ls*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        },
+        "task": {
+          "*": "deny",
+          "explore": "allow",
+          "reviewer": "allow"
+        },
+        "skill": {
+          "*": "allow"
+        }
+      }
+    },
+    "reviewer": {
+      "description": "Reviews code for bugs, security issues, and regressions without editing",
+      "mode": "subagent",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "grep *": "allow",
+          "grep *.env": "deny",
+          "grep *.env.*": "deny",
+          "grep *.envrc": "deny",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        },
+        "skill": {
+          "*": "allow"
+        }
+      }
+    },
+    "visual": {
+      "description": "Visual QA: inspects screenshots, contact sheets, and video frames (multimodal; reports findings as text)",
+      "mode": "all",
+      "model": "opencode/mimo-v2.6-flash-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "ask",
+          "ls*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        },
+        "task": {
+          "*": "deny"
+        },
+        "skill": {
+          "*": "deny"
+        }
+      }
+    },
+    "backend": {
+      "description": "Implements <backend-directory> routes, services, and business logic",
+      "mode": "subagent",
+      "permission": {
+        "edit": {
+          "<backend-directory>/**": "allow"
+        },
+        "bash": {
+          "*": "ask",
+          "cd <backend-directory>*": "allow",
+          "uv run*": "allow",
+          "uv sync*": "allow",
+          "python*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        }
+      }
+    },
+    "frontend": {
+      "description": "Implements UI components, pages, hooks, and client-side behavior",
+      "mode": "subagent",
+      "permission": {
+        "edit": {
+          "<frontend-directory>/**": "allow"
+        },
+        "bash": {
+          "*": "ask",
+          "cd <frontend-directory>*": "allow",
+          "npm*": "allow",
+          "npx*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        }
+      }
+    },
+    "tester": {
+      "description": "Writes and runs tests for <backend-directory> and <frontend-directory>",
+      "mode": "subagent",
+      "permission": {
+        "edit": {
+          "**/test*": "allow",
+          "**/*_test*": "allow",
+          "**/*.test.*": "allow",
+          "**/*.spec.*": "allow",
+          "**/conftest.py": "allow",
+          "**/pytest.ini": "allow",
+          "**/vitest.config.*": "allow",
+          "**/jest.config.*": "allow",
+          "**/*.env": "deny",
+          "**/*.env.*": "deny",
+          "**/*.env.example": "allow",
+          "**/*.envrc": "deny"
+        },
+        "bash": {
+          "*": "ask",
+          "cd <backend-directory>*": "allow",
+          "cd <frontend-directory>*": "allow",
+          "uv run*": "allow",
+          "pytest*": "allow",
+          "python*": "allow",
+          "npm*": "allow",
+          "npx*": "allow",
+          "printenv*": "deny",
+          "env": "deny",
+          "env *": "deny",
+          "docker compose config*": "deny",
+          "docker-compose config*": "deny",
+          "docker * config*": "deny",
+          "docker * env": "deny",
+          "docker * env *": "deny",
+          "docker inspect*": "deny",
+          "*.env": "deny",
+          "*.envrc": "deny",
+          "* .env": "deny",
+          "* .envrc": "deny",
+          "*/.env": "deny",
+          "*/.envrc": "deny",
+          "* .env*": "deny",
+          "*/.env*": "deny",
+          "* .envrc*": "deny",
+          "*/.envrc*": "deny",
+          "*.env.*": "deny",
+          "* .env.*": "deny",
+          "*/.env.*": "deny"
+        }
+      }
+    }
+  }
+}
