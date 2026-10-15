@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta
+      name="description"
+      content="Felipe Inoue — backend and tooling developer. Projects, experience and skills."
+    />
+    <title>Felipe Inoue</title>
+    <!--
+      Apply the stored theme before first paint, so there is no flash of the
+      wrong palette. The keys and values mirror src/theme/presets.ts — keep
+      them in sync. Colours stay in CSS; this only sets two data attributes.
+    -->
+    <script>
+      ;(() => {
+        try {
+          const root = document.documentElement
+          const presets = ['studio', 'paper', 'terminal']
+          const modes = ['light', 'dark', 'system']
+          let preset = localStorage.getItem('portfolio.v1.theme')
+          let mode = localStorage.getItem('portfolio.v1.mode')
+          if (!presets.includes(preset)) preset = 'studio'
+          if (!modes.includes(mode)) mode = 'system'
+          const resolved =
+            mode === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : mode
+          root.dataset.theme = preset
+          root.dataset.mode = resolved
+        } catch {
+          /* first paint falls back to the :root palette */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

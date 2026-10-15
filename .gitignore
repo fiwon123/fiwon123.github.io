@@ -1,13 +1,38 @@
-#others
+# Dependencies
 node_modules
-.hugo_build.lock
 
-# OS generated files
+# Build output
+dist
+dist-ssr
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment — never commit secrets
+.env
+.env.*
+!.env.example
+.envrc
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
+Thumbs.db
+desktop.ini
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Hugo
-public
+# Agent session memory — local to this machine, never committed
+.opencode/memory/
