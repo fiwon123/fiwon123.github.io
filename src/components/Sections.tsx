@@ -1,6 +1,7 @@
 import { about, contact, experience, projects, skills } from '../content'
 import { useLanguage, useT } from '../i18n/hooks'
 import { BrandIcon } from './BrandIcon'
+import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
 
 import styles from './sections.module.css'
@@ -78,16 +79,7 @@ export function Experience() {
               </ul>
             )}
             {entry.gallery && entry.gallery.length > 0 && (
-              <div className={styles.gallery}>
-                {entry.gallery.map((src, index) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`${entry.company} — ${index + 1}`}
-                    className={styles.thumb}
-                  />
-                ))}
-              </div>
+              <Gallery images={entry.gallery} title={entry.company} />
             )}
             {entry.tech.length > 0 && (
               <p className={styles.meta}>
@@ -120,16 +112,7 @@ export function Projects() {
             </header>
             <p>{project.description[locale]}</p>
             {project.gallery && project.gallery.length > 0 && (
-              <div className={styles.gallery}>
-                {project.gallery.map((src, index) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`${project.name} — ${index + 1}`}
-                    className={styles.thumb}
-                  />
-                ))}
-              </div>
+              <Gallery images={project.gallery} title={project.name} />
             )}
             {project.tech.length > 0 && (
               <p className={styles.meta}>

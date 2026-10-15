@@ -79,5 +79,10 @@ export const ptBR: Strings = {
   a11y: {
     skipToContent: 'Pular para o conteúdo',
     mainNav: 'Principal',
+    openImage: 'Abrir imagem',
+    lightbox: 'Visualizador de imagens',
+    close: 'Fechar',
+    nextImage: 'Próxima imagem',
+    previousImage: 'Imagem anterior',
   },
 }

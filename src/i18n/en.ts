@@ -78,6 +78,11 @@ export const en = {
   a11y: {
     skipToContent: 'Skip to content',
     mainNav: 'Main',
+    openImage: 'Open image',
+    lightbox: 'Image viewer',
+    close: 'Close',
+    nextImage: 'Next image',
+    previousImage: 'Previous image',
   },
 }
 
