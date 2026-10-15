@@ -64,6 +64,7 @@ npm run test          # Run unit tests (Vitest)
 npm run test:watch    # Run tests in watch mode
 npm run check         # fmt:check && lint && typecheck && test && build
 make check            # Same as npm run check
+make check-sandbox    # Static checks for the dev sandbox config (needs no Docker)
 make dev              # npm run dev
 make build            # npm run build
 make test             # npm run test
@@ -71,6 +72,35 @@ make fmt              # npm run fmt
 make lint             # npm run lint
 make help             # Show Makefile targets
 ```
+
+### Dev sandbox (optional, needs Docker)
+
+The same project can be developed inside a container — useful for a machine with
+no Node, or to keep the host clean. The source is bind-mounted, so edits on
+either side are visible to the other.
+
+```bash
+make setup-host       # one-time host bootstrap (mise, gh login, config dirs)
+make dev-up           # build + start; Vite on http://localhost:5173
+make dev-log          # follow the container output
+make opencode         # run opencode inside the sandbox
+make opencode-auto    # same, with --auto (deny rules still apply)
+make dev-shell        # interactive shell in the sandbox
+make dev-down         # stop it
+make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
+```
+
+- `HOST_PORT=5174 make dev-up` runs a second sandbox without a port collision.
+- The GitHub token is forwarded at runtime from `GH_TOKEN` or `GITHUB_TOKEN` —
+  never baked into the image — and `gh`/`opencode`/git config are mounted
+  read-only so the container cannot rewrite host state.
+- `opencode` is bind-mounted from `~/.opencode/bin/opencode`. A file bind mount
+  pins the inode, so an in-container upgrade silently does nothing: upgrade on
+  the host with `make opencode-upgrade`.
+- Docker is not available in the agent's environment, so the sandbox is
+  **author-only**: `make check-sandbox` statically validates the Dockerfile,
+  compose file, Makefile and scripts, but a real `make dev-up` must be run by a
+  human on a Docker-capable host.
 
 ## Key Conventions
 
@@ -86,7 +116,11 @@ make help             # Show Makefile targets
 
 ## Environment Constraints
 
-- Static site (no backend, no database, no Docker required)
-- Node 22+, npm 10+
-- `make check` is the local gate (CI only runs on release PRs to `main` and on pushes to `dev` per workflows)
+- Static site (no backend, no database)
+- Node 22+, npm 10+. A dev sandbox (`Dockerfile` + `docker-compose.yml`) is
+  optional — Docker is needed only for `make dev-up`/`make opencode`
+- `make check` is the local gate (CI only runs on release PRs to `main` and on
+  pushes to `dev` per workflows). It starts with `check-sandbox`, which validates
+  the dev sandbox config statically so a Docker-only mistake cannot sit
+  unexamined; Docker itself is never exercised in CI
 - No secrets committed; `.env*` ignored (except `.env.example`)
