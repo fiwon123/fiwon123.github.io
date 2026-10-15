@@ -425,6 +425,30 @@ for rel in sorted(referenced_scripts):
         continue
     check(f"{rel} is executable", os.access(path, os.X_OK), "Docker's COPY + compose command needs the bit set")
 
+# --- shell quoting ------------------------------------------------------------
+
+# `COMPOSE` is a command *and its arguments* ("docker compose"). Quoting it hands
+# the shell a single word, so `exec "$COMPOSE" …` looks for a binary literally
+# named "docker compose" and dies with 127 — how `make shell` came to be broken
+# (three call sites in `open-in-sandbox.sh`). The variable is fine as a string
+# (assignment, `read <<<`, `printf`); what is never fine is *starting a command*
+# with the quoted form, which is what this catches.
+QUOTED_COMPOSE_COMMAND = re.compile(
+    r'(?:^|[|&;()]\s*|exec\s+|then\s+|do\s+|\btime\s+)"(?:\$COMPOSE|\$\{COMPOSE)'
+)
+
+for path in sorted(ROOT.glob("scripts/*.sh")):
+    quoted = [
+        f"line {n}: {line.strip()}"
+        for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
+        if QUOTED_COMPOSE_COMMAND.search(line)
+    ]
+    check(
+        f"{path.name} never starts a command with a quoted COMPOSE",
+        not quoted,
+        "must word-split or use an array: " + "; ".join(quoted),
+    )
+
 if skips:
     print("\nskipped: " + "; ".join(skips))
 
