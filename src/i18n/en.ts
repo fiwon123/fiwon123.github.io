@@ -20,6 +20,7 @@ export const en = {
     greeting: "Hi, I'm Felipe Inoue",
     headline: 'Backend & developer tooling',
     stack: 'Go · Python · TypeScript · Docker',
+    avatarAlt: 'Portrait of Felipe Inoue',
   },
   sections: {
     about: 'About',
