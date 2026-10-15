@@ -51,18 +51,13 @@ RUN if [ -z "$TARGETARCH" ]; then \
 # --- runtime user (matches the host uid/gid from docker-compose.yml) ---
 # The compose service runs as `user: "${HOST_UID}:${HOST_GID}"`. Without a
 # passwd entry for that uid (or a home it can write), interactive shells greet
-# the user with "I have no name!" and rc files never load. Create devuser if the
-# uid is free; if the uid is already claimed by another account, fail the build
-# readably instead of silently producing a broken shell.
-RUN if ! getent group ${HOST_GID} >/dev/null; then groupadd --gid ${HOST_GID} devuser; fi \
-    && if ! getent passwd ${HOST_UID} >/dev/null; then \
-         useradd --uid ${HOST_UID} --gid ${HOST_GID} --create-home --shell /usr/bin/zsh devuser; \
-       fi \
-    && { getent passwd devuser >/dev/null \
-         || { echo "ERROR: uid ${HOST_UID} is already used by another account, so 'devuser' cannot be created. Rebuild for a different host uid (make dev-build)." >&2; exit 1; }; } \
-    && mkdir -p /home/devuser \
-    && chown -R ${HOST_UID}:${HOST_GID} /home/devuser \
-    && git config --system --add safe.directory /workspace
+# the user with "I have no name!" and rc files never load.
+#
+# The logic lives in its own script because `scripts/check-sandbox.py` runs that
+# exact file under `sh` with the account tooling stubbed — the only way to
+# exercise it where Docker is unavailable.
+COPY scripts/setup-container-user.sh /usr/local/share/setup-container-user.sh
+RUN sh /usr/local/share/setup-container-user.sh
 
 # --- dev-sandbox rc (badge + terminal title, loaded for BOTH users) ---
 # `make dev-shell` opens an interactive *non-login* bash, which reads only
