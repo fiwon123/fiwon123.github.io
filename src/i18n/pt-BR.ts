@@ -21,6 +21,7 @@ export const ptBR: Strings = {
     greeting: 'Olá, eu sou Felipe Inoue',
     headline: 'Backend e ferramentas para desenvolvedores',
     stack: 'Go · Python · TypeScript · Docker',
+    avatarAlt: 'Retrato de Felipe Inoue',
   },
   sections: {
     about: 'Sobre',
@@ -37,6 +38,11 @@ export const ptBR: Strings = {
     source: 'Fonte',
     link: 'Link',
     private: 'Privado',
+    stars: 'Estrelas',
+    updated: 'Atualizado',
+    games: 'Jogos',
+    site: 'Site',
+    trailer: 'Trailer',
   },
   theme: {
     label: 'Tema',
@@ -59,8 +65,6 @@ export const ptBR: Strings = {
     prompt: 'visitante@felipeinoue ~ $',
     welcome: 'Bem-vindo. Digite `help` para listar os comandos.',
     unknown: 'comando não encontrado',
-    show: 'Mostrar terminal',
-    hide: 'Navegar sem terminal',
     commands: {
       help: 'Lista os comandos disponíveis',
       about: 'Quem sou eu e o que faço',
@@ -70,6 +74,12 @@ export const ptBR: Strings = {
       clear: 'Limpa a saída',
     },
   },
+  view: {
+    toTerminal: 'Mostrar terminal',
+    toBrowse: 'Navegar normalmente',
+    welcomeBody:
+      'Esta página também funciona como um terminal. Digite um comando para abrir uma seção — `about`, `projects`, `skills`, `contact` — ou volte para a página convencional.',
+  },
   footer: {
     rights: 'Todos os direitos reservados.',
     builtWith: 'Feito do zero com React, TypeScript e Vite.',
@@ -78,5 +88,11 @@ export const ptBR: Strings = {
   a11y: {
     skipToContent: 'Pular para o conteúdo',
     mainNav: 'Principal',
+    openImage: 'Abrir imagem',
+    lightbox: 'Visualizador de imagens',
+    close: 'Fechar',
+    nextImage: 'Próxima imagem',
+    previousImage: 'Imagem anterior',
+    backToTop: 'Voltar ao topo',
   },
 }

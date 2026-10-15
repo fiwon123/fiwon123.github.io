@@ -20,6 +20,7 @@ export const en = {
     greeting: "Hi, I'm Felipe Inoue",
     headline: 'Backend & developer tooling',
     stack: 'Go · Python · TypeScript · Docker',
+    avatarAlt: 'Portrait of Felipe Inoue',
   },
   sections: {
     about: 'About',
@@ -36,6 +37,11 @@ export const en = {
     source: 'Source',
     link: 'Link',
     private: 'Private',
+    stars: 'Stars',
+    updated: 'Updated',
+    games: 'Games',
+    site: 'Site',
+    trailer: 'Trailer',
   },
   theme: {
     label: 'Theme',
@@ -58,8 +64,6 @@ export const en = {
     prompt: 'visitor@felipeinoue ~ $',
     welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
-    show: 'Show terminal',
-    hide: 'Browse without terminal',
     commands: {
       help: 'List the available commands',
       about: 'Who I am and what I do',
@@ -69,6 +73,12 @@ export const en = {
       clear: 'Clear the output',
     },
   },
+  view: {
+    toTerminal: 'Show terminal',
+    toBrowse: 'Browse normally',
+    welcomeBody:
+      'This page also runs as a terminal. Type a command to open a section — `about`, `projects`, `skills`, `contact` — or switch back to the conventional page.',
+  },
   footer: {
     rights: 'All rights reserved.',
     builtWith: 'Built from scratch with React, TypeScript and Vite.',
@@ -77,6 +87,12 @@ export const en = {
   a11y: {
     skipToContent: 'Skip to content',
     mainNav: 'Main',
+    openImage: 'Open image',
+    lightbox: 'Image viewer',
+    close: 'Close',
+    nextImage: 'Next image',
+    previousImage: 'Previous image',
+    backToTop: 'Back to top',
   },
 }
 

@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent 
 import { useLanguage, useT } from '../i18n/hooks'
 import { runCommand, type TerminalLine } from './commands'
 import { EMPTY_HISTORY, nextEntry, previousEntry, pushEntry } from './history'
-import { parseCommand } from './parser'
+import { parseCommand, type CommandName } from './parser'
 
 import styles from './Terminal.module.css'
 
@@ -14,7 +14,14 @@ interface Entry {
   unknown?: boolean
 }
 
-export function Terminal() {
+export interface TerminalProps {
+  /** Called for every recognised command, so the view can act on it. */
+  onCommand?: (name: CommandName) => void
+  /** Focus the input on mount — entering terminal mode should be ready to type. */
+  autoFocus?: boolean
+}
+
+export function Terminal({ onCommand, autoFocus = false }: TerminalProps) {
   const t = useT()
   const { locale } = useLanguage()
   const [input, setInput] = useState('')
@@ -22,12 +29,18 @@ export function Terminal() {
   const [entries, setEntries] = useState<Entry[]>([])
   const nextId = useRef(0)
   const logRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
 
   useEffect(() => {
     if (!logRef.current) return
     logRef.current.scrollTop = logRef.current.scrollHeight
   }, [entries])
+
+  useEffect(() => {
+    if (!autoFocus) return
+    inputRef.current?.focus()
+  }, [autoFocus])
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -48,6 +61,9 @@ export function Terminal() {
       ])
       return
     }
+    // Reported before the output is appended: the caller may scroll the page, and
+    // the terminal keeps focus so the next command can be typed straight away.
+    onCommand?.(parsed.name)
     if (parsed.name === 'clear') {
       setEntries([])
       return
@@ -120,6 +136,7 @@ export function Terminal() {
           </label>
           <input
             id={inputId}
+            ref={inputRef}
             className={styles.input}
             value={input}
             onChange={(event) => setInput(event.target.value)}

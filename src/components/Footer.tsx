@@ -18,7 +18,10 @@ export function Footer() {
   const rights = t.footer.rights.replace('{year}', year)
 
   return (
-    <footer className={styles.footer} aria-label="Footer">
+    // No aria-label: a top-level <footer> is already the `contentinfo` landmark,
+    // and there is only one, so a label would be redundant — and the one that
+    // was here ("Footer") was an English string in a bilingual page.
+    <footer className={styles.footer}>
       <p className={styles.text}>{rights}</p>
       <p className={styles.text}>{t.footer.builtWith}</p>
       <p className={styles.text}>

@@ -1,4 +1,6 @@
 import { useT } from '../i18n/hooks'
+import type { ViewMode } from '../lib/viewMode'
+import { Logo } from './Logo'
 import { Preferences } from './Preferences'
 
 import styles from './Header.module.css'
@@ -6,41 +8,45 @@ import styles from './Header.module.css'
 const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as const
 
 export interface HeaderProps {
-  terminalVisible: boolean
-  onToggleTerminal: () => void
+  view: ViewMode
+  onToggleView: () => void
 }
 
-export function Header({ terminalVisible, onToggleTerminal }: HeaderProps) {
+export function Header({ view, onToggleView }: HeaderProps) {
   const t = useT()
 
-  const toggleLabel = terminalVisible ? t.terminal.hide : t.terminal.show
+  const terminal = view === 'terminal'
+  const switchLabel = terminal ? t.view.toBrowse : t.view.toTerminal
 
   return (
     <header className={styles.header}>
       <a className={styles.brand} href="#top">
-        Felipe Inoue
+        <Logo />
+        <span>Felipe Inoue</span>
       </a>
 
-      <nav aria-label={t.a11y.mainNav}>
-        <ul className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
-            <li key={item}>
-              <a className={styles.navLink} href={`#${item}`}>
-                {t.nav[item]}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {/* Hidden in terminal mode: the terminal is the navigation there, and the
+          switch below is the way back. The switch stays in both modes. */}
+      {!terminal && (
+        <nav aria-label={t.a11y.mainNav}>
+          <ul className={styles.nav}>
+            {NAV_ITEMS.map((item) => (
+              <li key={item}>
+                <a className={styles.navLink} href={`#${item}`}>
+                  {t.nav[item]}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
 
       <Preferences />
-      <button
-        type="button"
-        className={styles.toggle}
-        onClick={onToggleTerminal}
-        aria-pressed={!terminalVisible}
-      >
-        {toggleLabel}
+      {/* No aria-pressed: the label names where the switch goes, and a toggle
+          state alongside a changing label contradicts it ("Browse normally,
+          pressed" would describe neither mode). */}
+      <button type="button" className={styles.toggle} onClick={onToggleView}>
+        {switchLabel}
       </button>
     </header>
   )

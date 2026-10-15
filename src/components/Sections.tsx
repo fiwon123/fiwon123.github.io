@@ -1,18 +1,83 @@
+import type { ComponentPropsWithoutRef } from 'react'
+
 import { about, contact, experience, projects, skills } from '../content'
 import { useLanguage, useT } from '../i18n/hooks'
+import { formatUpdated, statFor } from '../lib/repoStats'
+import { useReveal } from '../lib/useReveal'
 import { BrandIcon } from './BrandIcon'
+import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
 
 import styles from './sections.module.css'
 
+/**
+ * A section or card that fades in once, as it scrolls into view.
+ *
+ * The element always carries `reveal` and gains `reveal-visible` when revealed;
+ * under reduced motion, or without an observer, the hook starts revealed — the
+ * visible state is the default and the hidden one the exception.
+ */
+function RevealSection({ className, ...rest }: ComponentPropsWithoutRef<'section'>) {
+  const [ref, revealed] = useReveal<HTMLElement>()
+  return <section ref={ref} className={revealClass(className, revealed)} {...rest} />
+}
+
+function RevealArticle({ className, ...rest }: ComponentPropsWithoutRef<'article'>) {
+  const [ref, revealed] = useReveal<HTMLElement>()
+  return <article ref={ref} className={revealClass(className, revealed)} {...rest} />
+}
+
+function revealClass(className: string | undefined, revealed: boolean): string {
+  return [className, 'reveal', revealed && 'reveal-visible'].filter(Boolean).join(' ')
+}
+
+/**
+ * The build-time repository facts for a card whose project names a `repo`:
+ * primary language, stars, and the month of the last push. Renders nothing when
+ * the snapshot has no entry, so a private, missing, or not-yet-collected repo
+ * keeps the static card rather than showing a broken one.
+ */
+function RepoFacts({ repo }: { repo: string | undefined }) {
+  const t = useT()
+  const { locale } = useLanguage()
+  const stat = statFor(repo)
+  if (!stat) return null
+  return (
+    <p className={styles.meta}>
+      {stat.language && `${stat.language} · `}
+      <span className={styles.srOnly}>{t.labels.stars} </span>
+      <span aria-hidden="true">★</span> {stat.stars}
+      {stat.pushedAt && (
+        <>
+          {' · '}
+          {t.labels.updated}{' '}
+          <time dateTime={stat.pushedAt}>{formatUpdated(stat.pushedAt, locale)}</time>
+        </>
+      )}
+    </p>
+  )
+}
+
 export function Hero() {
   const t = useT()
   return (
-    <section id="top" className={styles.section}>
-      <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
-      <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
-      <p className={styles.heroStack}>{t.hero.stack}</p>
-    </section>
+    <RevealSection id="top" tabIndex={-1} className={styles.section}>
+      <div className={styles.hero}>
+        <img
+          className={styles.avatar}
+          src="/avatar/felipeinoue-512.jpg"
+          alt={t.hero.avatarAlt}
+          width={128}
+          height={128}
+          decoding="async"
+        />
+        <div className={styles.heroText}>
+          <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
+          <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
+          <p className={styles.heroStack}>{t.hero.stack}</p>
+        </div>
+      </div>
+    </RevealSection>
   )
 }
 
@@ -20,12 +85,12 @@ export function About() {
   const { locale } = useLanguage()
   const t = useT()
   return (
-    <section id="about" className={styles.section}>
+    <RevealSection id="about" className={styles.section}>
       <h2>{t.nav.about}</h2>
       {about[locale].map((paragraph, index) => (
         <p key={index}>{paragraph}</p>
       ))}
-    </section>
+    </RevealSection>
   )
 }
 
@@ -33,13 +98,24 @@ export function Experience() {
   const t = useT()
   const { locale } = useLanguage()
   return (
-    <section id="experience" className={styles.section}>
+    <RevealSection id="experience" className={styles.section}>
       <h2>{t.nav.experience}</h2>
       <div className={styles.grid}>
         {experience.map((entry) => (
-          <article key={entry.id} className={styles.card}>
+          <RevealArticle key={entry.id} className={styles.card}>
             <header className={styles.cardHeader}>
-              <h3>{entry.company}</h3>
+              <div className={styles.cardTitle}>
+                <img
+                  className={styles.companyLogo}
+                  src={entry.logo}
+                  alt=""
+                  width={44}
+                  height={44}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>{entry.company}</h3>
+              </div>
               <span className={styles.meta}>
                 {entry.role[locale]} · {entry.period[locale]}
               </span>
@@ -49,32 +125,42 @@ export function Experience() {
               <ul className={styles.list}>
                 {entry.highlights[locale].map((highlight, index) => (
                   <li key={index}>
-                    <InlineMarkup text={highlight} />
+                    <InlineMarkup text={highlight} platforms={entry.platforms} />
+                  </li>
+                ))}
+              </ul>
+            )}
+            {entry.games && entry.games.length > 0 && (
+              <ul className={styles.games} aria-label={t.labels.games}>
+                {entry.games.map((game) => (
+                  <li key={game.name} className={styles.game}>
+                    <span className={styles.gameName}>{game.name}</span>
+                    {game.site && (
+                      <a href={game.site} aria-label={`${game.name} — ${t.labels.site}`}>
+                        {t.labels.site}
+                      </a>
+                    )}
+                    {game.trailer && (
+                      <a href={game.trailer} aria-label={`${game.name} — ${t.labels.trailer}`}>
+                        {t.labels.trailer}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
             {entry.gallery && entry.gallery.length > 0 && (
-              <div className={styles.gallery}>
-                {entry.gallery.map((src, index) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`${entry.company} — ${index + 1}`}
-                    className={styles.thumb}
-                  />
-                ))}
-              </div>
+              <Gallery images={entry.gallery} title={entry.company} />
             )}
             {entry.tech.length > 0 && (
               <p className={styles.meta}>
                 {t.labels.tech}: {entry.tech.join(', ')}
               </p>
             )}
-          </article>
+          </RevealArticle>
         ))}
       </div>
-    </section>
+    </RevealSection>
   )
 }
 
@@ -82,11 +168,11 @@ export function Projects() {
   const t = useT()
   const { locale } = useLanguage()
   return (
-    <section id="projects" className={styles.section}>
+    <RevealSection id="projects" className={styles.section}>
       <h2>{t.nav.projects}</h2>
       <div className={styles.grid}>
         {projects.map((project) => (
-          <article key={project.id} className={styles.card}>
+          <RevealArticle key={project.id} className={styles.card}>
             <header className={styles.cardHeader}>
               <h3>{project.name}</h3>
               {project.source === 'github' && project.url && <a href={project.url}>GitHub</a>}
@@ -95,28 +181,20 @@ export function Projects() {
                 <span className={styles.meta}>{t.labels.private}</span>
               )}
             </header>
+            <RepoFacts repo={project.repo} />
             <p>{project.description[locale]}</p>
             {project.gallery && project.gallery.length > 0 && (
-              <div className={styles.gallery}>
-                {project.gallery.map((src, index) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`${project.name} — ${index + 1}`}
-                    className={styles.thumb}
-                  />
-                ))}
-              </div>
+              <Gallery images={project.gallery} title={project.name} />
             )}
             {project.tech.length > 0 && (
               <p className={styles.meta}>
                 {t.labels.tech}: {project.tech.join(', ')}
               </p>
             )}
-          </article>
+          </RevealArticle>
         ))}
       </div>
-    </section>
+    </RevealSection>
   )
 }
 
@@ -124,7 +202,7 @@ export function Skills() {
   const t = useT()
   const { locale } = useLanguage()
   return (
-    <section id="skills" className={styles.section}>
+    <RevealSection id="skills" className={styles.section}>
       <h2>{t.nav.skills}</h2>
       {skills.map((group) => (
         <section key={group.id} className={styles.group}>
@@ -138,14 +216,14 @@ export function Skills() {
           </ul>
         </section>
       ))}
-    </section>
+    </RevealSection>
   )
 }
 
 export function Contact() {
   const t = useT()
   return (
-    <section id="contact" className={styles.section}>
+    <RevealSection id="contact" className={styles.section}>
       <h2>{t.nav.contact}</h2>
       <ul className={styles.list}>
         {contact.map((link) => (
@@ -154,6 +232,6 @@ export function Contact() {
           </li>
         ))}
       </ul>
-    </section>
+    </RevealSection>
   )
 }
