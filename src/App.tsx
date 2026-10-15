@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
@@ -10,6 +12,13 @@ import { useViewMode } from './lib/useViewMode'
 import { nextViewMode, sectionForCommand } from './lib/viewMode'
 import type { CommandName } from './terminal/parser'
 import { Terminal } from './terminal/Terminal'
+
+const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
+
+function sectionFromHash(): string | null {
+  const id = window.location.hash.slice(1)
+  return SECTION_IDS.includes(id) ? id : null
+}
 
 /**
  * Scroll the section a command names into view; the scroll reveal then fades it in
@@ -30,6 +39,21 @@ function App() {
 
   const terminal = view === 'terminal'
 
+  useEffect(() => {
+    const sync = () => {
+      if (view === 'terminal' && sectionFromHash()) {
+        setView('browse')
+        requestAnimationFrame(() => {
+          const id = sectionFromHash()
+          if (id) openSection(id)
+        })
+      }
+    }
+    sync()
+    window.addEventListener('hashchange', sync)
+    return () => window.removeEventListener('hashchange', sync)
+  }, [view, setView])
+
   function toggleView() {
     setView(nextViewMode(view))
   }
@@ -46,22 +70,23 @@ function App() {
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
       <Header view={view} onToggleView={toggleView} />
-      {terminal && (
-        <>
-          {/* In place of the hero: it carries #top and the page's only h1. */}
-          <WelcomeScreen />
-          <Terminal onCommand={handleCommand} autoFocus />
-        </>
-      )}
-      {/* #content, not #about: the About *section* owns #about, and two elements
-          claiming one id made the nav link and commands jump to the page top. */}
-      <main id="content">
-        {!terminal && <Hero />}
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Contact />
+      <main id="content" className={terminal ? 'terminal-shell' : undefined}>
+        {terminal ? (
+          <>
+            {/* In place of the hero: it carries #top and the page's only h1. */}
+            <WelcomeScreen />
+            <Terminal onCommand={handleCommand} autoFocus />
+          </>
+        ) : (
+          <>
+            <Hero />
+            <About />
+            <Experience />
+            <Projects />
+            <Skills />
+            <Contact />
+          </>
+        )}
       </main>
       <Footer />
       <BackToTop />

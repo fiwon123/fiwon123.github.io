@@ -3,8 +3,10 @@ import type { CommandName } from '../terminal/parser'
 /**
  * The two presentations of the site.
  *
- * `terminal` leads with the welcome screen and the terminal, and hides the header
- * navigation; commands reveal sections. `browse` is the conventional page.
+ * `terminal` shows the welcome screen and the terminal and nothing else: every
+ * command answers in the scrollback, and the page sections are not rendered.
+ * `browse` is the conventional page, where a command scrolls its section into
+ * view. The switch in the header moves between them.
  *
  * Pure and storage-shaped: the storage object is a parameter so the parsing and
  * the migration are testable without a browser, exactly like `reveal.ts`.
@@ -59,6 +61,10 @@ export function readViewMode(storage: ViewStorage | undefined): ViewMode {
 /**
  * The section a command opens, or null for commands that only talk.
  *
+ * In browse mode this scrolls the page. In terminal mode the section is not
+ * rendered, so the scroll is a no-op and the command's own output is the answer —
+ * the mapping stays the same for both.
+ *
  * `help` and `clear` must not move the page — the acceptance criterion is
  * explicit — and an unknown command never reaches here.
  */
@@ -66,6 +72,8 @@ export function sectionForCommand(name: CommandName): string | null {
   switch (name) {
     case 'about':
       return 'about'
+    case 'experience':
+      return 'experience'
     case 'projects':
       return 'projects'
     case 'skills':

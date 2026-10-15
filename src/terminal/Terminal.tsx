@@ -28,13 +28,13 @@ export function Terminal({ onCommand, autoFocus = false }: TerminalProps) {
   const [history, setHistory] = useState(EMPTY_HISTORY)
   const [entries, setEntries] = useState<Entry[]>([])
   const nextId = useRef(0)
-  const logRef = useRef<HTMLDivElement>(null)
+  const screenRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
 
   useEffect(() => {
-    if (!logRef.current) return
-    logRef.current.scrollTop = logRef.current.scrollHeight
+    if (!screenRef.current) return
+    screenRef.current.scrollTop = screenRef.current.scrollHeight
   }, [entries])
 
   useEffect(() => {
@@ -103,50 +103,52 @@ export function Terminal({ onCommand, autoFocus = false }: TerminalProps) {
           <p className={styles.hint}>{t.terminal.hint}</p>
         </header>
 
-        <div ref={logRef} className={styles.log} role="log" aria-live="polite">
-          <div className={styles.welcome}>{t.terminal.welcome}</div>
-          {entries.map((entry) => (
-            <div key={entry.id} className={styles.entry}>
-              <div className={styles.commandRow}>
-                {t.terminal.prompt} {entry.command}
+        <div ref={screenRef} className={styles.screen}>
+          <div className={styles.log} role="log" aria-live="polite">
+            <div className={styles.welcome}>{t.terminal.welcome}</div>
+            {entries.map((entry) => (
+              <div key={entry.id} className={styles.entry}>
+                <div className={styles.commandRow}>
+                  {t.terminal.prompt} {entry.command}
+                </div>
+                <div className={styles.lines}>
+                  {entry.lines.map((line, index) => {
+                    const tone = line.tone ?? 'normal'
+                    const className =
+                      tone === 'muted'
+                        ? styles.lineMuted
+                        : tone === 'accent'
+                          ? styles.lineAccent
+                          : undefined
+                    return (
+                      <div key={index} className={className}>
+                        {line.text}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-              <div className={styles.lines}>
-                {entry.lines.map((line, index) => {
-                  const tone = line.tone ?? 'normal'
-                  const className =
-                    tone === 'muted'
-                      ? styles.lineMuted
-                      : tone === 'accent'
-                        ? styles.lineAccent
-                        : undefined
-                  return (
-                    <div key={index} className={className}>
-                      {line.text}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <label className={styles.label} htmlFor={inputId}>
-            {t.terminal.prompt}
-          </label>
-          <input
-            id={inputId}
-            ref={inputRef}
-            className={styles.input}
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t.terminal.placeholder}
-            spellCheck={false}
-            autoComplete="off"
-          />
-          <span className={styles.cursor} aria-hidden="true" />
-        </form>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <label className={styles.label} htmlFor={inputId}>
+              {t.terminal.prompt}
+            </label>
+            <input
+              id={inputId}
+              ref={inputRef}
+              className={styles.input}
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t.terminal.placeholder}
+              spellCheck={false}
+              autoComplete="off"
+            />
+            <span className={styles.cursor} aria-hidden="true" />
+          </form>
+        </div>
       </div>
     </section>
   )

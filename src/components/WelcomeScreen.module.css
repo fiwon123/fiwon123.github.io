@@ -1,5 +1,6 @@
 .welcome {
   border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
 }
 
 /* Matches the terminal block it sits above, so the two read as one surface. */
@@ -8,8 +9,27 @@
   margin: 0 auto;
   padding: var(--space-8) var(--space-4);
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.text {
+  flex: 1 1 240px;
+  min-width: 0;
+  display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .name {
