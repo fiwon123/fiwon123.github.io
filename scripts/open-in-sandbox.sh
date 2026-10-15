@@ -11,6 +11,10 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 
 COMPOSE="${COMPOSE:-docker compose}"
+# `COMPOSE` is a command *plus arguments* ("docker compose"), so it is split into
+# an array here: quoting "$COMPOSE" would hand exec one string named
+# "docker compose" and fail with 127. `read -a` splits on IFS without globbing.
+read -r -a compose_cmd <<< "$COMPOSE"
 HOST_HOME="${HOST_HOME:-$HOME}"
 HOST_PROJECT_DIR="${HOST_PROJECT_DIR:-$ROOT_DIR}"
 
@@ -27,10 +31,16 @@ fi
 
 "$SCRIPT_DIR/resolve-gh-token.sh" --check >/dev/null 2>&1 || true
 
-"$SCRIPT_DIR/ensure-sandbox-running.sh" >/dev/null 2>&1 || "$COMPOSE" up -d --build dev
+"$SCRIPT_DIR/ensure-sandbox-running.sh" >/dev/null 2>&1 || "${compose_cmd[@]}" up -d --build dev
 
 if [ -t 0 ]; then
-    exec "$COMPOSE" exec -it dev zsh || exec "$COMPOSE" exec -it dev bash
+    exec_flags=(-it)
 else
-    exec "$COMPOSE" exec -T dev zsh || exec "$COMPOSE" exec -T dev bash
+    exec_flags=(-T)
 fi
+
+# Pick the shell *inside* the container and exec it directly. The old
+# `exec … zsh || exec … bash` form was unreachable: a non-interactive shell
+# exits when `exec` cannot run its command, so the fallback never executed.
+exec "${compose_cmd[@]}" exec "${exec_flags[@]}" dev sh -c \
+    'if command -v zsh >/dev/null 2>&1; then exec zsh; else exec bash; fi'
