@@ -1,0 +1,33 @@
+.button {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--color-fg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}
