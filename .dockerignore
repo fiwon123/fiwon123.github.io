@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+coverage
+.git
+.github
+.opencode/memory
+*.log
+.DS_Store

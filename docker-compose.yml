@@ -1,0 +1,49 @@
+# Dev sandbox compose file for the portfolio site.
+#
+#   make dev-up     build + start, then `make dev-log` to watch it
+#   make opencode   open opencode inside the sandbox
+#   make dev-shell  open a shell inside the sandbox
+#
+# There is no database or cache here: the site is a static frontend plus a Vite
+# dev server, so `dev` is the only service.
+
+name: felipeinoue-portfolio
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID:-1000}
+        HOST_GID: ${HOST_GID:-1000}
+    user: '${HOST_UID:-1000}:${HOST_GID:-1000}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    command: ['./scripts/dev-entrypoint.sh']
+    init: true
+    ports:
+      # Host port only; the container port is fixed. The host side is overridable
+      # per project via HOST_PORT so two dev sandboxes can run at once — two
+      # containers publishing the same host port means the second cannot program
+      # its mapping and can be left with no network attachment at all.
+      - '${HOST_PORT:-5173}:5173'
+    environment:
+      # Both names are forwarded: a project may set either one, and a container
+      # that gets neither shows up as an unauthenticated `gh`, not as a config
+      # error. Values come from the host at runtime and are never baked in.
+      - GH_TOKEN=${GH_TOKEN:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - HOME=/home/devuser
+      - VITE_PORT=5173
+    volumes:
+      - .:/workspace:cached
+      # Host config, read-only: the container never edits the host's gh or
+      # opencode state. `opencode` itself is a host file mounted in, so it can
+      # only be upgraded on the host (`make opencode-upgrade`).
+      - ${HOST_HOME:-${HOME}}/.config/gh:/home/devuser/.config/gh:ro
+      - ${HOST_HOME:-${HOME}}/.opencode/bin/opencode:/usr/local/bin/opencode:ro
+      - ${HOST_HOME:-${HOME}}/.config/opencode:/home/devuser/.config/opencode:ro
+      - ${HOST_HOME:-${HOME}}/.gitconfig:/home/devuser/.gitconfig:ro
+    tty: true
+    stdin_open: true

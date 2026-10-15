@@ -1,0 +1,8 @@
+# Toolchain pins for the host, and the version the dev image is built on.
+#
+# The sandbox image is node:22-bookworm, so the host pin must stay on the same
+# major or `npm ci` inside the container and on the host disagree about the
+# lockfile. See Dockerfile for the image side.
+
+[tools]
+node = "22"
