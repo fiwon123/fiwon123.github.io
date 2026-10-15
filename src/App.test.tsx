@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
+import { about, contact, experience, projects, skills } from './content'
 import { en } from './i18n/en'
 import { LanguageProvider } from './i18n/LanguageProvider'
 import { VIEW_KEY } from './lib/viewMode'
@@ -30,15 +31,6 @@ function submitCommand(text: string) {
   const form = input.closest('form')
   if (!form) throw new Error('the terminal input is not inside a form')
   fireEvent.submit(form)
-}
-
-/** Spy on one section's own scrollIntoView, so the assertion names the target. */
-function spyOnSection(id: string) {
-  const element = document.getElementById(id)
-  if (!element) throw new Error(`no #${id} in the document`)
-  const spy = vi.fn()
-  element.scrollIntoView = spy
-  return spy
 }
 
 beforeEach(() => {
@@ -101,51 +93,41 @@ describe('the switch', () => {
   })
 })
 
-describe('commands reveal their section', () => {
+describe('commands answer in the terminal', () => {
   it.each([
-    ['about', 'about'],
-    ['projects', 'projects'],
-    ['skills', 'skills'],
-    ['contact', 'contact'],
-  ])('%s scrolls to #%s', (command, id) => {
+    ['about', () => about.en[0], 'about'],
+    ['experience', () => experience[0].company, 'experience'],
+    ['projects', () => projects[0].name, 'projects'],
+    ['skills', () => skills[0].label.en, 'skills'],
+    ['contact', () => contact[0].url, 'contact'],
+  ])('%s prints its answer into the scrollback', (command, expected, id) => {
     renderApp()
-    const spy = spyOnSection(id)
     submitCommand(command)
-    expect(spy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
+    // The answer is in the terminal, and the section it names stayed unrendered.
+    expect(screen.getByText(expected(), { exact: false })).toBeTruthy()
+    expect(document.getElementById(id)).toBeNull()
   })
 
-  it('scrolls instantly when the visitor prefers reduced motion', () => {
-    window.matchMedia = ((query: string) => ({
-      matches: query.includes('prefers-reduced-motion'),
-      media: query,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-    })) as unknown as typeof window.matchMedia
-    try {
-      renderApp()
-      const spy = spyOnSection('about')
-      submitCommand('about')
-      expect(spy).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' })
-    } finally {
-      Reflect.deleteProperty(window, 'matchMedia')
-    }
-  })
-
-  it('leaves the page alone for help, clear and unknown commands', () => {
+  it('clears the scrollback without leaving the terminal', () => {
     renderApp()
-    const about = spyOnSection('about')
-    const projects = spyOnSection('projects')
-    submitCommand('help')
+    submitCommand('about')
+    expect(screen.getByText(about.en[0])).toBeTruthy()
     submitCommand('clear')
-    submitCommand('nonsense')
-    expect(about).not.toHaveBeenCalled()
-    expect(projects).not.toHaveBeenCalled()
+    expect(screen.queryByText(about.en[0])).toBeNull()
+    expect(terminalInput()).toBeTruthy()
   })
 
-  it('reaches the sections a command names in both modes', () => {
+  it('answers an unknown command without moving or breaking the page', () => {
+    renderApp()
+    submitCommand('nonsense')
+    expect(screen.getByText(`${en.terminal.unknown}: nonsense`)).toBeTruthy()
+    expect(terminalInput()).toBeTruthy()
+  })
+
+  it('renders the page sections only in browse, never beside the terminal', () => {
     renderApp()
     for (const id of SECTION_IDS) {
-      expect(document.getElementById(id)).toBeTruthy()
+      expect(document.getElementById(id)).toBeNull()
     }
     fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
     for (const id of SECTION_IDS) {
@@ -154,19 +136,59 @@ describe('commands reveal their section', () => {
   })
 })
 
+describe('deep links', () => {
+  it('opens browse mode and scrolls to the section the URL names', async () => {
+    window.location.hash = '#about'
+    // The scroll runs in a rAF after the browse render commits, so waiting for
+    // the call also proves the section made it into the document.
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    try {
+      renderApp()
+      await waitFor(() => expect(scrolled).toHaveBeenCalled())
+      expect((scrolled.mock.contexts[0] as HTMLElement).id).toBe('about')
+      expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
+    } finally {
+      window.location.hash = ''
+    }
+  })
+
+  it('scrolls instantly when the visitor prefers reduced motion', async () => {
+    window.location.hash = '#projects'
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    })) as unknown as typeof window.matchMedia
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    try {
+      renderApp()
+      await waitFor(() =>
+        expect(scrolled).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' }),
+      )
+    } finally {
+      Reflect.deleteProperty(window, 'matchMedia')
+      window.location.hash = ''
+    }
+  })
+})
+
 describe('document structure', () => {
   it('gives each id to exactly one element, in both modes', () => {
     // `<main id="about">` and the About `<section id="about">` used to collide,
     // which sent every #about link to the top of the page.
-    const assertUnique = () => {
-      for (const id of ['content', 'top', ...SECTION_IDS]) {
-        expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)
-      }
-    }
     renderApp()
-    assertUnique()
+    expect(document.querySelectorAll('#content').length).toBe(1)
+    expect(document.querySelectorAll('#top').length).toBe(1)
+    for (const id of SECTION_IDS) {
+      expect(document.querySelectorAll(`#${id}`).length).toBe(0)
+    }
     fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
-    assertUnique()
+    for (const id of ['content', 'top', ...SECTION_IDS]) {
+      expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)
+    }
   })
 
   it('has exactly one h1 in either mode', () => {

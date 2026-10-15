@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 
+import { about } from '../content'
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
@@ -32,37 +33,6 @@ function input() {
 afterEach(cleanup)
 
 describe('Terminal', () => {
-  it('reports a recognised command to its caller', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('about')
-    expect(onCommand).toHaveBeenCalledWith('about')
-  })
-
-  it('reports an alias as the command it resolves to', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('sobre')
-    expect(onCommand).toHaveBeenCalledWith('about')
-  })
-
-  it('reports help, which is recognised but opens nothing', () => {
-    // Which commands move the page is the section mapping's business, not ours:
-    // `help` is reported and `sectionForCommand('help')` returns null.
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('help')
-    expect(onCommand).toHaveBeenCalledWith('help')
-  })
-
-  it('reports nothing for an unknown or empty command', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('nonsense')
-    submit('   ')
-    expect(onCommand).not.toHaveBeenCalled()
-  })
-
   it('focuses the input when it opens as the view', () => {
     renderTerminal({ autoFocus: true })
     expect(document.activeElement).toBe(input())
@@ -73,27 +43,37 @@ describe('Terminal', () => {
     expect(document.activeElement).not.toBe(input())
   })
 
-  it('keeps focus in the input after a command that opens a section', () => {
-    // The loop is type-command-type; moving focus into the section would need a
-    // click before the next command.
-    renderTerminal({ onCommand: vi.fn(), autoFocus: true })
+  it('keeps focus in the input after a command, ready for the next one', () => {
+    // The loop is type-command-type; moving focus out would need a click before
+    // the next command.
+    renderTerminal({ autoFocus: true })
     submit('projects')
     expect(document.activeElement).toBe(input())
   })
 
-  it('still answers a command with output', () => {
+  it('answers a command with output', () => {
     renderTerminal()
     submit('help')
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
   })
 
-  it('empties the output on clear, and still reports it', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
+  it('prints an alias as the command it resolves to', () => {
+    renderTerminal()
+    submit('sobre')
+    expect(screen.getByText(about.en[0])).toBeTruthy()
+  })
+
+  it('prints an unknown command as such', () => {
+    renderTerminal()
+    submit('nonsense')
+    expect(screen.getByText(`${en.terminal.unknown}: nonsense`)).toBeTruthy()
+  })
+
+  it('empties the output on clear', () => {
+    renderTerminal()
     submit('help')
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
     submit('clear')
     expect(screen.queryByText(en.terminal.commands.help)).toBeNull()
-    expect(onCommand).toHaveBeenLastCalledWith('clear')
   })
 })

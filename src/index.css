@@ -1,6 +1,3 @@
-@import url('./theme/fonts.css');
-@import url('./theme/tokens.css');
-
 /* Reveal classes are applied by the library (and parsed by tests). */
 html.js .reveal {
   opacity: 0;
@@ -20,6 +17,7 @@ html.js .reveal-visible {
   html.js .reveal {
     transition: none;
     transform: none;
+    opacity: 1 !important;
   }
 }
 

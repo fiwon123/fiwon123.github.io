@@ -6,6 +6,7 @@ describe('parseCommand', () => {
   it('parses basic commands', () => {
     expect(parseCommand('help')).toEqual({ kind: 'command', name: 'help', args: [] })
     expect(parseCommand('about')).toEqual({ kind: 'command', name: 'about', args: [] })
+    expect(parseCommand('experience')).toEqual({ kind: 'command', name: 'experience', args: [] })
     expect(parseCommand('projects')).toEqual({ kind: 'command', name: 'projects', args: [] })
     expect(parseCommand('skills')).toEqual({ kind: 'command', name: 'skills', args: [] })
     expect(parseCommand('contact')).toEqual({ kind: 'command', name: 'contact', args: [] })
@@ -19,6 +20,7 @@ describe('parseCommand', () => {
   it('supports Portuguese aliases', () => {
     expect(parseCommand('ajuda')).toEqual({ kind: 'command', name: 'help', args: [] })
     expect(parseCommand('sobre')).toEqual({ kind: 'command', name: 'about', args: [] })
+    expect(parseCommand('experiencia')).toEqual({ kind: 'command', name: 'experience', args: [] })
     expect(parseCommand('projetos')).toEqual({ kind: 'command', name: 'projects', args: [] })
     expect(parseCommand('habilidades')).toEqual({ kind: 'command', name: 'skills', args: [] })
     expect(parseCommand('contato')).toEqual({ kind: 'command', name: 'contact', args: [] })

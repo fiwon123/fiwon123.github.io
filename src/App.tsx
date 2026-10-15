@@ -9,8 +9,7 @@ import { SkipLink } from './components/SkipLink'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { prefersReducedMotion } from './lib/reveal'
 import { useViewMode } from './lib/useViewMode'
-import { nextViewMode, sectionForCommand } from './lib/viewMode'
-import type { CommandName } from './terminal/parser'
+import { nextViewMode } from './lib/viewMode'
 import { Terminal } from './terminal/Terminal'
 
 const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
@@ -21,9 +20,9 @@ function sectionFromHash(): string | null {
 }
 
 /**
- * Scroll the section a command names into view; the scroll reveal then fades it in
- * as it arrives. Focus stays in the terminal input on purpose — it is the command
- * loop, and moving focus out would need a click before the next command.
+ * Scroll a deep-linked `#section` into view; the scroll reveal then fades it in as
+ * it arrives. Only used to land a link in browse mode, the one mode the sections
+ * are rendered in — commands answer in the terminal instead of navigating.
  */
 function openSection(id: string) {
   const target = document.getElementById(id)
@@ -58,11 +57,6 @@ function App() {
     setView(nextViewMode(view))
   }
 
-  function handleCommand(name: CommandName) {
-    const section = sectionForCommand(name)
-    if (section) openSection(section)
-  }
-
   return (
     <>
       {/* First focusable element: Tab once to reach it, Enter jumps to <main>. */}
@@ -75,7 +69,7 @@ function App() {
           <>
             {/* In place of the hero: it carries #top and the page's only h1. */}
             <WelcomeScreen />
-            <Terminal onCommand={handleCommand} autoFocus />
+            <Terminal autoFocus />
           </>
         ) : (
           <>

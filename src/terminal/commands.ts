@@ -35,7 +35,10 @@ export function runCommand(name: CommandName, t: Strings, locale: Locale): Termi
           { text: `  ${entry.period[locale]}`, tone: 'muted' },
         ]
         if (entry.games && entry.games.length > 0) {
-          lines.push({ text: `  ${t.labels.games}: ${entry.games.map((g) => g.name).join(', ')}`, tone: 'muted' })
+          lines.push({
+            text: `  ${t.labels.games}: ${entry.games.map((g) => g.name).join(', ')}`,
+            tone: 'muted',
+          })
         }
         return lines
       })

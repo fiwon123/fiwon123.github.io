@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent 
 import { useLanguage, useT } from '../i18n/hooks'
 import { runCommand, type TerminalLine } from './commands'
 import { EMPTY_HISTORY, nextEntry, previousEntry, pushEntry } from './history'
-import { parseCommand, type CommandName } from './parser'
+import { parseCommand } from './parser'
 
 import styles from './Terminal.module.css'
 
@@ -15,13 +15,11 @@ interface Entry {
 }
 
 export interface TerminalProps {
-  /** Called for every recognised command, so the view can act on it. */
-  onCommand?: (name: CommandName) => void
   /** Focus the input on mount — entering terminal mode should be ready to type. */
   autoFocus?: boolean
 }
 
-export function Terminal({ onCommand, autoFocus = false }: TerminalProps) {
+export function Terminal({ autoFocus = false }: TerminalProps) {
   const t = useT()
   const { locale } = useLanguage()
   const [input, setInput] = useState('')
@@ -61,9 +59,6 @@ export function Terminal({ onCommand, autoFocus = false }: TerminalProps) {
       ])
       return
     }
-    // Reported before the output is appended: the caller may scroll the page, and
-    // the terminal keeps focus so the next command can be typed straight away.
-    onCommand?.(parsed.name)
     if (parsed.name === 'clear') {
       setEntries([])
       return
