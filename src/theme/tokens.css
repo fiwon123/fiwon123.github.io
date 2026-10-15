@@ -1,0 +1,100 @@
+/* Design tokens.
+ *
+ * Colour palettes live here as CSS custom properties, so the first paint is
+ * correct without JavaScript. Every palette block below is checked for WCAG AA
+ * contrast by `src/theme/tokens.test.ts`, which parses this file — keep the
+ * `--color-*` names and the `[data-theme='…'][data-mode='…']` selectors stable,
+ * because the test resolves colours by name.
+ *
+ * `system` mode is resolved to `light` or `dark` before it reaches the
+ * document, so only the two concrete modes need palettes here.
+ */
+
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  --radius: 10px;
+  --max-width: 64rem;
+
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+}
+
+:root,
+[data-theme='studio'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #eef1f5;
+  --color-fg: #121417;
+  --color-fg-muted: #4b5563;
+  --color-accent: #1d4ed8;
+  --color-accent-contrast: #ffffff;
+  --color-border: #cbd3dd;
+}
+
+[data-theme='studio'][data-mode='dark'] {
+  color-scheme: dark;
+  --color-bg: #0e1116;
+  --color-surface: #161b22;
+  --color-fg: #e6edf3;
+  --color-fg-muted: #9aa7b4;
+  --color-accent: #6ea8fe;
+  --color-accent-contrast: #06121f;
+  --color-border: #2a323d;
+}
+
+[data-theme='paper'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #fdfaf4;
+  --color-surface: #f3ebdc;
+  --color-fg: #241c12;
+  --color-fg-muted: #6b5a41;
+  --color-accent: #8a4b12;
+  --color-accent-contrast: #fff8ef;
+  --color-border: #e3d7c3;
+}
+
+[data-theme='paper'][data-mode='dark'] {
+  color-scheme: dark;
+  --color-bg: #17130d;
+  --color-surface: #211b12;
+  --color-fg: #f2e9da;
+  --color-fg-muted: #b9a98e;
+  --color-accent: #e3a355;
+  --color-accent-contrast: #2a1c09;
+  --color-border: #3a3126;
+}
+
+[data-theme='terminal'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #f6f7f5;
+  --color-surface: #e9ebe7;
+  --color-fg: #10150f;
+  --color-fg-muted: #414b3f;
+  --color-accent: #0b6b3a;
+  --color-accent-contrast: #f2fff7;
+  --color-border: #c9cec4;
+}
+
+[data-theme='terminal'][data-mode='dark'] {
+  color-scheme: dark;
+  --color-bg: #05080a;
+  --color-surface: #0c1311;
+  --color-fg: #cdf5d6;
+  --color-fg-muted: #86b892;
+  --color-accent: #41e08a;
+  --color-accent-contrast: #03150c;
+  --color-border: #1b2a22;
+}
