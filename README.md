@@ -1,25 +1,27 @@
-# Felipe Inoue – Portfolio
+# felipeinoue.com
 
-Welcome to my personal portfolio website, built with [Hugo](https://gohugo.io/) and the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme.
+Personal portfolio of **Felipe Inoue** — a single-page static site built with
+**React + TypeScript + Vite**, deployed to GitHub Pages at
+<https://felipeinoue.com/>.
 
-## About
+This repository previously held a Hugo site. The Hugo sources are preserved at
+the tag `archive/hugo`; the rewrite is in progress on the `dev` branch.
 
-This site showcases my experience, projects, and background focused on:
-- My new journey
-- Game development
+## Development
 
-Live site: [fiwon123.github.io](https://fiwon123.github.io/)
+```bash
+npm install     # install dependencies
+npm run dev     # start the dev server
+make check      # format-check, lint, type-check, test, build
+```
 
-## Built With
+## Documentation
 
-- **Hugo** (v0.147.0)
-- **PaperMod** theme
-- GitHub Pages + GitHub Actions for deployment
-
-## Deployment
-
-This site is automatically deployed to GitHub Pages using a GitHub Actions workflow defined in `.github/workflows/`.
+Project conventions, the branching model, and the development workflow live in
+[`AGENTS.md`](./AGENTS.md). This README is expanded, with screenshots, in a
+follow-up change.
 
 ## License
 
-This repository contains only my personal portfolio. All content is © 2025 Felipe Inoue.
+All rights reserved. The source is public for reference; no license is granted
+for reuse.
