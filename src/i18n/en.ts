@@ -59,8 +59,6 @@ export const en = {
     prompt: 'visitor@felipeinoue ~ $',
     welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
-    show: 'Show terminal',
-    hide: 'Browse without terminal',
     commands: {
       help: 'List the available commands',
       about: 'Who I am and what I do',
@@ -69,6 +67,12 @@ export const en = {
       contact: 'How to get in touch',
       clear: 'Clear the output',
     },
+  },
+  view: {
+    toTerminal: 'Show terminal',
+    toBrowse: 'Browse normally',
+    welcomeBody:
+      'This page also runs as a terminal. Type a command to open a section — `about`, `projects`, `skills`, `contact` — or switch back to the conventional page.',
   },
   footer: {
     rights: 'All rights reserved.',
