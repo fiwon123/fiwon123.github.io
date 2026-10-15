@@ -3,6 +3,7 @@ import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { ParticleBackground } from './components/ParticleBackground'
 import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
+import { SkipLink } from './components/SkipLink'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { prefersReducedMotion } from './lib/reveal'
 import { useViewMode } from './lib/useViewMode'
@@ -40,6 +41,8 @@ function App() {
 
   return (
     <>
+      {/* First focusable element: Tab once to reach it, Enter jumps to <main>. */}
+      <SkipLink />
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
       <Header view={view} onToggleView={toggleView} />

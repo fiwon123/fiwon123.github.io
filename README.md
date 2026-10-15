@@ -4,17 +4,63 @@ Personal portfolio of **Felipe Inoue** — a single-page static site built with
 **React + TypeScript + Vite**, deployed to GitHub Pages at
 <https://felipeinoue.com/>.
 
-This repository previously held a Hugo site. The Hugo sources are preserved at
-the tag `archive/hugo`; the rewrite is in progress on the `dev` branch.
+![The terminal view, in dark mode](docs/screenshots/home-terminal-dark.png)
+
+## What it is
+
+A one-page site for a backend and tooling developer. It opens in a **terminal**:
+a real command line (`about`, `projects`, `skills`, …) that scrolls the page to
+the section a command names. A **browse** switch reveals a conventional layout
+with a navigation bar for visitors who would rather not type.
+
+It reads the same in either view: one page, English and Brazilian Portuguese,
+three colour presets in light, dark, or the system's choice, and a background of
+slow particles.
+
+## Features
+
+- **Terminal-first navigation** — a pure parser/history layer with EN/PT-BR
+  command aliases (`help`, `clear`, `about`, `projects`, `work`, …).
+- **Two views** — terminal or browse, remembered per visitor.
+- **Three theme presets** (Studio, Paper, Terminal) × light/dark/system, applied
+  before first paint so there is no flash of the wrong palette.
+- **Bilingual** — EN and PT-BR, with the document language kept in sync.
+- **Repository cards** — language, stars and last-push date, read from a
+  build-time snapshot (`npm run stats`), never from the browser.
+- **Accessible** — skip link, WCAG AA contrast enforced in tests, keyboard-operable
+  terminal, gallery, image viewer and back-to-top.
+- **Reduced-motion aware** — the particle layer and scroll reveals stand down.
+
+## Screenshots
+
+### Terminal view (default)
+
+| Light                                                             | Dark                                                            |
+| ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| ![Terminal view, light](docs/screenshots/home-terminal-light.png) | ![Terminal view, dark](docs/screenshots/home-terminal-dark.png) |
+
+### Browse view
+
+| Light                                                         | Dark                                                        |
+| ------------------------------------------------------------- | ----------------------------------------------------------- |
+| ![Browse view, light](docs/screenshots/home-browse-light.png) | ![Browse view, dark](docs/screenshots/home-browse-dark.png) |
+
+Regenerate these with `make screenshots` — see
+[`docs/screenshots/README.md`](docs/screenshots/README.md).
 
 ## Development
 
 ```bash
 npm install          # install dependencies
 npm run dev          # start the dev server
-make check           # sandbox config, format-check, lint, type-check, test, build
+make check           # sandbox config, project docs, format-check, lint, type-check, test, build
+npm run stats        # refresh the repository cards from the GitHub API (needs `gh`)
+make screenshots     # rebuild + capture the README images (needs Chrome)
 python3 scripts/fetch-fonts.py   # refresh the self-hosted webfonts
 ```
+
+This repository previously held a Hugo site. The Hugo sources are preserved at
+the tag `archive/hugo`.
 
 ## Dev sandbox
 
@@ -44,12 +90,13 @@ upgraded on the host (`make opencode-upgrade`).
   see `public/fonts/README.md`.
 - `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
   active theme colour.
+- `docs/screenshots/` — the images above; see
+  [`docs/screenshots/README.md`](docs/screenshots/README.md) to regenerate them.
 
 ## Documentation
 
-Project conventions, the branching model, and the development workflow live in
-[`AGENTS.md`](./AGENTS.md). This README is expanded, with screenshots, in a
-follow-up change.
+Project conventions, the branching model, the CI strategy, and the development
+workflow live in [`AGENTS.md`](./AGENTS.md).
 
 ## License
 

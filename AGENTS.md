@@ -44,8 +44,8 @@ GitHub Pages (felipeinoue.com)
 
 ```
 src/
-  components/      # UI components (Header, Footer, Sections, Preferences, Logo, BrandIcon)
-  content/         # Typed bilingual content (about, experience, projects, skills, contact)
+  components/      # UI components (Header, Footer, Sections, Gallery, Lightbox, SkipLink, …)
+  content/         # Typed bilingual content (about, experience, projects, skills, contact, repoStats.json)
   i18n/            # Language context/provider/hooks + dictionaries
   lib/             # Shared utilities/hooks
   assets/icons/    # Brand marks (masked with currentColor)
@@ -54,7 +54,8 @@ src/
   test/            # Entry/build/asset tests
   types.ts         # Shared types
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
-scripts/           # Asset tooling (fetch-fonts.py)
+docs/screenshots/  # Committed README images + regeneration notes
+scripts/           # Gates and tooling (check-docs.py, check-sandbox.py, fetch-fonts.py, repo-stats.mjs, screenshots.mjs)
 ```
 
 ## Development Commands
@@ -67,6 +68,7 @@ npm run dev           # Start dev server (http://localhost:5173)
 npm run build         # Build for production (outputs dist/)
 npm run preview       # Preview production build
 npm run stats         # Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
+npm run screenshots   # Capture the README images into docs/screenshots/ (needs Chrome)
 npm run lint          # Lint with oxlint
 npm run fmt           # Format with oxfmt
 npm run fmt:check     # Check formatting
@@ -82,6 +84,7 @@ make test             # npm run test
 make fmt              # npm run fmt
 make lint             # npm run lint
 make stats            # npm run stats
+make screenshots      # npm run build && npm run screenshots
 make help             # Show Makefile targets
 ```
 
@@ -125,6 +128,9 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - **Bilingual content**: EN and PT-BR live in the same typed records (never separate files); `en.ts` is source of truth, `pt-BR.ts` typed `: Strings`
 - **Themes**: 3 presets (Studio/Paper/Terminal) × 3 modes (light/dark/system); persisted with `portfolio.v1.*` keys; WCAG AA contrast enforced in tests
 - **Terminal**: Pure parser/history modules, EN/PT-BR aliases, accessible (`role="log" aria-live="polite"`), persisted visibility toggle
+- **Repository cards**: language/stars/last-push come from the committed build-time snapshot (`src/content/repoStats.json`, `npm run stats`); the browser never calls the GitHub API, and a repo with no snapshot entry keeps the static card
+- **Accessibility**: a skip link is the first focusable element and targets `<main id="content">`; focus-visible styles on every control; `document.documentElement.lang` tracks the chosen language
+- **README screenshots**: committed images under `docs/screenshots/`, reproduced by `make screenshots` (`scripts/screenshots.mjs`), which refuses to write a capture it cannot trust
 - **Formatting/Linting**: oxlint + oxfmt (0.x tools pinned via lockfile)
 - **Tests**: Unit tests for pure logic (parser/history), i18n parity, theme contrast/tokens, entry smoke test
 
@@ -133,8 +139,9 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - Static site (no backend, no database)
 - Node 22+, npm 10+. A dev sandbox (`Dockerfile` + `docker-compose.yml`) is
   optional — Docker is needed only for `make dev-up`/`make opencode`
-- `make check` is the local gate (CI only runs on release PRs to `main` and on
-  pushes to `dev` per workflows). It starts with `check-sandbox`, which validates
+- `make check` is the local gate. CI runs on `dev` (pull requests and pushes) and
+  `pages.yml` deploys on push to `main` — never on a feature-branch push, so run
+  `make check` before pushing. It starts with `check-sandbox`, which validates
   the dev sandbox config statically so a Docker-only mistake cannot sit
   unexamined; Docker itself is never exercised in CI
 - No secrets committed; `.env*` ignored (except `.env.example`)
