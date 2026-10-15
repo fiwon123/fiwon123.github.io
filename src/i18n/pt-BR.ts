@@ -56,9 +56,19 @@ export const ptBR: Strings = {
     label: 'Terminal',
     hint: 'Digite um comando e pressione Enter. Tente `help`, `about`, `projects`, `skills` ou `contact`.',
     placeholder: 'digite um comando…',
+    prompt: 'visitante@felipeinoue ~ $',
+    welcome: 'Bem-vindo. Digite `help` para listar os comandos.',
     unknown: 'comando não encontrado',
     show: 'Mostrar terminal',
-    hide: 'Ocultar terminal',
+    hide: 'Navegar sem terminal',
+    commands: {
+      help: 'Lista os comandos disponíveis',
+      about: 'Quem sou eu e o que faço',
+      projects: 'Ferramentas e projetos',
+      skills: 'Linguagens, dados e ferramentas',
+      contact: 'Como falar comigo',
+      clear: 'Limpa a saída',
+    },
   },
   footer: {
     rights: 'Todos os direitos reservados.',
@@ -66,6 +76,7 @@ export const ptBR: Strings = {
     source: 'Código-fonte',
   },
   a11y: {
-    skipToContent: 'Ir para o conteúdo',
+    skipToContent: 'Pular para o conteúdo',
+    mainNav: 'Principal',
   },
 }

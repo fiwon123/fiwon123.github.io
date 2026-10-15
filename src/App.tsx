@@ -1,32 +1,33 @@
-import { Preferences } from './components/Preferences'
-import { about } from './content'
-import { useLanguage, useT } from './i18n/hooks'
+import { Footer } from './components/Footer'
+import { Header } from './components/Header'
+import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
+import { usePersistentFlag } from './lib/usePersistentFlag'
+import { Terminal } from './terminal/Terminal'
 
-export default function App() {
-  const t = useT()
-  const { locale } = useLanguage()
+const TERMINAL_KEY = 'portfolio.v1.terminal'
+
+function App() {
+  const [terminalVisible, setTerminalVisible] = usePersistentFlag(TERMINAL_KEY, true)
+
+  function toggleTerminal() {
+    setTerminalVisible(!terminalVisible)
+  }
 
   return (
     <>
-      <a className="skip-link" href="#main">
-        {t.a11y.skipToContent}
-      </a>
-
-      <header className="hero">
-        <p className="hero-greeting">{t.hero.greeting}</p>
-        <h1 className="hero-headline">{t.hero.headline}</h1>
-        <p className="hero-stack">{t.hero.stack}</p>
-        <Preferences />
-      </header>
-
-      <main id="main">
-        <section>
-          <h2>{t.sections.about}</h2>
-          {about[locale].map((paragraph) => (
-            <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-          ))}
-        </section>
+      <Header terminalVisible={terminalVisible} onToggleTerminal={toggleTerminal} />
+      {terminalVisible && <Terminal />}
+      <main id="about">
+        <Hero />
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Contact />
       </main>
+      <Footer />
     </>
   )
 }
+
+export default App

@@ -55,9 +55,19 @@ export const en = {
     label: 'Terminal',
     hint: 'Type a command and press Enter. Try `help`, `about`, `projects`, `skills` or `contact`.',
     placeholder: 'type a command…',
+    prompt: 'visitor@felipeinoue ~ $',
+    welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
     show: 'Show terminal',
-    hide: 'Hide terminal',
+    hide: 'Browse without terminal',
+    commands: {
+      help: 'List the available commands',
+      about: 'Who I am and what I do',
+      projects: 'Tools and projects',
+      skills: 'Languages, data and tooling',
+      contact: 'How to get in touch',
+      clear: 'Clear the output',
+    },
   },
   footer: {
     rights: 'All rights reserved.',
@@ -66,6 +76,7 @@ export const en = {
   },
   a11y: {
     skipToContent: 'Skip to content',
+    mainNav: 'Main',
   },
 }
 
