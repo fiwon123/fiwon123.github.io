@@ -35,6 +35,16 @@ into the image), and `gh`/`opencode`/git config are mounted read-only. See
 `AGENTS.md` → "Dev sandbox" for the details, including why `opencode` must be
 upgraded on the host (`make opencode-upgrade`).
 
+## Assets
+
+- `public/avatar/felipeinoue-512.jpg` — the hero portrait, downloaded from the
+  GitHub profile. Re-download it when the profile photo changes:
+  `curl -fsSL "https://github.com/fiwon123.png?size=512" -o public/avatar/felipeinoue-512.jpg`
+- `public/fonts/` — self-hosted Space Grotesk and JetBrains Mono (SIL OFL 1.1);
+  see `public/fonts/README.md`.
+- `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
+  active theme colour.
+
 ## Documentation
 
 Project conventions, the branching model, and the development workflow live in

@@ -4,6 +4,27 @@
   margin: 0 auto;
 }
 
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.heroText {
+  min-width: 0;
+}
+
+.avatar {
+  flex: none;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
 .heroTitle {
   margin: 0;
   font-size: 2rem;
@@ -38,6 +59,35 @@
   gap: 0.5rem;
   align-items: baseline;
   justify-content: space-between;
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.companyLogo {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  filter: grayscale(1);
+  transition: filter 0.2s ease;
+}
+
+.card:hover .companyLogo,
+.card:focus-within .companyLogo {
+  filter: grayscale(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companyLogo {
+    transition: none;
+  }
 }
 
 .meta {

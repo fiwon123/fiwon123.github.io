@@ -9,9 +9,21 @@ export function Hero() {
   const t = useT()
   return (
     <section id="top" className={styles.section}>
-      <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
-      <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
-      <p className={styles.heroStack}>{t.hero.stack}</p>
+      <div className={styles.hero}>
+        <img
+          className={styles.avatar}
+          src="/avatar/felipeinoue-512.jpg"
+          alt={t.hero.avatarAlt}
+          width={128}
+          height={128}
+          decoding="async"
+        />
+        <div className={styles.heroText}>
+          <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
+          <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
+          <p className={styles.heroStack}>{t.hero.stack}</p>
+        </div>
+      </div>
     </section>
   )
 }
@@ -39,7 +51,18 @@ export function Experience() {
         {experience.map((entry) => (
           <article key={entry.id} className={styles.card}>
             <header className={styles.cardHeader}>
-              <h3>{entry.company}</h3>
+              <div className={styles.cardTitle}>
+                <img
+                  className={styles.companyLogo}
+                  src={entry.logo}
+                  alt=""
+                  width={44}
+                  height={44}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>{entry.company}</h3>
+              </div>
               <span className={styles.meta}>
                 {entry.role[locale]} · {entry.period[locale]}
               </span>
