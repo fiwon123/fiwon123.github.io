@@ -98,10 +98,22 @@ export interface ExperienceEntry {
   tech: string[]
 }
 
+/**
+ * One skill badge. `url` points at the tool's own site (or the closest official
+ * reference), and `blurb` is the one-line description a visitor reads in the
+ * hover/focus tooltip — it is also the badge link's accessible name, so both
+ * languages are required.
+ */
+export interface SkillItem {
+  name: string
+  url: string
+  blurb: Localized<string>
+}
+
 export interface SkillGroup {
   id: string
   label: Localized<string>
-  items: string[]
+  items: SkillItem[]
 }
 
 export interface ContactLink {
