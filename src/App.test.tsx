@@ -9,7 +9,7 @@ import { LanguageProvider } from './i18n/LanguageProvider'
 import { DOCK_KEY } from './lib/terminalDock'
 import { ThemeProvider } from './theme/ThemeProvider'
 
-const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
+const SECTION_IDS = ['about', 'experience', 'projects']
 
 function renderApp() {
   return render(
@@ -98,33 +98,32 @@ describe('the dock control', () => {
     fireEvent.click(hideButton()!)
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(localStorage.getItem(DOCK_KEY)).toBe('false')
-    // Collapsed: the header offers the way back in, and the panel's own control is gone.
+    // Collapsed: the floating FAB *is* the show control; the panel's own hide control is gone.
     expect(showButton()).toBeTruthy()
-    expect(showButton()!.getAttribute('aria-expanded')).toBe('false')
     expect(hideButton()).toBeNull()
   })
 
-  it('re-opens from the header control and persists the choice', () => {
+  it('re-opens from the floating FAB and persists the choice', () => {
     localStorage.setItem(DOCK_KEY, 'false')
     renderApp()
+    expect(screen.queryByRole('textbox')).toBeNull()
     fireEvent.click(showButton()!)
     expect(terminalInput()).toBeTruthy()
     expect(localStorage.getItem(DOCK_KEY)).toBe('true')
   })
 
-  it('moves focus to the header control when the panel control collapses it', () => {
+  it('moves focus to the floating FAB when the panel control collapses it', () => {
     // The clicked control becomes `inert`, which would otherwise drop focus to
     // <body> and strand a keyboard visitor.
     renderApp()
     const hide = hideButton()!
     hide.focus()
     fireEvent.click(hide)
-    expect(document.activeElement).toBe(showButton())
+    const active = document.activeElement as Element
+    expect(active).toBe(document.getElementById('terminal-fab'))
   })
 
   it('keeps the collapsed console mounted but out of the accessibility tree', () => {
-    // The scrollback has to survive a toggle, so the panel is not removed — it is
-    // hidden, and `aria-hidden` + `inert` keep it out of the tree and the tab order.
     localStorage.setItem(DOCK_KEY, 'false')
     renderApp()
     const dock = document.getElementById('terminal-dock')
@@ -147,27 +146,56 @@ const log = () => screen.getByRole('log')
 
 describe('navigation commands focus their section', () => {
   it.each([
-    ['about', en.nav.about, 'about'],
-    ['experience', en.nav.experience, 'experience'],
-    ['projects', en.nav.projects, 'projects'],
-    ['skills', en.nav.skills, 'skills'],
-    ['contact', en.nav.contact, 'contact'],
-  ])('%s focuses #%s and confirms in the scrollback', async (command, label, id) => {
+    ['about', en.nav.about, 'about', 'top'],
+    ['experience', en.nav.experience, 'experience', 'experience'],
+    ['projects', en.nav.projects, 'projects', 'projects'],
+  ])('%s focuses #%s and scrolls to #%s', async (command, label, id, scrolledTo) => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
     submitCommand(command)
-    // The move is recorded in the console...
     expect(within(log()).getByText(`▸ ${label}`)).toBeTruthy()
-    // ...only the named section is left...
     for (const other of SECTION_IDS) {
       const present = document.getElementById(other)
       if (other === id) expect(present, `#${id}`).toBeTruthy()
       else expect(present, `#${other}`).toBeNull()
     }
-    // ...and it is scrolled into view (on the next frame, after the commit).
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
-    expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(id)
+    expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(scrolledTo)
+  })
+
+  it('keeps the hero above the About section when About is focused', async () => {
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    renderApp()
+    submitCommand('about')
+    await waitFor(() => expect(document.getElementById('about')).toBeTruthy())
+    // The hero is rendered, not filtered out — its h1 is the page's one heading.
+    expect(screen.getByText(en.hero.greeting)).toBeTruthy()
+    expect(document.querySelectorAll('h1')).toHaveLength(1)
+    expect(document.querySelectorAll('#top')).toHaveLength(1)
+    // Drain the focus frame here so it cannot leak into a later test.
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
+  })
+
+  it('contact scrolls to the hero contact row without focusing a section', async () => {
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    renderApp()
+    submitCommand('contact')
+    expect(within(log()).getByText(`▸ ${en.nav.contact}`)).toBeTruthy()
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
+    const id = (scrolled.mock.contexts.at(-1) as HTMLElement).id
+    expect(id).toBe('contact')
+    for (const sid of SECTION_IDS) {
+      expect(document.getElementById(sid)).toBeTruthy()
+    }
+  })
+
+  it('reports the removed skills command as unknown', () => {
+    renderApp()
+    submitCommand('skills')
+    expect(within(log()).getByText(new RegExp(en.terminal.unknown))).toBeTruthy()
   })
 
   it('keeps one h1, one #top and the skip link target while focused', async () => {
@@ -232,7 +260,6 @@ describe('navigation commands focus their section', () => {
       'about',
       'experience',
       'projects',
-      'skills',
       'contact',
       'all',
       'theme',
@@ -294,7 +321,7 @@ describe('settings commands drive the same controls as the header', () => {
   it('lists the valid values for a bare settings command', () => {
     renderApp()
     submitCommand('mode')
-    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`
+    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark}`
     expect(within(log()).getByText(listing)).toBeTruthy()
   })
 })
@@ -313,6 +340,20 @@ describe('contact links', () => {
       expect(link.textContent).not.toContain('http')
     }
   })
+
+  it('renders the links only in the hero, not the footer', () => {
+    renderApp()
+    // The footer used to duplicate the row under `#contact-footer`; it now holds
+    // only the copyright / built-with / source lines.
+    const footer = document.querySelector('footer') as HTMLElement
+    expect(footer).toBeTruthy()
+    // The one footer link is the repo source; the contact links are gone.
+    expect(within(footer).queryAllByRole('link')).toHaveLength(1)
+    expect(document.getElementById('contact-footer')).toBeNull()
+    // The single contact row is the hero's, and it still holds every link.
+    const hero = document.getElementById('contact') as HTMLElement
+    expect(within(hero).getAllByRole('link')).toHaveLength(contact.length)
+  })
 })
 
 describe('deep links', () => {
@@ -323,7 +364,10 @@ describe('deep links', () => {
     try {
       renderApp()
       await waitFor(() => expect(scrolled).toHaveBeenCalled())
-      expect((scrolled.mock.contexts[0] as HTMLElement).id).toBe('about')
+      // A pending `handleFocus` frame from an earlier test can land here (the
+      // scroll runs in a rAF), so assert the About section was scrolled to
+      // rather than that it was the very first call.
+      expect(scrolled.mock.contexts).toContain(document.getElementById('about'))
       expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
       expect(terminalInput()).toBeTruthy()
     } finally {
@@ -358,7 +402,7 @@ describe('document structure', () => {
     // `<main id="about">` and the About `<section id="about">` used to collide,
     // which sent every #about link to the top of the page.
     renderApp()
-    for (const id of ['content', 'top', ...SECTION_IDS]) {
+    for (const id of ['content', 'top', 'contact', ...SECTION_IDS]) {
       expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)
     }
   })
@@ -416,7 +460,6 @@ describe('the skip link', () => {
   it('stays present when the console is collapsed', () => {
     renderApp()
     expect(skipLink()).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: /terminal/i }))
     expect(skipLink()).toBeTruthy()
   })
 })

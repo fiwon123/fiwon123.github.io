@@ -13,7 +13,7 @@
 @media (min-width: 68.01rem) {
   .dock {
     position: sticky;
-    top: var(--space-4);
+    top: calc(var(--header-h) + var(--space-4));
     /* `flex-basis: auto` lets `width` drive the column, so `width` is what
        animates; `flex-shrink: 0` stops the content column stealing from it. */
     flex: 0 0 auto;

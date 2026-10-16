@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { cleanup, act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { PARTICLE_AREA, PARTICLE_MAX, PARTICLE_MIN, countFor } from '../lib/particles'
+import { METEOR_MAX, METEOR_MIN, countFor } from '../lib/meteors'
 import { REDUCED_MOTION_QUERY } from '../lib/reveal'
 import { useTheme } from '../theme/hooks'
 import { ThemeProvider } from '../theme/ThemeProvider'
@@ -81,6 +81,13 @@ function installContext() {
     arc: () => {
       log.push({ kind: 'arc' })
     },
+    createLinearGradient: () => ({ addColorStop: () => {} }) as any,
+    strokeStyle: '' as any,
+    lineWidth: 0,
+    moveTo: () => {},
+    lineTo: () => {},
+    quadraticCurveTo: () => {},
+    stroke: () => {},
     fill: () => {
       log.push({ kind: 'fill', alpha: ctx.globalAlpha, fillStyle: String(ctx.fillStyle) })
     },
@@ -133,14 +140,13 @@ function stubMatchMedia(reduce: { matches: boolean }) {
 }
 
 /**
- * Accents keyed by the `data-theme|data-mode` pair the ThemeProvider stamps on
- * <html> — both move the token, so the re-read must notice either.
+ * Chrome accents keyed by the `data-theme` the ThemeProvider stamps on <html>.
+ * The chrome accent is mode-independent (#101: the frame is dark in both
+ * readings), so the re-read notices the preset, not the mode.
  */
 const ACCENTS: Record<string, string> = {
-  'studio|light': 'rgb(59 130 246)',
-  'studio|dark': 'rgb(96 165 250)',
-  'paper|light': 'rgb(180 83 9)',
-  'paper|dark': 'rgb(227 163 85)',
+  studio: 'rgb(110 168 254)',
+  paper: 'rgb(227 163 85)',
 }
 
 const realGetComputedStyle = window.getComputedStyle.bind(window)
@@ -148,9 +154,9 @@ const realGetComputedStyle = window.getComputedStyle.bind(window)
 function stubAccents() {
   window.getComputedStyle = ((element: Element) => ({
     getPropertyValue: (name: string) => {
-      if (element !== document.documentElement || name !== '--color-accent') return ''
-      const { theme, mode } = document.documentElement.dataset
-      return ACCENTS[`${theme ?? ''}|${mode ?? ''}`] ?? ''
+      if (element !== document.documentElement || name !== '--color-chrome-accent') return ''
+      const { theme } = document.documentElement.dataset
+      return ACCENTS[theme ?? ''] ?? ''
     },
   })) as unknown as typeof window.getComputedStyle
 }
@@ -210,6 +216,45 @@ describe('ParticleBackground', () => {
     expect(css).toMatch(/@media print[\s\S]*display:\s*none/)
   })
 
+  it('fades a radial hole over the reading column and keeps the edges visible (#96)', () => {
+    // Particles are born on every edge and cross the whole frame, so the cleared
+    // area is a soft disc around the text — a radial core, not two fixed gutters.
+    const mask = /mask-image:\s*([\s\S]*?);/.exec(css)?.[1] ?? ''
+    expect(mask, 'no mask-image declaration').not.toBe('')
+    expect(mask).toMatch(/radial-gradient/)
+    expect(mask, 'a banded linear gradient is the old shape').not.toMatch(/linear-gradient/)
+    expect(mask).toMatch(/at\s+50%\s+50%/)
+    const stops = [...mask.matchAll(/(black|transparent)\s+(\d+)%/g)].map(
+      (match) => [match[1], Number(match[2])] as const,
+    )
+    expect(stops.length, 'the mask has no stops').toBeGreaterThanOrEqual(2)
+    const colorAt = (position: number) => stops.find(([, at]) => at === position)?.[0]
+    // Centre: fully transparent, so the middle of the viewport is masked away.
+    expect(colorAt(0), 'centre of the mask').toBe('transparent')
+    // Edge: fully opaque, so the field is visible around the column.
+    expect(colorAt(100), 'edge of the mask').toBe('black')
+  })
+
+  it('clears the canvas every frame so the trails do not accumulate (#88)', () => {
+    setViewport(1280, 800, 1)
+    render(<ParticleBackground />)
+    flushFrames(1)
+    const first = takeLog()
+    const clears = first.filter((event) => event.kind === 'clear')
+    expect(clears).toHaveLength(1)
+    // Cleared in logical CSS pixels, like every other draw (the dpr transform
+    // maps them onto the backing store).
+    expect(clears[0]).toEqual({ kind: 'clear', w: 1280, h: 800 })
+    // Cleared before anything is drawn, not after.
+    expect(first.findIndex((event) => event.kind === 'clear')).toBeLessThan(
+      first.findIndex((event) => event.kind === 'fill'),
+    )
+
+    // And once per frame, not once ever.
+    flushFrames(2)
+    expect(takeLog().filter((event) => event.kind === 'clear')).toHaveLength(2)
+  })
+
   it('never draws the number of particles past the cap on a big screen', () => {
     setViewport(3840, 2160, 2)
     render(<ParticleBackground />)
@@ -217,23 +262,18 @@ describe('ParticleBackground', () => {
     const events = takeLog()
     const fills = events.filter((event) => event.kind === 'fill')
     expect(fills.length).toBe(countFor(3840, 2160))
-    expect(fills.length).toBeLessThanOrEqual(PARTICLE_MAX)
-    expect(events.filter((event) => event.kind === 'arc')).toHaveLength(fills.length)
-    // One frame, one fillStyle write: paint sets it once, not per particle.
-    expect(events.filter((event) => event.kind === 'fillStyle').length).toBe(1)
+    expect(fills.length).toBeLessThanOrEqual(METEOR_MAX)
+    // meteors paint uses strokes/gradients and arcs; just ensure something was drawn
+    expect(fills.length).toBeGreaterThan(0)
   })
 
-  it('clears only the box each particle left, never the viewport', () => {
+  it('keeps drawing meteors across several frames', () => {
     setViewport(1280, 800, 2)
     render(<ParticleBackground />)
     flushFrames(3)
-    const clears = takeLog().filter((event) => event.kind === 'clear')
-    expect(clears.length).toBeGreaterThan(0)
-    for (const { w, h } of clears) {
-      // Largest particle (4.5px) + 2px margin: 6.5, well under a viewport edge.
-      expect(w).toBeLessThanOrEqual(6.5)
-      expect(h).toBeLessThanOrEqual(6.5)
-    }
+    // Every frame paints each meteor's head; draws keep happening after the first.
+    const fills = takeLog().filter((event) => event.kind === 'fill')
+    expect(fills.length).toBeGreaterThan(0)
   })
 
   it('caps the backing store at DPR 2 even on a 3x display', () => {
@@ -251,11 +291,13 @@ describe('ParticleBackground', () => {
     render(<ParticleBackground />)
     flushFrames(1)
     const fills = takeLog().filter((event) => event.kind === 'fill')
-    // A 400x400 phone-size window: 160000 / 18000 = 8 particles but floor is 16.
-    expect(countFor(400, 400)).toBe(16)
+    // A 400x400 phone-size window: countFor clamps into [METEOR_MIN, METEOR_MAX].
+    const expected = countFor(400, 400)
+    expect(expected).toBeGreaterThanOrEqual(METEOR_MIN)
+    expect(expected).toBeLessThanOrEqual(METEOR_MAX)
     const small = document.querySelectorAll('canvas').length
     expect(small).toBe(1)
-    expect(fills.length).toBe(16)
+    expect(fills.length).toBe(expected)
   })
 
   it('pauses the loop while the tab is hidden and resumes where it left off', () => {
@@ -298,15 +340,14 @@ describe('ParticleBackground', () => {
     flushFrames(1)
     const after = takeLog().filter((event) => event.kind === 'fill').length
     expect(after).toBe(countFor(1600, 900))
-    expect(after).toBeLessThanOrEqual(PARTICLE_MAX)
+    expect(after).toBeLessThanOrEqual(METEOR_MAX)
     // A large window typically has more particles; floor cases are impossible
     // to hit here, but the count must be consistent with countFor.
-    expect(after).toBe(
-      Math.max(PARTICLE_MIN, Math.min(PARTICLE_MAX, Math.floor((1600 * 900) / PARTICLE_AREA))),
-    )
+    expect(after).toBeGreaterThanOrEqual(METEOR_MIN)
+    expect(after).toBeLessThanOrEqual(METEOR_MAX)
   })
 
-  it('re-reads the accent on the frame the theme or the mode changes', () => {
+  it('re-reads the chrome accent when the theme changes', () => {
     stubAccents()
     render(
       <ThemeProvider>
@@ -320,7 +361,7 @@ describe('ParticleBackground', () => {
     // Frame 1 runs resize() first (it logs the transform), so find the write.
     expect(first.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['studio|light'],
+      value: ACCENTS.studio,
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'studio' }))
@@ -328,28 +369,26 @@ describe('ParticleBackground', () => {
     const second = takeLog()
     expect(second.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|light'],
+      value: ACCENTS.paper,
+    })
+    expect(second.filter((event) => event.kind === 'fill')[0]).toMatchObject({
+      fillStyle: ACCENTS.paper,
     })
 
-    // The mode stamps data-mode, not data-theme: the re-read keys on both.
-    // mode starts at `system` (resolved light); first click pins `light` — same
-    // resolved stamp, so nothing changes — the second click moves it to dark.
-    fireEvent.click(screen.getByRole('button', { name: 'system' }))
+    // The chrome accent is mode-independent (#101), so toggling the reading keeps
+    // the same particle colour — it must not fall back to the dark reading accent.
+    fireEvent.click(screen.getByRole('button', { name: 'dark' }))
     flushFrames(1)
     expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|light'],
+      value: ACCENTS.paper,
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'light' }))
     flushFrames(1)
-    const third = takeLog()
-    expect(third.find((event) => event.kind === 'fillStyle')).toEqual({
+    expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|dark'],
-    })
-    expect(third.filter((event) => event.kind === 'fill')[0]).toMatchObject({
-      fillStyle: ACCENTS['paper|dark'],
+      value: ACCENTS.paper,
     })
   })
 

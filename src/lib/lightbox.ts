@@ -37,3 +37,51 @@ export function positionLabel(index: number, length: number): string {
   if (length <= 0) return ''
   return `${clampIndex(index, length) + 1} / ${length}`
 }
+
+/**
+ * The subset of a DOM rect the shared-element zoom needs. Kept structural (not
+ * `DOMRect`) so the maths is testable with plain objects — jsdom has no layout,
+ * so `getBoundingClientRect()` is all zeros and can never exercise this.
+ */
+export interface Rect {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+/** The transform that places a target element over an origin rect. */
+export interface ZoomTransform {
+  translateX: number
+  translateY: number
+  scaleX: number
+  scaleY: number
+}
+
+/** How long the close fade lasts (ms); the component's unmount timer matches it. */
+export const CLOSE_MS = 180
+
+/**
+ * The FLIP transform that draws `target` where `origin` is, about their centres:
+ * a translate of the centre delta plus a non-uniform scale. Applying it as the
+ * element's opening transform makes the image grow out of the thumbnail, then
+ * clearing it settles the image into place.
+ *
+ * Returns `null` when the target has no size to scale from (jsdom, or a hidden
+ * element) — there is nothing to animate, so the caller should just show it.
+ */
+export function zoomTransform(origin: Rect, target: Rect): ZoomTransform | null {
+  if (!(target.width > 0) || !(target.height > 0)) return null
+  return {
+    translateX: origin.x + origin.width / 2 - (target.x + target.width / 2),
+    translateY: origin.y + origin.height / 2 - (target.y + target.height / 2),
+    scaleX: origin.width / target.width,
+    scaleY: origin.height / target.height,
+  }
+}
+
+/** The `transform` value for a zoom transform, e.g. `translate(4px, 9px) scale(0.2, 0.2)`. */
+export function zoomTransformCss(transform: ZoomTransform): string {
+  const { translateX, translateY, scaleX, scaleY } = transform
+  return `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+}

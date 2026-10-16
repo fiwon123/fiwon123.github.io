@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { en } from '../i18n/en'
 import { ptBR } from '../i18n/pt-BR'
-import type { Mode, Preset } from '../theme/presets'
+import { MODES, PRESETS, type Mode, type Preset } from '../theme/presets'
 import type { Locale } from '../types'
 import { runSetting } from './settings'
 
@@ -40,7 +40,7 @@ describe('runSetting', () => {
   it('lists the presets and changes nothing without a valid value', () => {
     const s = settings()
     const listing = {
-      text: `${en.theme.label}: ${en.theme.presets.studio} · ${en.theme.presets.paper} · ${en.theme.presets.terminal}`,
+      text: `${en.theme.label}: ${PRESETS.map((preset) => en.theme.presets[preset]).join(' · ')}`,
       tone: 'muted' as const,
     }
     expect(runSetting('theme', [], en, s)).toEqual([listing])
@@ -50,20 +50,22 @@ describe('runSetting', () => {
 
   it('sets the mode and confirms it', () => {
     const s = settings()
-    expect(runSetting('mode', ['dark'], en, s)).toEqual([
-      { text: `▸ ${en.theme.modeLabel}: ${en.theme.modes.dark}`, tone: 'accent' },
+    expect(runSetting('mode', ['light'], en, s)).toEqual([
+      { text: `▸ ${en.theme.modeLabel}: ${en.theme.modes.light}`, tone: 'accent' },
     ])
-    expect(s.setMode).toHaveBeenCalledWith('dark')
+    expect(s.setMode).toHaveBeenCalledWith('light')
   })
 
   it('lists the modes and changes nothing without a valid value', () => {
     const s = settings()
     const listing = {
-      text: `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`,
+      text: `${en.theme.modeLabel}: ${MODES.map((mode) => en.theme.modes[mode]).join(' · ')}`,
       tone: 'muted' as const,
     }
     expect(runSetting('mode', [], en, s)).toEqual([listing])
     expect(runSetting('mode', ['blue'], en, s)).toEqual([listing])
+    // `system` is retired: it is not a value, so it answers with the choices.
+    expect(runSetting('mode', ['system'], en, s)).toEqual([listing])
     expect(s.setMode).not.toHaveBeenCalled()
   })
 

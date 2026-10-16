@@ -7,20 +7,19 @@ import { MODE_STORAGE_KEY, PRESET_STORAGE_KEY } from './presets'
 import { ThemeProvider } from './ThemeProvider'
 
 function Probe() {
-  const { preset, mode, resolvedMode, setPreset, setMode } = useTheme()
+  const { preset, mode, setPreset, setMode } = useTheme()
   return (
     <div>
       <span data-testid="preset">{preset}</span>
       <span data-testid="mode">{mode}</span>
-      <span data-testid="resolved">{resolvedMode}</span>
       <button
         type="button"
         onClick={() => {
-          setPreset('terminal')
-          setMode('dark')
+          setPreset('violet')
+          setMode('light')
         }}
       >
-        terminal-dark
+        violet-light
       </button>
     </div>
   )
@@ -43,38 +42,45 @@ beforeEach(() => {
 afterEach(cleanup)
 
 describe('ThemeProvider', () => {
-  it('defaults to the studio preset in system mode', () => {
+  it('defaults to the studio preset in dark mode', () => {
     renderProbe()
     expect(screen.getByTestId('preset').textContent).toBe('studio')
-    expect(screen.getByTestId('mode').textContent).toBe('system')
-    // jsdom has no matchMedia, so system resolves to light.
-    expect(screen.getByTestId('resolved').textContent).toBe('light')
+    expect(screen.getByTestId('mode').textContent).toBe('dark')
     expect(document.documentElement.dataset.theme).toBe('studio')
-    expect(document.documentElement.dataset.mode).toBe('light')
+    expect(document.documentElement.dataset.mode).toBe('dark')
   })
 
   it('applies and persists changes to the document element', () => {
     renderProbe()
 
-    fireEvent.click(screen.getByRole('button', { name: 'terminal-dark' }))
+    fireEvent.click(screen.getByRole('button', { name: 'violet-light' }))
 
-    expect(screen.getByTestId('preset').textContent).toBe('terminal')
-    expect(screen.getByTestId('mode').textContent).toBe('dark')
-    expect(screen.getByTestId('resolved').textContent).toBe('dark')
-    expect(document.documentElement.dataset.theme).toBe('terminal')
-    expect(document.documentElement.dataset.mode).toBe('dark')
-    expect(localStorage.getItem(PRESET_STORAGE_KEY)).toBe('terminal')
-    expect(localStorage.getItem(MODE_STORAGE_KEY)).toBe('dark')
+    expect(screen.getByTestId('preset').textContent).toBe('violet')
+    expect(screen.getByTestId('mode').textContent).toBe('light')
+    expect(document.documentElement.dataset.theme).toBe('violet')
+    expect(document.documentElement.dataset.mode).toBe('light')
+    expect(localStorage.getItem(PRESET_STORAGE_KEY)).toBe('violet')
+    expect(localStorage.getItem(MODE_STORAGE_KEY)).toBe('light')
   })
 
   it('restores a persisted preset and mode', () => {
-    localStorage.setItem(PRESET_STORAGE_KEY, 'paper')
-    localStorage.setItem(MODE_STORAGE_KEY, 'dark')
+    localStorage.setItem(PRESET_STORAGE_KEY, 'ember')
+    localStorage.setItem(MODE_STORAGE_KEY, 'light')
 
     renderProbe()
 
-    expect(screen.getByTestId('preset').textContent).toBe('paper')
+    expect(screen.getByTestId('preset').textContent).toBe('ember')
+    expect(screen.getByTestId('mode').textContent).toBe('light')
+    expect(document.documentElement.dataset.theme).toBe('ember')
+    expect(document.documentElement.dataset.mode).toBe('light')
+  })
+
+  it('ignores the retired `system` value and falls back to dark', () => {
+    localStorage.setItem(MODE_STORAGE_KEY, 'system')
+
+    renderProbe()
+
     expect(screen.getByTestId('mode').textContent).toBe('dark')
-    expect(document.documentElement.dataset.theme).toBe('paper')
+    expect(document.documentElement.dataset.mode).toBe('dark')
   })
 })

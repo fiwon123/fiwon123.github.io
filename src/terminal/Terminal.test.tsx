@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
+import { MODES, PRESETS } from '../theme/presets'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Terminal, type TerminalProps } from './Terminal'
 import { TerminalProvider } from './TerminalProvider'
@@ -104,14 +105,14 @@ describe('Terminal', () => {
   it('lists the valid values when a settings command has no argument', () => {
     renderTerminal()
     submit('theme')
-    const listing = `${en.theme.label}: ${en.theme.presets.studio} · ${en.theme.presets.paper} · ${en.theme.presets.terminal}`
+    const listing = `${en.theme.label}: ${PRESETS.map((preset) => en.theme.presets[preset]).join(' · ')}`
     expect(screen.getByText(listing)).toBeTruthy()
   })
 
   it('answers a bad value with the valid ones and changes nothing', () => {
     renderTerminal()
     submit('mode blue')
-    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`
+    const listing = `${en.theme.modeLabel}: ${MODES.map((mode) => en.theme.modes[mode]).join(' · ')}`
     expect(screen.getByText(listing)).toBeTruthy()
     expect(document.documentElement.dataset.mode).not.toBe('blue')
   })

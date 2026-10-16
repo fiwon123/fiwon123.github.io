@@ -7,9 +7,11 @@ import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { about, experience, projects, skills } from '../content'
+import { about, experience, projects, TECHNOLOGIES } from '../content'
+import type { TechName } from '../content/types'
+import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
 import { LanguageProvider } from '../i18n/LanguageProvider'
-import { About, Contact, Experience, Hero, Projects, Skills } from './Sections'
+import { About, Experience, Hero, Projects } from './Sections'
 
 type FakeEntry = { isIntersecting: boolean }
 
@@ -58,9 +60,10 @@ function classesOf(container: HTMLElement, tag: string): string[][] {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  localStorage.clear()
 })
 
-const sections = { Hero, About, Experience, Projects, Skills, Contact }
+const sections = { Hero, About, Experience, Projects }
 
 describe('reveal wiring', () => {
   // The acceptance criterion is on the rendered section, not on the hook: a
@@ -118,17 +121,11 @@ describe('reveal wiring', () => {
     for (const card of cards.slice(1)) expect([...card.classList]).not.toContain('reveal-visible')
   })
 
-  it('renders one card per project and one tag per skill', () => {
+  it('renders one card per project and keeps only the project Tech line', () => {
     withoutObserver()
     allowMotion()
-    const skillCount = skills.reduce((total, group) => total + group.items.length, 0)
-
     const { container: projectTree } = renderSection(<Projects />)
     expect(projectTree.querySelectorAll('article')).toHaveLength(projects.length)
-    cleanup()
-
-    const { container: skillTree } = renderSection(<Skills />)
-    expect(skillTree.querySelectorAll('li')).toHaveLength(skillCount)
   })
 
   it('renders every about paragraph, so none is dropped by the wrapper', () => {
@@ -170,23 +167,6 @@ describe('repository facts and game tiles (#20, #43)', () => {
     expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
   })
 
-  it('lists game names without sending visitors off-site', () => {
-    withoutObserver()
-    allowMotion()
-    const { container } = renderSection(<Experience />)
-    const lists = [...container.querySelectorAll('ul[aria-label="Games"]')]
-    expect(lists).toHaveLength(1)
-
-    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
-    expect(games.length).toBeGreaterThan(0)
-    expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
-    // The card names the titles and links out to nothing — the off-site anchors
-    // moved into the lightbox detail (#43).
-    expect(lists[0].querySelectorAll('a')).toHaveLength(0)
-    const listed = [...lists[0].querySelectorAll('li')].map((li) => li.textContent)
-    for (const game of games) expect(listed).toContain(game.name)
-  })
-
   it('gives every shipped title its own named gallery tile', () => {
     withoutObserver()
     allowMotion()
@@ -216,40 +196,131 @@ describe('repository facts and game tiles (#20, #43)', () => {
   })
 })
 
-const skillItems = skills.flatMap((group) => group.items)
-
-describe('skill badges (#44)', () => {
-  it('gives every skill an official URL and both blurbs', () => {
-    expect(skillItems.length).toBeGreaterThan(0)
-    for (const item of skillItems) {
-      expect(item.url, item.name).toMatch(/^https:\/\//)
-      expect(item.blurb.en.trim(), `${item.name} EN`).not.toBe('')
-      expect(item.blurb['pt-BR'].trim(), `${item.name} PT-BR`).not.toBe('')
-    }
-  })
-
-  it('links each badge to its reference with the blurb as its accessible name', () => {
+describe('skill badges removed (#87)', () => {
+  it('renders no skills block and no skill links in the hero', () => {
     withoutObserver()
     allowMotion()
-    const { container } = renderSection(<Skills />)
-    const links = [...container.querySelectorAll('a')]
-    expect(links).toHaveLength(skillItems.length)
+    const { container } = renderSection(<Hero />)
+    // The block is gone entirely: no `#skills` anchor, and the only links left
+    // are the contact row (each labelled with its own name, no ` — ` separator).
+    expect(container.querySelector('#skills')).toBeNull()
+    const skillLinks = [...container.querySelectorAll('a')].filter((node) =>
+      (node.getAttribute('aria-label') ?? '').includes(' — '),
+    )
+    expect(skillLinks).toHaveLength(0)
+  })
 
-    for (const item of skillItems) {
-      const accessibleName = `${item.name} — ${item.blurb.en}`
-      const link = links.find((node) => node.getAttribute('aria-label') === accessibleName)
-      expect(link, accessibleName).toBeTruthy()
-      expect(link?.getAttribute('href'), item.name).toBe(item.url)
-      expect(link?.getAttribute('target'), item.name).toBe('_blank')
-      expect(link?.getAttribute('rel'), item.name).toBe('noopener noreferrer')
-      // The blurb also shows as a tooltip, hidden from the accessibility tree so
-      // the badge is not announced twice.
-      const tip = link?.parentElement?.querySelector('[aria-hidden="true"]')
-      expect(tip?.textContent, item.name).toBe(item.blurb.en)
+  it('keeps the per-project Tech line on the project cards', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const cards = [...container.querySelectorAll('article')]
+    const withTech = cards.filter((card) => card.textContent?.includes('Tech:'))
+    expect(withTech.length).toBeGreaterThan(0)
+  })
+})
+
+describe('tech tags (#98)', () => {
+  const TECH_NAMES = new Set(Object.keys(TECHNOLOGIES))
+
+  /** The tag anchors inside a card — those whose visible text is a tech name. */
+  function tagAnchors(card: Element): HTMLAnchorElement[] {
+    return [...card.querySelectorAll('a')].filter((a) =>
+      TECH_NAMES.has(a.textContent ?? ''),
+    ) as HTMLAnchorElement[]
+  }
+
+  function cardFor(container: HTMLElement, heading: string): Element {
+    const card = [...container.querySelectorAll('article')].find(
+      (node) => node.querySelector('h3')?.textContent === heading,
+    )
+    if (!card) throw new Error(`no card for ${heading}`)
+    return card
+  }
+
+  it('renders one tag per technology, linked to its official site, on both card types', () => {
+    withoutObserver()
+    allowMotion()
+    const projectsTree = renderSection(<Projects />).container
+    for (const project of projects) {
+      const tags = tagAnchors(cardFor(projectsTree, project.name))
+      expect(
+        tags.map((tag) => tag.textContent),
+        project.name,
+      ).toEqual(project.tech)
+      for (const tag of tags) {
+        const name = tag.textContent as TechName
+        expect(tag.getAttribute('href'), name).toBe(TECHNOLOGIES[name].url)
+        expect(tag.getAttribute('target'), name).toBe('_blank')
+        expect(tag.getAttribute('rel'), name).toBe('noopener noreferrer')
+      }
+    }
+    cleanup()
+
+    const experienceTree = renderSection(<Experience />).container
+    for (const entry of experience) {
+      const tags = tagAnchors(cardFor(experienceTree, entry.company))
+      expect(
+        tags.map((tag) => tag.textContent),
+        entry.company,
+      ).toEqual(entry.tech)
     }
   })
 
-  it('keeps the badge stylesheet free of literal colours', () => {
+  it('gives a tag its blurb as the accessible name and the tooltip', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const tag = tagAnchors(container)[0]
+    expect(tag).toBeTruthy()
+    const name = tag.textContent as TechName
+    const blurb = TECHNOLOGIES[name].blurb.en
+    expect(tag.getAttribute('aria-label')).toBe(`${name} — ${blurb}`)
+    // The tooltip is present but hidden from assistive tech — the accessible
+    // name already carries it, so it is not read twice.
+    const tip = tag.parentElement?.querySelector('[aria-hidden="true"]')
+    expect(tip?.textContent).toBe(blurb)
+  })
+
+  it('reads the blurb in the chosen language', () => {
+    withoutObserver()
+    allowMotion()
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt-BR')
+    const { container } = renderSection(<Projects />)
+    const tag = tagAnchors(container)[0]
+    const name = tag.textContent as TechName
+    const blurb = TECHNOLOGIES[name].blurb['pt-BR']
+    expect(tag.getAttribute('aria-label')).toBe(`${name} — ${blurb}`)
+    expect(tag.parentElement?.querySelector('[aria-hidden="true"]')?.textContent).toBe(blurb)
+  })
+
+  it('keeps the Tech label beside the tags', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const card = container.querySelector('article') as Element
+    expect(card.textContent).toContain('Tech:')
+  })
+
+  it('names every technology with a real URL and both blurbs', () => {
+    // `Record<TechName, …>` makes a missing entry a compile error; this catches
+    // an empty value the type cannot.
+    for (const [name, tech] of Object.entries(TECHNOLOGIES)) {
+      expect(tech.url, name).toMatch(/^https:\/\/\S+$/)
+      expect(tech.blurb.en.length, name).toBeGreaterThan(0)
+      expect(tech.blurb['pt-BR'].length, name).toBeGreaterThan(0)
+    }
+    // And every name a card uses resolves — the runtime twin of the union.
+    const used = [
+      ...projects.flatMap((project) => project.tech),
+      ...experience.flatMap((entry) => entry.tech),
+    ]
+    for (const name of used) expect(TECHNOLOGIES[name], name).toBeTruthy()
+  })
+})
+
+describe('section stylesheet', () => {
+  it('stays free of literal colours, so every value is a token', () => {
     const cssPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css')
     const css = readFileSync(cssPath, 'utf8')
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)

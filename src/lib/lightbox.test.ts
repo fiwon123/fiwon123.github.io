@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { clampIndex, positionLabel, step } from './lightbox'
+import {
+  clampIndex,
+  positionLabel,
+  step,
+  zoomTransform,
+  zoomTransformCss,
+  type Rect,
+} from './lightbox'
 
 describe('step', () => {
   it('walks forward and wraps at the end', () => {
@@ -63,5 +70,63 @@ describe('positionLabel', () => {
 
   it('is empty for an empty gallery', () => {
     expect(positionLabel(0, 0)).toBe('')
+  })
+})
+
+/** A rect from its top-left corner and size, for readability. */
+const rect = (x: number, y: number, width: number, height: number): Rect => ({
+  x,
+  y,
+  width,
+  height,
+})
+
+describe('zoomTransform', () => {
+  it('lines the target up over the origin about their centres', () => {
+    // Target centred at (600, 400), 400x300; origin centred at (100, 120), 80x60.
+    const z = zoomTransform(rect(60, 90, 80, 60), rect(400, 250, 400, 300))
+    expect(z).not.toBeNull()
+    // translate moves the target centre (600,400) onto the origin centre (100,120).
+    expect(z!.translateX).toBe(100 - 600)
+    expect(z!.translateY).toBe(120 - 400)
+    // scale shrinks the target to the origin's size.
+    expect(z!.scaleX).toBeCloseTo(80 / 400, 10)
+    expect(z!.scaleY).toBeCloseTo(60 / 300, 10)
+  })
+
+  it('is identity when the origin and target are the same rect', () => {
+    const z = zoomTransform(rect(10, 20, 200, 120), rect(10, 20, 200, 120))!
+    expect(z.translateX).toBe(0)
+    expect(z.translateY).toBe(0)
+    expect(z.scaleX).toBe(1)
+    expect(z.scaleY).toBe(1)
+  })
+
+  it('keeps the same aspect ratio when origin and target share one', () => {
+    // The real case: the thumbnail keeps the image's aspect, so the scale is uniform.
+    const z = zoomTransform(rect(0, 0, 100, 50), rect(0, 0, 800, 400))!
+    expect(z.scaleX).toBe(z.scaleY)
+  })
+
+  it('returns null when the target has no size to animate from', () => {
+    // jsdom reports every rect as 0x0; there is nothing to scale toward.
+    expect(zoomTransform(rect(0, 0, 100, 50), rect(0, 0, 0, 0))).toBeNull()
+    expect(zoomTransform(rect(0, 0, 100, 50), rect(0, 0, 100, 0))).toBeNull()
+    expect(zoomTransform(rect(0, 0, 100, 50), rect(0, 0, 0, 50))).toBeNull()
+  })
+
+  it('still maps a zero-sized origin (a collapsed thumbnail) onto the target', () => {
+    const z = zoomTransform(rect(50, 50, 0, 0), rect(0, 0, 200, 200))
+    expect(z).not.toBeNull()
+    expect(z!.scaleX).toBe(0)
+    expect(z!.scaleY).toBe(0)
+  })
+})
+
+describe('zoomTransformCss', () => {
+  it('renders the transform as a translate and a scale', () => {
+    expect(zoomTransformCss({ translateX: 4, translateY: -9.5, scaleX: 0.25, scaleY: 0.5 })).toBe(
+      'translate(4px, -9.5px) scale(0.25, 0.5)',
+    )
   })
 })

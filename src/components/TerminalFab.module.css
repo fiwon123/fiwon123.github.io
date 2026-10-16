@@ -1,0 +1,37 @@
+/* The re-open control, shown only while the console is collapsed. It is a
+   labelled pill in the bottom-right corner the dock occupies, stacked clear of
+   the back-to-top button (44px tall) that shares the corner. */
+.fab {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--space-4) + 44px + var(--space-3));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  border: 1px solid var(--color-chrome-border);
+  background: var(--color-chrome-surface);
+  color: var(--color-chrome-fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.fab:hover,
+.fab:focus-visible {
+  outline: 2px solid var(--color-chrome-accent);
+  outline-offset: 2px;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+  flex: none;
+}
+
+.label {
+  white-space: nowrap;
+}

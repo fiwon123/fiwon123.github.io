@@ -6,8 +6,15 @@
  * `--color-*` names and the `[data-theme='…'][data-mode='…']` selectors stable,
  * because the test resolves colours by name.
  *
- * `system` mode is resolved to `light` or `dark` before it reaches the
- * document, so only the two concrete modes need palettes here.
+ * Two axes: 5 presets × 2 readings (`light`/`dark`). `dark` is the default, so
+ * the first paint is the studio dark palette before the provider writes a stamp.
+ *
+ * Each palette has two surfaces: the **reading** tokens (`--color-bg`/`-surface`/
+ * `-fg`/`-fg-muted`/`-border`) paint the centred content column, and the **chrome**
+ * tokens (`--color-chrome-*`) paint the page sides, header and footer. Chrome is
+ * deliberately dark in *both* readings — the light/dark choice is a reading feature,
+ * not a page-wide one — but keeps each preset's hue so the frame still has an
+ * identity. `tokens.test.ts` gates AA on both surfaces.
  */
 
 :root {
@@ -30,6 +37,7 @@
   /* The page frame: the header and the content/dock row share it, so the header
      chrome lines up with the page instead of the viewport edges. */
   --page-max: 88rem;
+  --header-h: 3.5rem;
 
   --step-0: 1rem;
   --step-1: 1.25rem;
@@ -39,7 +47,7 @@
   /* Overlay chrome: the scrim and the controls that sit on it.
    *
    * Deliberately *not* derived from the page palette, and deliberately the same
-   * in every preset. The scrim is 82% black, so the surface it produces is
+   * in every theme. The scrim is 82% black, so the surface it produces is
    * near-black whatever the page is — `#eef1f5` dimmed is (44,44,44) in a light
    * preset and `#161b22` dimmed is (1,1,2) in a dark one. Page tokens cannot
    * clear WCAG 1.4.11 (3:1 for a control boundary) against both: `--color-surface`
@@ -54,26 +62,8 @@
   --color-overlay-chrome-fg: #1a1a1a;
 }
 
-/* Skill-badge tints, one per skill group. Used only for the badge's non-text
-   dot — the label keeps `--color-fg` — so each only needs 3:1 (WCAG 1.4.11)
-   against `--color-surface`, the badge's own background. `tokens.test.ts`
-   recomputes that ratio per palette from these values. */
+/* The default reading: studio, dark. */
 :root,
-[data-theme='studio'][data-mode='light'] {
-  color-scheme: light;
-  --color-bg: #ffffff;
-  --color-surface: #eef1f5;
-  --color-fg: #121417;
-  --color-fg-muted: #4b5563;
-  --color-accent: #1d4ed8;
-  --color-accent-contrast: #ffffff;
-  --color-border: #cbd3dd;
-  --color-tag-lang: #2563eb;
-  --color-tag-data: #0f766e;
-  --color-tag-tool: #b45309;
-  --color-tag-game: #7c3aed;
-}
-
 [data-theme='studio'][data-mode='dark'] {
   color-scheme: dark;
   --color-bg: #0e1116;
@@ -83,10 +73,29 @@
   --color-accent: #6ea8fe;
   --color-accent-contrast: #06121f;
   --color-border: #2a323d;
-  --color-tag-lang: #60a5fa;
-  --color-tag-data: #34d399;
-  --color-tag-tool: #fbbf24;
-  --color-tag-game: #c4b5fd;
+  --color-chrome-bg: #0a0d12;
+  --color-chrome-fg: #e6edf3;
+  --color-chrome-muted: #9aa7b4;
+  --color-chrome-border: #242c36;
+  --color-chrome-surface: #151a22;
+  --color-chrome-accent: #6ea8fe;
+}
+
+[data-theme='studio'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #eef1f5;
+  --color-fg: #121417;
+  --color-fg-muted: #4b5563;
+  --color-accent: #1d4ed8;
+  --color-accent-contrast: #ffffff;
+  --color-border: #cbd3dd;
+  --color-chrome-bg: #0a0d12;
+  --color-chrome-fg: #e6edf3;
+  --color-chrome-muted: #9aa7b4;
+  --color-chrome-border: #242c36;
+  --color-chrome-surface: #151a22;
+  --color-chrome-accent: #6ea8fe;
 }
 
 [data-theme='paper'][data-mode='light'] {
@@ -98,10 +107,12 @@
   --color-accent: #8a4b12;
   --color-accent-contrast: #fff8ef;
   --color-border: #e3d7c3;
-  --color-tag-lang: #2563eb;
-  --color-tag-data: #0f766e;
-  --color-tag-tool: #b45309;
-  --color-tag-game: #7c3aed;
+  --color-chrome-bg: #141009;
+  --color-chrome-fg: #f2e9da;
+  --color-chrome-muted: #bfae92;
+  --color-chrome-border: #332c21;
+  --color-chrome-surface: #1e1810;
+  --color-chrome-accent: #e3a355;
 }
 
 [data-theme='paper'][data-mode='dark'] {
@@ -113,10 +124,12 @@
   --color-accent: #e3a355;
   --color-accent-contrast: #2a1c09;
   --color-border: #3a3126;
-  --color-tag-lang: #60a5fa;
-  --color-tag-data: #34d399;
-  --color-tag-tool: #fbbf24;
-  --color-tag-game: #c4b5fd;
+  --color-chrome-bg: #141009;
+  --color-chrome-fg: #f2e9da;
+  --color-chrome-muted: #bfae92;
+  --color-chrome-border: #332c21;
+  --color-chrome-surface: #1e1810;
+  --color-chrome-accent: #e3a355;
 }
 
 [data-theme='terminal'][data-mode='light'] {
@@ -128,10 +141,12 @@
   --color-accent: #0b6b3a;
   --color-accent-contrast: #f2fff7;
   --color-border: #c9cec4;
-  --color-tag-lang: #2563eb;
-  --color-tag-data: #0f766e;
-  --color-tag-tool: #b45309;
-  --color-tag-game: #7c3aed;
+  --color-chrome-bg: #05080a;
+  --color-chrome-fg: #cdf5d6;
+  --color-chrome-muted: #86b892;
+  --color-chrome-border: #17241d;
+  --color-chrome-surface: #0a1210;
+  --color-chrome-accent: #41e08a;
 }
 
 [data-theme='terminal'][data-mode='dark'] {
@@ -143,8 +158,80 @@
   --color-accent: #41e08a;
   --color-accent-contrast: #03150c;
   --color-border: #1b2a22;
-  --color-tag-lang: #60a5fa;
-  --color-tag-data: #34d399;
-  --color-tag-tool: #fbbf24;
-  --color-tag-game: #c4b5fd;
+  --color-chrome-bg: #05080a;
+  --color-chrome-fg: #cdf5d6;
+  --color-chrome-muted: #86b892;
+  --color-chrome-border: #17241d;
+  --color-chrome-surface: #0a1210;
+  --color-chrome-accent: #41e08a;
+}
+
+/* Violet: cool lavender surfaces, a purple accent distinct from Studio's blue. */
+[data-theme='violet'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #fbfaff;
+  --color-surface: #f0ecfa;
+  --color-fg: #1a1523;
+  --color-fg-muted: #574d6b;
+  --color-accent: #6d28d9;
+  --color-accent-contrast: #ffffff;
+  --color-border: #ddd4ee;
+  --color-chrome-bg: #0f0b19;
+  --color-chrome-fg: #ece7f7;
+  --color-chrome-muted: #b3a8cb;
+  --color-chrome-border: #2a2340;
+  --color-chrome-surface: #191428;
+  --color-chrome-accent: #a78bfa;
+}
+
+[data-theme='violet'][data-mode='dark'] {
+  color-scheme: dark;
+  --color-bg: #120f1c;
+  --color-surface: #1c1729;
+  --color-fg: #ece7f7;
+  --color-fg-muted: #a79bc0;
+  --color-accent: #a78bfa;
+  --color-accent-contrast: #1a1030;
+  --color-border: #2e2740;
+  --color-chrome-bg: #0f0b19;
+  --color-chrome-fg: #ece7f7;
+  --color-chrome-muted: #b3a8cb;
+  --color-chrome-border: #2a2340;
+  --color-chrome-surface: #191428;
+  --color-chrome-accent: #a78bfa;
+}
+
+/* Ember: warm surfaces, a burnt-orange accent distinct from Paper's brown. */
+[data-theme='ember'][data-mode='light'] {
+  color-scheme: light;
+  --color-bg: #fffaf7;
+  --color-surface: #fbeee4;
+  --color-fg: #23130c;
+  --color-fg-muted: #6d4b36;
+  --color-accent: #c2410c;
+  --color-accent-contrast: #fff8f2;
+  --color-border: #edd9c9;
+  --color-chrome-bg: #130b07;
+  --color-chrome-fg: #f5e8e0;
+  --color-chrome-muted: #c9a995;
+  --color-chrome-border: #33221a;
+  --color-chrome-surface: #1d120c;
+  --color-chrome-accent: #fb923c;
+}
+
+[data-theme='ember'][data-mode='dark'] {
+  color-scheme: dark;
+  --color-bg: #180f0b;
+  --color-surface: #221712;
+  --color-fg: #f5e8e0;
+  --color-fg-muted: #c0a08d;
+  --color-accent: #fb923c;
+  --color-accent-contrast: #2a1408;
+  --color-border: #38261d;
+  --color-chrome-bg: #130b07;
+  --color-chrome-fg: #f5e8e0;
+  --color-chrome-muted: #c9a995;
+  --color-chrome-border: #33221a;
+  --color-chrome-surface: #1d120c;
+  --color-chrome-accent: #fb923c;
 }

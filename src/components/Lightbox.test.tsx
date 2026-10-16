@@ -3,14 +3,17 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { GalleryItem } from '../content/types'
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
+import { zoomTransform, zoomTransformCss } from '../lib/lightbox'
 import { Gallery } from './Gallery'
 import { Lightbox } from './Lightbox'
+
+import styles from './Lightbox.module.css'
 
 const dir = path.dirname(fileURLToPath(import.meta.url))
 const css = readFileSync(path.join(dir, 'Lightbox.module.css'), 'utf8')
@@ -72,9 +75,54 @@ function openFirstThumbnail() {
   return thumbs[0]
 }
 
+/** requestAnimationFrame stub: the FLIP clears its start transform on the frame
+ * after the layout effect, so the test can observe it before flushing. */
+let rafQueue: FrameRequestCallback[] = []
+
+function flushRaf() {
+  const batch = rafQueue
+  rafQueue = []
+  for (const callback of batch) callback(0)
+}
+
+/** A DOMRect-shaped object for an injected rect, so the maths is exercised. */
+function domRect(x: number, y: number, width: number, height: number): DOMRect {
+  return {
+    x,
+    y,
+    width,
+    height,
+    top: y,
+    left: x,
+    right: x + width,
+    bottom: y + height,
+    toJSON: () => ({}),
+  } as DOMRect
+}
+
+function stubReducedMotion() {
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: query.includes('reduced-motion'),
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }))
+}
+
+beforeEach(() => {
+  rafQueue = []
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+    rafQueue.push(callback)
+    return rafQueue.length
+  })
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+})
+
 afterEach(() => {
   cleanup()
   document.documentElement.style.overflow = ''
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('Gallery thumbnails', () => {
@@ -118,6 +166,88 @@ describe('Gallery game tiles', () => {
     renderGameGallery()
     const thumb = screen.getByRole('button', { name: `${en.a11y.openImage}: Virtuoso — 2` })
     expect(thumb.querySelector('img')?.getAttribute('alt')).toBe('')
+  })
+})
+
+describe('Lightbox zoom', () => {
+  const ORIGIN = { x: 40, y: 60, width: 160, height: 90 }
+  const TARGET = { x: 200, y: 100, width: 800, height: 450 }
+
+  function openAndLoad() {
+    renderGallery()
+    openFirstThumbnail()
+    const img = screen.getByRole('dialog').querySelector('img') as HTMLImageElement
+    Object.defineProperty(img, 'naturalWidth', { value: 1600, configurable: true })
+    Object.defineProperty(img, 'naturalHeight', { value: 900, configurable: true })
+    fireEvent.load(img)
+    return img
+  }
+
+  it('grows the image out of the clicked thumbnail, then settles', () => {
+    vi.spyOn(HTMLButtonElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(ORIGIN.x, ORIGIN.y, ORIGIN.width, ORIGIN.height),
+    )
+    vi.spyOn(HTMLImageElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(TARGET.x, TARGET.y, TARGET.width, TARGET.height),
+    )
+
+    const img = openAndLoad()
+    // The start transform is applied before paint (the layout effect), so it is
+    // observable until the next frame clears it.
+    const expected = zoomTransformCss(zoomTransform(ORIGIN, TARGET)!)
+    expect(img.style.transform).toBe(expected)
+
+    flushRaf()
+    expect(img.style.transform).toBe('')
+  })
+
+  it('does not start from the poster until the real aspect is known', () => {
+    vi.spyOn(HTMLButtonElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(ORIGIN.x, ORIGIN.y, ORIGIN.width, ORIGIN.height),
+    )
+    vi.spyOn(HTMLImageElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(TARGET.x, TARGET.y, TARGET.width, TARGET.height),
+    )
+    renderGallery()
+    openFirstThumbnail()
+    // Before the image loads there is no aspect to measure against, so nothing
+    // is transformed — and the image is held back rather than flashing in place.
+    const content = screen.getByRole('dialog')
+    const img = content.querySelector('img') as HTMLImageElement
+    expect(img.style.transform).toBe('')
+    expect(img.style.opacity).toBe('0')
+  })
+
+  it('skips the zoom under reduced motion', () => {
+    stubReducedMotion()
+    vi.spyOn(HTMLButtonElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(ORIGIN.x, ORIGIN.y, ORIGIN.width, ORIGIN.height),
+    )
+    vi.spyOn(HTMLImageElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      domRect(TARGET.x, TARGET.y, TARGET.width, TARGET.height),
+    )
+    const img = openAndLoad()
+    expect(img.style.transform).toBe('')
+    expect(rafQueue).toHaveLength(0)
+    // …and the image is shown, not left hidden.
+    expect(img.style.opacity).toBe('')
+  })
+
+  it('shows the image plainly when there is no origin', () => {
+    render(
+      <LanguageProvider>
+        <Lightbox
+          items={plainItems(IMAGES)}
+          index={0}
+          title="Astrea"
+          onClose={() => {}}
+          onNavigate={() => {}}
+        />
+      </LanguageProvider>,
+    )
+    const img = screen.getByRole('dialog').querySelector('img') as HTMLImageElement
+    expect(img.style.transform).toBe('')
+    expect(img.style.opacity).toBe('')
   })
 })
 
@@ -203,20 +333,40 @@ describe('Lightbox trailer facade', () => {
 })
 
 describe('Lightbox modal contract', () => {
-  it('closes on Escape', () => {
+  it('closes on Escape', async () => {
+    renderGallery()
+    openFirstThumbnail()
+    fireEvent.keyDown(document, { key: 'Escape' })
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  it('closes at once under reduced motion, with no fade', () => {
+    stubReducedMotion()
     renderGallery()
     openFirstThumbnail()
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).toBeNull()
+    expect(rafQueue).toHaveLength(0)
   })
 
-  it('closes on a backdrop click but not on a click inside the dialog', () => {
+  it('closes on a backdrop click but not on a click inside the dialog', async () => {
     renderGallery()
     openFirstThumbnail()
     fireEvent.click(screen.getByRole('dialog'))
     expect(screen.queryByRole('dialog')).not.toBeNull()
     fireEvent.click(screen.getByRole('dialog').parentElement as HTMLElement)
-    expect(screen.queryByRole('dialog')).toBeNull()
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  it('fades the scrim out before it unmounts', () => {
+    renderGallery()
+    openFirstThumbnail()
+    const backdrop = screen.getByRole('dialog').parentElement as HTMLElement
+    expect(backdrop.className).not.toContain(styles.closing)
+    fireEvent.click(screen.getByRole('button', { name: en.a11y.close }))
+    // Still mounted while the fade runs…
+    expect(screen.queryByRole('dialog')).not.toBeNull()
+    expect(backdrop.className).toContain(styles.closing)
   })
 
   it('walks forward and wraps with the arrow keys', () => {
@@ -232,12 +382,12 @@ describe('Lightbox modal contract', () => {
     expect(dialog().textContent).toContain('1 / 3')
   })
 
-  it('moves focus into the dialog and back to the thumbnail on close', () => {
+  it('moves focus into the dialog and back to the thumbnail on close', async () => {
     renderGallery()
     const thumb = openFirstThumbnail()
     expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true)
     fireEvent.keyDown(document, { key: 'Escape' })
-    expect(document.activeElement).toBe(thumb)
+    await waitFor(() => expect(document.activeElement).toBe(thumb))
   })
 
   it('keeps Tab inside the dialog', () => {
@@ -267,12 +417,12 @@ describe('Lightbox modal contract', () => {
     expect(document.activeElement).toBe(first)
   })
 
-  it('locks the page scroll while open and restores it on close', () => {
+  it('locks the page scroll while open and restores it on close', async () => {
     renderGallery()
     openFirstThumbnail()
     expect(document.documentElement.style.overflow).toBe('hidden')
     fireEvent.keyDown(document, { key: 'Escape' })
-    expect(document.documentElement.style.overflow).toBe('')
+    await waitFor(() => expect(document.documentElement.style.overflow).toBe(''))
   })
 
   it('hides the arrows for a single image', () => {
@@ -283,7 +433,7 @@ describe('Lightbox modal contract', () => {
     expect(screen.getByRole('dialog').textContent).toContain('1 / 1')
   })
 
-  it('closes with the close button', () => {
+  it('closes with the close button', async () => {
     const onClose = vi.fn()
     render(
       <LanguageProvider>
@@ -297,7 +447,7 @@ describe('Lightbox modal contract', () => {
       </LanguageProvider>,
     )
     fireEvent.click(screen.getByRole('button', { name: en.a11y.close }))
-    expect(onClose).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
   })
 
   it('names the dialog after what it shows', () => {

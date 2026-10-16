@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { PARTICLE_ALPHA } from '../lib/particles'
+import { PARTICLE_ALPHA } from '../lib/meteors'
 import { AA_NORMAL, contrastRatio, parseHex, type Rgb } from './contrast'
 import { PRESETS } from './presets'
 
@@ -20,10 +20,12 @@ const REQUIRED = [
   '--color-accent',
   '--color-accent-contrast',
   '--color-border',
-  '--color-tag-lang',
-  '--color-tag-data',
-  '--color-tag-tool',
-  '--color-tag-game',
+  '--color-chrome-bg',
+  '--color-chrome-fg',
+  '--color-chrome-muted',
+  '--color-chrome-border',
+  '--color-chrome-surface',
+  '--color-chrome-accent',
 ] as const
 
 /** Pairs that must reach WCAG AA. `[foreground, background]`. */
@@ -34,19 +36,13 @@ const PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['--color-fg-muted', '--color-surface'],
   ['--color-accent', '--color-bg'],
   ['--color-accent-contrast', '--color-accent'],
+  // The chrome surface is its own budget (#101): text on the dark frame, both
+  // directly on `chrome-bg` and on the lifted `chrome-surface` the controls use.
+  ['--color-chrome-fg', '--color-chrome-bg'],
+  ['--color-chrome-muted', '--color-chrome-bg'],
+  ['--color-chrome-fg', '--color-chrome-surface'],
+  ['--color-chrome-muted', '--color-chrome-surface'],
 ]
-
-/**
- * Skill-badge tints. Each is a non-text accent (the badge's dot) on the badge's
- * own `--color-surface` background, so it is gated at 3:1 (WCAG 1.4.11), not the
- * 4.5:1 the text pairs above need.
- */
-const TINTS = [
-  '--color-tag-lang',
-  '--color-tag-data',
-  '--color-tag-tool',
-  '--color-tag-game',
-] as const
 
 interface Palette {
   preset: string
@@ -191,61 +187,75 @@ describe('overlay chrome', () => {
   )
 })
 
-describe('skill badge tints', () => {
-  // The tint is the only colour the badge adds; the label stays `--color-fg`.
-  // It must read as a distinct mark against the badge surface, so 3:1, the
-  // non-text threshold, is the gate — recomputed from the palette, not assumed.
-  it.each(palettes)(
-    '$preset/$mode keeps every skill tint visible against the badge surface',
-    ({ preset, mode, colors }) => {
-      for (const tint of TINTS) {
-        const ratio = contrastRatio(parseHex(colors[tint]), parseHex(colors['--color-surface']))
-        expect(
-          ratio,
-          `${preset}/${mode}: ${tint} on --color-surface = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-        ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-      }
-    },
-  )
-})
-
 /**
- * The particle background draws `--color-accent` over `--color-bg` at
- * `PARTICLE_ALPHA`. Sections are transparent — body text sits directly on the
- * page colour — so a dot behind a glyph is a real change to the background that
- * text is measured against. Computed here rather than eyeballed, exactly like
- * the scrim above.
+ * The particle background draws the **chrome** accent (`--color-chrome-accent`)
+ * at `PARTICLE_ALPHA` over the frame. Since #101 the centred reading column is
+ * opaque, so a particle is only ever seen over the **chrome** — body text in the
+ * column sits on the reading surface, above the layer. The budget is therefore
+ * recomputed against `--color-chrome-bg`, with the chrome text as the foreground,
+ * exactly like the scrim above. (The particle reads the chrome accent, not the
+ * reading one, so it stays visible in light mode where the reading accent is dark.)
  *
- * The worst case across the six palettes is alpha 0.230 (paper/light): beyond
- * that, `--color-fg-muted` drops under 4.5:1. 0.16 is what ships, so the gate
- * has room to spare and `PARTICLE_ALPHA` cannot be raised in isolation.
+ * The lifecycle fade in `alphaAt` peaks at exactly 1, so `PARTICLE_ALPHA` **is**
+ * the drawn maximum — the gate below caps that constant directly rather than a
+ * multiple of it. The tightest palette is studio (dark and light agree: chrome is
+ * mode-independent): its accent over the studio chrome drops `--color-chrome-muted`
+ * under 4.5:1 at alpha 0.306, so the constant is capped at 0.23 and cannot be
+ * raised in isolation.
  *
- * `throughParticle` is source-over: what a particle does to the page colour
+ * `throughParticle` is source-over: what a particle does to the surface
  * underneath it.
  */
-function throughParticle(page: Rgb, particle: Rgb, alpha: number): Rgb {
+function throughParticle(under: Rgb, particle: Rgb, alpha: number): Rgb {
   const mix = (over: number, below: number) => Math.round(over * alpha + below * (1 - alpha))
-  return { r: mix(particle.r, page.r), g: mix(particle.g, page.g), b: mix(particle.b, page.b) }
+  return { r: mix(particle.r, under.r), g: mix(particle.g, under.g), b: mix(particle.b, under.b) }
 }
 
-describe('particle background over the page', () => {
+describe('particle background over the chrome', () => {
   it('draws below the measured contrast budget', () => {
     expect(PARTICLE_ALPHA).toBeGreaterThan(0)
     expect(PARTICLE_ALPHA).toBeLessThan(0.23)
   })
 
   it.each(palettes)(
-    '$preset/$mode keeps WCAG AA when a particle sits behind text',
+    '$preset/$mode keeps WCAG AA when a particle sits over the chrome',
     ({ preset, mode, colors }) => {
-      const page = parseHex(colors['--color-bg'])
-      const behind = throughParticle(page, parseHex(colors['--color-accent']), PARTICLE_ALPHA)
-      for (const foreground of ['--color-fg', '--color-fg-muted']) {
+      const under = parseHex(colors['--color-chrome-bg'])
+      const behind = throughParticle(
+        under,
+        parseHex(colors['--color-chrome-accent']),
+        PARTICLE_ALPHA,
+      )
+      for (const foreground of ['--color-chrome-fg', '--color-chrome-muted']) {
         const ratio = contrastRatio(parseHex(colors[foreground]), behind)
         expect(
           ratio,
-          `${preset}/${mode}: ${foreground} over a particle-blended background = ${ratio.toFixed(2)}:1 (needs ${AA_NORMAL})`,
+          `${preset}/${mode}: ${foreground} over a particle-blended chrome = ${ratio.toFixed(2)}:1 (needs ${AA_NORMAL})`,
         ).toBeGreaterThanOrEqual(AA_NORMAL)
       }
+    },
+  )
+})
+
+/**
+ * The chrome accent is what focus rings and hover borders on the dark frame are
+ * drawn from. A reading accent is tuned for the reading surface and several of
+ * the light ones fall under 3:1 on chrome (studio 2.90, paper 2.79, violet 2.73),
+ * so the frame carries its own accent — the preset's dark-background accent,
+ * which keeps the hue. WCAG 1.4.11 wants 3:1 for that non-text boundary.
+ */
+describe('chrome accent', () => {
+  it.each(palettes)(
+    '$preset/$mode keeps the chrome accent visible on the chrome',
+    ({ preset, mode, colors }) => {
+      const ratio = contrastRatio(
+        parseHex(colors['--color-chrome-accent']),
+        parseHex(colors['--color-chrome-bg']),
+      )
+      expect(
+        ratio,
+        `${preset}/${mode}: chrome-accent on chrome-bg = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
+      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
     },
   )
 })

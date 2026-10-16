@@ -71,14 +71,40 @@ export function Terminal({ autoFocus = false, onClose }: TerminalProps) {
           <div className={styles.headerActions}>
             <p className={styles.hint}>{t.terminal.hint}</p>
             {onClose ? (
-              <button type="button" className={styles.hide} onClick={onClose}>
-                {t.terminal.hide}
+              <button
+                type="button"
+                className={styles.hide}
+                aria-label={t.terminal.hide}
+                onClick={onClose}
+              >
+                <svg
+                  className={styles.hideIcon}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M6 6L18 18M6 18L18 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </button>
             ) : null}
           </div>
         </div>
 
-        <div ref={screenRef} className={styles.screen}>
+        <div
+          ref={screenRef}
+          className={styles.screen}
+          onClick={(event) => {
+            if (event.target === screenRef.current) {
+              inputRef.current?.focus()
+              return
+            }
+          }}
+        >
           <div className={styles.log} role="log" aria-live="polite">
             <div className={styles.welcome}>{t.terminal.welcome}</div>
             {entries.map((entry) => (

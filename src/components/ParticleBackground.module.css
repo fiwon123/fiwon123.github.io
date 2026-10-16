@@ -18,24 +18,21 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  /* Fade particles away over the centred reading column so text stays readable. */
+  /* Fade the field out over the centre so the reading column stays clear and the
+     middle reads as empty. A radial (elliptical) core, not a banded linear
+     gradient: particles are born on every edge and cross the whole frame, so the
+     cleared area has to be a soft disc around the text, not two fixed gutters. */
   -webkit-mask-image: radial-gradient(
-    ellipse 120% 200% at 50% 50%,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0) calc(50% - clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 1) calc(50% - clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 1) calc(50% + clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 0) calc(50% + clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 0) 100%
+    ellipse 48% 54% at 50% 50%,
+    transparent 0%,
+    transparent 52%,
+    black 100%
   );
   mask-image: radial-gradient(
-    ellipse 120% 200% at 50% 50%,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0) calc(50% - clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 1) calc(50% - clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 1) calc(50% + clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 0) calc(50% + clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 0) 100%
+    ellipse 48% 54% at 50% 50%,
+    transparent 0%,
+    transparent 52%,
+    black 100%
   );
 }
 

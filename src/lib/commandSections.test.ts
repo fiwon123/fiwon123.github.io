@@ -11,6 +11,10 @@ describe('focusForCommand', () => {
     expect(focusForCommand('all')).toBe(ALL)
   })
 
+  it('scrolls to the contact anchor', () => {
+    expect(focusForCommand('contact')).toBe('contact')
+  })
+
   it('names no target for help or clear', () => {
     expect(focusForCommand('help')).toBeNull()
     expect(focusForCommand('clear')).toBeNull()
@@ -25,6 +29,7 @@ describe('isSectionId', () => {
   it('rejects anything else', () => {
     expect(isSectionId('top')).toBe(false)
     expect(isSectionId('all')).toBe(false)
+    expect(isSectionId('contact')).toBe(false)
     expect(isSectionId('')).toBe(false)
   })
 })

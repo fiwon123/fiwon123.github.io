@@ -25,8 +25,8 @@ tests here instead of by intention.
 ## Goal
 
 A visitor can explore the content either through an interactive terminal or
-through conventional navigation, switch language (EN/PT-BR) and theme (3 presets
-× light/dark/system), and read everything at WCAG AA contrast — with the whole
+through conventional navigation, switch language (EN/PT-BR) and theme (5 presets
+× light/dark), and read everything at WCAG AA contrast — with the whole
 site served as static files.
 
 ## Stack
@@ -83,6 +83,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   is **not persisted**, so a reload is always the whole page, and while focused a
   nav link to a hidden section moves the focus there rather than landing on
   nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
+- **The contact links live in the hero, and the `contact` command targets them**
+  (#99) — the footer used to render a second `ContactRow` under `#contact-footer`;
+  it now carries only the copyright / built-with / source lines, and the command
+  scrolls to the hero row's own `#contact` anchor (not `#top`, so it lands on the
+  row). One row, one source, no dead anchor. (2026-10-16)
 - **Terminal settings commands drive the same setters as the header controls**
   (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
   console is a second way in, never a second source of truth, so the terminal
@@ -90,12 +95,35 @@ Each entry is settled; the reason is what stops it being re-opened.
   recognised, prints the valid values and changes nothing, so a typo answers
   with the choices instead of failing silently. (2026-10-16)
 - **The preference controls carry their meaning in an icon, not a visible label**
-  — the appearance is a single button that cycles light → dark → system and the
-  language a select of flag + short code, so the bar reads without spelling out
-  "Appearance" and "Language"; the theme select keeps its visible label and gains
-  a palette glyph. Each control keeps an accessible name — the mode button also a
-  `title` — so dropping the label costs sighted users nothing that the icon does
-  not say. (2026-10-16)
+  — the appearance is a single button that cycles light ↔ dark and the language a
+  select of flag + short code, so the bar reads without spelling out "Appearance"
+  and "Language"; the theme and language selects keep an accessible name (and the
+  theme options name the presets). Each control keeps an accessible name — the
+  mode button also a `title` — so dropping the label costs sighted users nothing
+  that the icon does not say. (2026-10-16)
+- **Two theme axes: 5 presets × 2 readings, and no `system`** — `PRESETS` grew
+  from Studio/Paper/Terminal to add Violet and Ember, and `MODES` collapsed from
+  `light`/`dark`/`system` to `light`/`dark` (#102). `system` was a third of the
+  appearance button's cycle spent on a reading nobody chose and the site could not
+  show differently from the OS; dropping it makes the control a two-state toggle
+  and the default `dark`, the site's signature look. Light/dark stays a **mode**
+  (`data-mode`), not a theme: a preset is an identity, a reading is how you read
+  it, and folding them into one axis (the #100 proposal) would have made every
+  preset a separate theme. (2026-10-16)
+- **The page is a light/dark reading column on a dark chrome frame** (#101) — the
+  palette splits into a **reading** set (`--color-bg`/`-surface`/`-fg`/`-fg-muted`/
+  `-border`, the centred column) and a **chrome** set (`--color-chrome-bg`/
+  `-surface`/`-fg`/`-muted`/`-border`/`-accent`, the page sides, header and
+  footer). Chrome is dark in **both** readings — the light/dark choice is a reading
+  feature, not a page-wide one — but keeps each preset's hue, so the frame still
+  has an identity. The frame carries its **own** accent because a reading accent is
+  tuned for the reading surface and the light ones fall under 3:1 on chrome
+  (studio 2.90, paper 2.79, violet 2.73): `tokens.test.ts` gates text on both
+  surfaces (4.5:1) and the chrome accent as a non-text boundary (3:1), and
+  `surfaces.test.ts` pins which selector paints which surface so the split cannot
+  silently revert. The particle field lives on the frame, so it reads the **chrome**
+  accent too (the reading accent is dark in light mode). The overlay pair is
+  unchanged. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
@@ -105,6 +133,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   under `prefers-reduced-motion` — an animation library would outweigh the whole
   effect it provides, and a motion feature that can leave content unrevealed
   under reduced motion is a bug, not a decoration.
+- **The ambient field is many curved particles with a radial centre fade**
+  (#96) — dozens of particles (area-scaled, hard-capped) are born just outside a
+  random edge and aimed inward with spread, and each follows a shallow quadratic
+  curve: the heading drifts by a signed `turn` and the trail is bent by a control
+  point on the normal, so the path curves without storing a per-particle position
+  history (the field stays allocation-free). Lifecycle alpha (`alphaAt`) ramps in
+  at birth and to zero at death, peaking at **exactly 1**, so `PARTICLE_ALPHA` is
+  the true drawn maximum the contrast gate caps. The reading column is cleared by
+  an **elliptical radial mask** (transparent centre → opaque edges), not the old
+  banded linear gradient — that shape was tuned to two fixed side gutters, which
+  no longer matches a field that crosses the whole frame. (2026-10-16)
 - **Overlay chrome is mode-independent** (`--color-overlay-*`, fixed white on an
   82% black scrim) — page tokens cannot meet WCAG 1.4.11 once composited over a
   scrim (measured: caption 1.85:1 in light presets, control boundary 1.21:1 in
@@ -114,6 +153,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   it costs a full-viewport compositing layer, and it would turn the scrim into a
   mixture rather than the pure alpha blend the contrast guard recomputes.
   (2026-10-15)
+- **The lightbox opens with a one-shot FLIP from the clicked thumbnail** (#97) —
+  the gallery captures the tile's viewport rect and hands it to the viewer, which
+  draws the image over it (a centre-aligned translate + scale from
+  `zoomTransform`) and then clears the transform so a CSS transition settles it.
+  The zoom waits until the image's real aspect is known, so it never starts from
+  the placeholder box, and the image is held back until then rather than flashing
+  in place; it runs once per mount, so navigating between images does not replay
+  it, and it is skipped entirely under reduced motion (the image simply appears,
+  never left at a transform). Closing goes through one path (`requestClose`) that
+  fades the scrim and unmounts on a timer, so a missed transition cannot leave the
+  page scroll-locked. (2026-10-16)
 - **Repository facts come from a committed build-time snapshot**
   (`src/content/repoStats.json`), never a browser API call — no runtime token, no
   rate limit, no third-party origin between the visitor and the page, and the site
@@ -130,12 +180,12 @@ Each entry is settled; the reason is what stops it being re-opened.
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
-  twice** — `public/favicon.svg` is the same geometry and palette as `Logo.tsx`
-  (a test derives both from source and fails on drift), and `make favicons`
-  rasterises it in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
-  16/32/180/192/512 PNGs. A hand-maintained second copy of the icon is the way the
-  tab and the page drift apart, and a capture harness that writes a blank or
-  opaque-cornered file is worse than no harness. (2026-10-16)
+  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
+  the studio-dark palette (a test derives both from source and fails on drift),
+  and `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
+  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs. A hand-maintained second copy of
+  the icon is the way the tab and the page drift apart, and a capture harness that
+  writes a blank or opaque-cornered file is worse than no harness. (2026-10-16)
 - **A game owns its image; the experience gallery is derived from the games** —
   `GameLink.image` is the single place the title→image link lives, and the card
   builds its tiles as `{ src: game.image, game }`, so an image path is never
@@ -148,6 +198,14 @@ Each entry is settled; the reason is what stops it being re-opened.
   it is pressed, so opening a gallery makes no third-party request. The pure
   `youtubeId` helper decides whether a trailer is embeddable; a title whose link
   is not a YouTube video simply gets no play control. (2026-10-16)
+- **A `Tech:` entry is a linked tag, and the name is a union, not a string**
+  (#98) — `TechName` in `content/types.ts` lists every technology, and
+  `TECHNOLOGIES` is `Record<TechName, { url, blurb }>`, so a name with no entry —
+  or a typo in a project — is a `tsc` error rather than a blank tag. The blurb is
+  both the link's accessible name and its hover/focus tooltip (the tip is
+  `aria-hidden`, so it is not read twice), and the tag carries a plain border with
+  no tint, so no non-text accent has to clear 3:1 and no `--color-tag-*` token is
+  resurrected. (2026-10-16)
 - **A skill badge is a link, and its group colour is a dot, not the text** — each
   skill carries a `url` and a bilingual `blurb`; the badge is an anchor to the
   reference, with the blurb as its accessible name and a hover/focus tooltip, and

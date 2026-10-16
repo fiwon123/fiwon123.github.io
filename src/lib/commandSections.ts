@@ -4,7 +4,7 @@ import type { CommandName } from '../terminal/parser'
  * The page sections, in page order. These are the ids a `#section` link and the
  * header navigation resolve to, and the sections a terminal command opens.
  */
-export const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact'] as const
+export const SECTION_IDS = ['about', 'experience', 'projects'] as const
 
 export type SectionId = (typeof SECTION_IDS)[number]
 
@@ -14,21 +14,18 @@ export type SectionId = (typeof SECTION_IDS)[number]
  */
 export const ALL = 'all'
 
-export type FocusTarget = SectionId | typeof ALL
+export type ScrollTarget = 'contact'
+
+export type FocusTarget = SectionId | typeof ALL | ScrollTarget
 
 /**
  * What a command does to the page: focus one section, restore the whole page
- * (`all`), or nothing.
- *
- * `help` and `clear` act on the scrollback only — they name no target — so they
- * are absent from the map rather than mapped to `null`, and `focusForCommand`
- * returns `null` for them.
+ * (`all`), or scroll to a special anchor (`contact`).
  */
-const FOCUS_BY_COMMAND: Partial<Record<CommandName, SectionId>> = {
+const FOCUS_BY_COMMAND: Partial<Record<CommandName, FocusTarget>> = {
   about: 'about',
   experience: 'experience',
   projects: 'projects',
-  skills: 'skills',
   contact: 'contact',
 }
 
