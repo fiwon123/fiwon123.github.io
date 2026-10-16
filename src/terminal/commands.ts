@@ -15,10 +15,10 @@ export interface TerminalLine {
  * Turn a command into output lines. Pure: it reads the active locale's strings
  * and returns what the terminal should print.
  *
- * The page now always shows every section, so a navigation command does not
- * reprint its content — it scrolls the page there (the provider owns that) and
- * confirms which section it moved to, so the scrollback records the jump.
- * `clear` returns nothing — the component handles it.
+ * A navigation command does not reprint a section's content — it focuses that
+ * section (the provider owns that) and confirms which one, so the scrollback
+ * records the move; `all` restores the whole page. `clear` returns nothing —
+ * the component handles it.
  */
 export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
   switch (name) {
@@ -38,6 +38,9 @@ export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
     case 'skills':
     case 'contact':
       return [{ text: `▸ ${t.nav[name]}`, tone: 'accent' }]
+
+    case 'all':
+      return [{ text: `▸ ${t.terminal.all}`, tone: 'accent' }]
 
     case 'clear':
       return []

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react'
 
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
@@ -6,22 +6,38 @@ import { Header } from './components/Header'
 import { ParticleBackground } from './components/ParticleBackground'
 import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
 import { SkipLink } from './components/SkipLink'
-import { isSectionId } from './lib/commandSections'
+import { useT } from './i18n/hooks'
+import {
+  ALL,
+  isSectionId,
+  SECTION_IDS,
+  type FocusTarget,
+  type SectionId,
+} from './lib/commandSections'
 import { prefersReducedMotion } from './lib/reveal'
 import { useTerminalDock } from './lib/useTerminalDock'
 import { TerminalPanel } from './terminal/TerminalPanel'
 
 import styles from './App.module.css'
 
-function sectionFromHash(): string | null {
+/** The section each terminal command can focus, in page order. */
+const SECTION_COMPONENTS: Record<SectionId, ComponentType> = {
+  about: About,
+  experience: Experience,
+  projects: Projects,
+  skills: Skills,
+  contact: Contact,
+}
+
+function sectionFromHash(): SectionId | null {
   const id = window.location.hash.replace(/^#/, '')
   return isSectionId(id) ? id : null
 }
 
 /**
- * Scroll a deep-linked `#section` into view; the scroll reveal then fades it in
- * as it arrives. The page always renders every section, so a deep link only has
- * to land — it never changes what is shown.
+ * Scroll a `#section` into view; the scroll reveal then fades it in as it
+ * arrives. The focused section is always rendered, so a deep link or a nav click
+ * only has to land — it is the focus, not this, that changes what is shown.
  */
 function openSection(id: string) {
   const target = document.getElementById(id)
@@ -33,14 +49,27 @@ function openSection(id: string) {
 }
 
 function App() {
+  const t = useT()
   const [dockOpen, setDockOpen] = useTerminalDock()
+  // The one section the terminal is focused on, or null for the whole page. Not
+  // persisted: a reload is always the full page.
+  const [focus, setFocus] = useState<SectionId | null>(null)
 
-  // A `#section` deep link scrolls to the section. It acts on the hash present
-  // at mount and on a later, *real* change of the hash — never on a mere
-  // re-render, so an explicit "Hide terminal" is not fought by a hash that is
-  // still in the address bar.
+  // Focus a section, or restore the whole page (`all`). The page owns this, so a
+  // command never has to know how the sections are rendered.
+  const handleFocus = useCallback((target: FocusTarget) => {
+    const next = target === ALL ? null : target
+    setFocus(next)
+    // After the commit: `all` brings the hero back, so land on `#top`.
+    requestAnimationFrame(() => openSection(next ?? 'top'))
+  }, [])
+
+  // A `#section` deep link (or a nav click) scrolls to the section. It acts on
+  // the hash present at mount and on a later, *real* change of the hash — never
+  // on a mere re-render, so an explicit "Hide terminal" is not fought by a hash
+  // that is still in the address bar.
   useEffect(() => {
-    const openDeepLink = () => {
+    const scrollToLanding = () => {
       const id = sectionFromHash()
       if (!id) return
       requestAnimationFrame(() => {
@@ -54,9 +83,15 @@ function App() {
     const onHashChange = () => {
       if (window.location.hash === last) return
       last = window.location.hash
-      openDeepLink()
+      const id = sectionFromHash()
+      if (!id) return
+      // While a section is focused the others are hidden, so a nav link to one of
+      // them would land on nothing; move the focus there instead. Unfocused, every
+      // section is visible and the anchor alone is enough.
+      setFocus((current) => (current === null ? null : id))
+      scrollToLanding()
     }
-    openDeepLink()
+    scrollToLanding()
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
@@ -73,6 +108,8 @@ function App() {
     wasOpen.current = dockOpen
   }, [dockOpen])
 
+  const Focused = focus ? SECTION_COMPONENTS[focus] : null
+
   return (
     <>
       {/* First focusable element: Tab once to reach it, Enter jumps to <main>. */}
@@ -84,14 +121,26 @@ function App() {
           shut, so `data-dock` drives the layout without ever unmounting it. */}
       <main id="content" className={styles.layout} data-dock={dockOpen ? 'open' : 'closed'}>
         <div className={styles.page}>
-          <Hero />
-          <About />
-          <Experience />
-          <Projects />
-          <Skills />
-          <Contact />
+          {focus === null ? (
+            <>
+              <Hero />
+              {SECTION_IDS.map((id) => {
+                const Section = SECTION_COMPONENTS[id]
+                return <Section key={id} />
+              })}
+            </>
+          ) : (
+            <>
+              {/* Focusing filters the hero out, but the page keeps one `#top` and
+                  one h1 so the heading outline, the skip link and back-to-top all
+                  still resolve. */}
+              <span id="top" />
+              <h1 className={styles.srOnly}>{t.hero.greeting}</h1>
+              {Focused ? <Focused /> : null}
+            </>
+          )}
         </div>
-        <TerminalPanel open={dockOpen} onHide={() => setDockOpen(false)} />
+        <TerminalPanel open={dockOpen} onHide={() => setDockOpen(false)} onFocus={handleFocus} />
       </main>
       <Footer />
       <BackToTop />

@@ -70,13 +70,19 @@ Each entry is settled; the reason is what stops it being re-opened.
   `pt-BR.ts` is typed `: Strings`, so a missing or misspelled key is a `tsc`
   error rather than a blank string in production.
 - **The page is one conventional page; the terminal is a dock, not a mode**
-  (`portfolio.v1.dock`) — every section is always rendered, and the console sits
-  beside it (or below on a phone) and scrolls the page rather than replacing it.
-  An earlier two-presentation "view mode" hid the page behind the console; it
-  meant a visitor could not see the work and the console at once, and the first
-  version of that idea had `#section` and a translated string doing work a DOM
-  element should do. The dock keeps the terminal optional without making the
-  content conditional. (2026-10-16)
+  (`portfolio.v1.dock`) — the console sits beside the page (or below on a phone)
+  rather than replacing it. An earlier two-presentation "view mode" hid the page
+  behind the console; it meant a visitor could not see the work and the console at
+  once, and the first version of that idea had `#section` and a translated string
+  doing work a DOM element should do. The dock keeps the terminal optional without
+  making the content conditional. (2026-10-16)
+- **A terminal navigation command focuses one section; `all` restores the page**
+  — the sections are rendered by the page, so a command asks the page to show one.
+  Focusing filters the hero out but keeps a visually-hidden h1 and a `#top` anchor,
+  so the heading outline, the skip link and back-to-top still resolve; the focus
+  is **not persisted**, so a reload is always the whole page, and while focused a
+  nav link to a hidden section moves the focus there rather than landing on
+  nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
@@ -164,24 +170,29 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   pass (#21).
 - **In progress**: milestone `v1.2 — Terminal & details`. Merged to `dev` so far:
   the two-column layout (#40), the centred header and SVG-first favicons (#41),
-  the particle reading-zone fade (#42), and icon-only contact links (#45).
+  the particle reading-zone fade (#42), icon-only contact links (#45), and the
+  always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
+  polish`: the animated dock, readable console and in-panel hide control (#52),
+  and one-section focus with `all` (#53).
 
 ## Backlog
 
-Build order for the rest of `v1.2`; each item is a GitHub issue already filed.
+The rest of `v1.2`, then `v1.3`; each item is a GitHub issue already filed.
 
-1. `#47` — always-docked terminal panel: the console scrolls the page instead of
-   replacing it, retiring the two-presentation view switch
-2. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
+1. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
    playback
-3. `#44` — skill badges with group tints, tooltips and official links
-4. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
+2. `#44` — skill badges with group tints, tooltips and official links
+3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
+4. `#54` — set theme, appearance and language from the terminal
+5. `#55` — preference controls as icons (mode toggle, language flag, theme)
+6. `#56` — centre the header within a max-width
 
-Milestone tracking lives on GitHub (milestone `v1.2 — Terminal & details`, issue
-#2). After `v1.2` is released, the plan is to add new projects and possibly a new
-language track (e.g. Rust) — deliberately _after_ the polish, so the additions
-land on a base that already looks finished.
+Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
+`v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan
+is to add new projects and possibly a new language track (e.g. Rust) —
+deliberately _after_ the polish, so the additions land on a base that already
+looks finished.
 
 ## Notes
 

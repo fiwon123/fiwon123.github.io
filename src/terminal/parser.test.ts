@@ -10,11 +10,17 @@ describe('parseCommand', () => {
     expect(parseCommand('projects')).toEqual({ kind: 'command', name: 'projects', args: [] })
     expect(parseCommand('skills')).toEqual({ kind: 'command', name: 'skills', args: [] })
     expect(parseCommand('contact')).toEqual({ kind: 'command', name: 'contact', args: [] })
+    expect(parseCommand('all')).toEqual({ kind: 'command', name: 'all', args: [] })
     expect(parseCommand('clear')).toEqual({ kind: 'command', name: 'clear', args: [] })
   })
 
   it('treats work as projects alias', () => {
     expect(parseCommand('work')).toEqual({ kind: 'command', name: 'projects', args: [] })
+  })
+
+  it('treats home and tudo as the all alias', () => {
+    expect(parseCommand('home')).toEqual({ kind: 'command', name: 'all', args: [] })
+    expect(parseCommand('tudo')).toEqual({ kind: 'command', name: 'all', args: [] })
   })
 
   it('supports Portuguese aliases', () => {
