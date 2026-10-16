@@ -265,9 +265,9 @@ describe('navigation commands focus their section', () => {
 describe('settings commands drive the same controls as the header', () => {
   it('moves the appearance control when mode is set from the terminal', () => {
     renderApp()
-    const control = screen.getByRole('combobox', { name: en.theme.modeLabel }) as HTMLSelectElement
     submitCommand('mode dark')
-    expect(control.value).toBe('dark')
+    const label = `${en.theme.modeLabel}: ${en.theme.modes.dark}`
+    expect(screen.getByRole('button', { name: label })).toBeTruthy()
   })
 
   it('moves the theme control when the preset is set from the terminal', () => {
