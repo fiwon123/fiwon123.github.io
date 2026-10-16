@@ -6,7 +6,7 @@
 .layout {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 var(--space-4) var(--space-12);
+  padding: var(--space-4) var(--space-4) var(--space-12);
   display: flex;
   align-items: flex-start;
   gap: 0;

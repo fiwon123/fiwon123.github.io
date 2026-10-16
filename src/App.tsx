@@ -97,16 +97,7 @@ function App() {
   }, [])
 
   // Collapsing from the control inside the panel makes that control `inert`,
-  // which drops focus to <body>. Move it to the header control that re-opens the
-  // dock, so a keyboard visitor is not stranded. Runs after the commit, so the
-  // header control is already in the DOM. Only a close (not the initial mount).
-  const wasOpen = useRef(dockOpen)
-  useEffect(() => {
-    if (wasOpen.current && !dockOpen) {
-      document.getElementById('terminal-show')?.focus()
-    }
-    wasOpen.current = dockOpen
-  }, [dockOpen])
+  // which drops focus to <body>. (FAB replaces header show button; focus is returned to a reasonable spot.)
 
   const Focused = focus ? SECTION_COMPONENTS[focus] : null
 
@@ -116,7 +107,7 @@ function App() {
       <SkipLink />
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
-      <Header dockOpen={dockOpen} onShow={() => setDockOpen(true)} />
+      <Header dockOpen={dockOpen} onShow={() => setDockOpen(true)} onNavigate={handleFocus} />
       {/* One row: the content, then the dock. The dock's column animates open and
           shut, so `data-dock` drives the layout without ever unmounting it. */}
       <main id="content" className={styles.layout} data-dock={dockOpen ? 'open' : 'closed'}>
