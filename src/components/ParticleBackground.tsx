@@ -67,7 +67,7 @@ export function ParticleBackground() {
       }
       if (field) {
         step(field, dt, width, height)
-        paint(ctx, field, accentFor())
+        paint(ctx, field, accentFor(), width, height)
       }
       if (!document.hidden) frame = requestAnimationFrame(onFrame)
     }

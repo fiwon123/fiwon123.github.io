@@ -18,24 +18,25 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  /* Keep particles in left/right gutters so reading column stays clear. */
+  /* Show the left/right gutters where the meteors spawn and fade the reading
+     column out, so the trails never sit behind the text. */
   -webkit-mask-image: linear-gradient(
     to right,
-    transparent 0%,
-    transparent 16%,
-    black 26%,
-    black 74%,
-    transparent 84%,
-    transparent 100%
+    black 0%,
+    black 16%,
+    transparent 26%,
+    transparent 74%,
+    black 84%,
+    black 100%
   );
   mask-image: linear-gradient(
     to right,
-    transparent 0%,
-    transparent 16%,
-    black 26%,
-    black 74%,
-    transparent 84%,
-    transparent 100%
+    black 0%,
+    black 16%,
+    transparent 26%,
+    transparent 74%,
+    black 84%,
+    black 100%
   );
 }
 

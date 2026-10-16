@@ -216,6 +216,54 @@ describe('ParticleBackground', () => {
     expect(css).toMatch(/@media print[\s\S]*display:\s*none/)
   })
 
+  it('masks the reading column out and keeps the gutters visible (#88)', () => {
+    // The meteors spawn in the left/right gutters, so the mask must be the
+    // rounded (gutters-black, centre-transparent) way round. #82 shipped the
+    // inverse and drew them where the mask was transparent.
+    const mask = /mask-image:\s*([\s\S]*?);/.exec(css)?.[1] ?? ''
+    expect(mask, 'no mask-image declaration').not.toBe('')
+    const stops = [...mask.matchAll(/(black|transparent)\s+(\d+)%/g)].map(
+      (match) => [match[1], Number(match[2])] as const,
+    )
+    expect(stops.length, 'the mask has no stops').toBeGreaterThanOrEqual(4)
+
+    const colorAt = (position: number) => stops.find(([, at]) => at === position)?.[0]
+    // Edges: gutters are visible.
+    expect(colorAt(0), 'left edge').toBe('black')
+    expect(colorAt(100), 'right edge').toBe('black')
+    // Centre: the reading column is faded out — a transparent stop on each side
+    // of the midpoint, so the middle of the viewport is masked away.
+    const transparent = stops.filter(([color]) => color === 'transparent').map(([, at]) => at)
+    expect(
+      transparent.some((at) => at < 50),
+      'transparent stop left of centre',
+    ).toBe(true)
+    expect(
+      transparent.some((at) => at > 50),
+      'transparent stop right of centre',
+    ).toBe(true)
+  })
+
+  it('clears the canvas every frame so the trails do not accumulate (#88)', () => {
+    setViewport(1280, 800, 1)
+    render(<ParticleBackground />)
+    flushFrames(1)
+    const first = takeLog()
+    const clears = first.filter((event) => event.kind === 'clear')
+    expect(clears).toHaveLength(1)
+    // Cleared in logical CSS pixels, like every other draw (the dpr transform
+    // maps them onto the backing store).
+    expect(clears[0]).toEqual({ kind: 'clear', w: 1280, h: 800 })
+    // Cleared before anything is drawn, not after.
+    expect(first.findIndex((event) => event.kind === 'clear')).toBeLessThan(
+      first.findIndex((event) => event.kind === 'fill'),
+    )
+
+    // And once per frame, not once ever.
+    flushFrames(2)
+    expect(takeLog().filter((event) => event.kind === 'clear')).toHaveLength(2)
+  })
+
   it('never draws the number of particles past the cap on a big screen', () => {
     setViewport(3840, 2160, 2)
     render(<ParticleBackground />)
