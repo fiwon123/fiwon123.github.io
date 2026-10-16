@@ -127,7 +127,7 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - **Assignee**: `fiwon123`
 - **Branch model**: `main` (release/deploy) ← `dev` (integration) ← feature branches `feat/<issue>-<slug>`
 - **Local gate**: `make check` = `make check-sandbox` + `make check-docs` + `npm run check`
-- **CI**: `ci.yml` runs on pull requests and pushes targeting `dev`; `pages.yml` deploys on push to `main`
+- **CI**: `ci.yml` runs on pull requests targeting `dev` and `main`, and pushes to `dev`; `pages.yml` deploys on push to `main`
 - **Issue-first**: Every change tracked via GitHub issue → branch → PR → merge
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `ci:`
 - **Bilingual content**: EN and PT-BR live in the same typed records (never separate files); `en.ts` is source of truth, `pt-BR.ts` typed `: Strings`
@@ -148,7 +148,8 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - Node 22+, npm 10+. A dev sandbox (`Dockerfile` + `docker-compose.yml`) is
   optional — Docker is needed only for `make dev-up`/`make opencode`
 - `make check` is the local gate. CI runs on `dev` (pull requests and pushes) and
-  `pages.yml` deploys on push to `main` — never on a feature-branch push, so run
+  on pull requests to `main`; `pages.yml` deploys on push to `main` — never on a
+  feature-branch push, so run
   `make check` before pushing. It starts with `check-sandbox`, which validates
   the dev sandbox config statically so a Docker-only mistake cannot sit
   unexamined; Docker itself is never exercised in CI
