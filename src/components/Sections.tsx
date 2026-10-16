@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { about, contact, experience, projects } from '../content'
-import type { ExperienceEntry, GalleryItem } from '../content/types'
+import { about, contact, experience, projects, TECHNOLOGIES } from '../content'
+import type { ExperienceEntry, GalleryItem, TechName } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
 import { useReveal } from '../lib/useReveal'
@@ -31,6 +31,45 @@ export function ContactRow() {
         </li>
       ))}
     </ul>
+  )
+}
+
+/**
+ * The `Tech:` line: one anchor per technology, each pointing at its official
+ * site. The blurb is both the link's accessible name and its hover/focus
+ * tooltip, so what is seen and what is spoken come from one record — and
+ * `TECHNOLOGIES` is keyed by `TechName`, so a name with no entry is a `tsc`
+ * error, never a blank tag. There is no tint: a plain border keeps the tag a
+ * text-only link, so no non-text accent has to clear 3:1.
+ */
+function TechTags({ label, tech }: { label: string; tech: TechName[] }) {
+  const { locale } = useLanguage()
+  return (
+    <div className={styles.tech}>
+      <span className={styles.techLabel}>{label}:</span>
+      <ul className={styles.tags}>
+        {tech.map((name) => {
+          const { url, blurb } = TECHNOLOGIES[name]
+          const text = blurb[locale]
+          return (
+            <li key={name} className={styles.tag}>
+              <a
+                className={styles.tagLink}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${name} — ${text}`}
+              >
+                {name}
+              </a>
+              <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
+                {text}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 
@@ -160,11 +199,7 @@ export function Experience() {
               </ul>
             )}
             <Gallery items={experienceGallery(entry)} title={entry.company} />
-            {entry.tech.length > 0 && (
-              <p className={styles.meta}>
-                {t.labels.tech}: {entry.tech.join(', ')}
-              </p>
-            )}
+            {entry.tech.length > 0 && <TechTags label={t.labels.tech} tech={entry.tech} />}
           </RevealArticle>
         ))}
       </div>
@@ -194,11 +229,7 @@ export function Projects() {
             {project.gallery && project.gallery.length > 0 && (
               <Gallery items={project.gallery.map((src) => ({ src }))} title={project.name} />
             )}
-            {project.tech.length > 0 && (
-              <p className={styles.meta}>
-                {t.labels.tech}: {project.tech.join(', ')}
-              </p>
-            )}
+            {project.tech.length > 0 && <TechTags label={t.labels.tech} tech={project.tech} />}
           </RevealArticle>
         ))}
       </div>
