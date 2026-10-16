@@ -4,24 +4,27 @@ Personal portfolio of **Felipe Inoue** — a single-page static site built with
 **React + TypeScript + Vite**, deployed to GitHub Pages at
 <https://felipeinoue.com/>.
 
-![The terminal view, in dark mode](docs/screenshots/home-terminal-dark.png)
+![The page with the terminal docked, in dark mode](docs/screenshots/home-terminal-dark.png)
 
 ## What it is
 
-A one-page site for a backend and tooling developer. It opens in a **terminal**:
-a real command line (`about`, `projects`, `skills`, …) that scrolls the page to
-the section a command names. A **browse** switch reveals a conventional layout
-with a navigation bar for visitors who would rather not type.
+A one-page site for a backend and tooling developer. Every section is always
+rendered, and a **terminal** is docked beside the page: a real command line
+(`about`, `projects`, `skills`, …) that scrolls the page to the section a command
+names. The console is optional — a header toggle collapses it for visitors who
+would rather just read.
 
-It reads the same in either view: one page, English and Brazilian Portuguese,
-three colour presets in light, dark, or the system's choice, and a background of
-slow particles.
+One page, English and Brazilian Portuguese, three colour presets in light, dark,
+or the system's choice, and a background of slow particles.
 
 ## Features
 
-- **Terminal-first navigation** — a pure parser/history layer with EN/PT-BR
-  command aliases (`help`, `clear`, `about`, `projects`, `work`, …).
-- **Two views** — terminal or browse, remembered per visitor.
+- **Terminal-docked navigation** — a pure parser/history layer with EN/PT-BR
+  command aliases (`help`, `clear`, `about`, `projects`, `work`, …): a navigation
+  command focuses one section (`all` restores the page), and `theme`, `mode` and
+  `lang` change the preferences.
+- **One page, optional console** — every section always renders; the terminal
+  dock is toggled per visitor and remembered.
 - **Three theme presets** (Studio, Paper, Terminal) × light/dark/system, applied
   before first paint so there is no flash of the wrong palette.
 - **Bilingual** — EN and PT-BR, with the document language kept in sync.
@@ -33,17 +36,17 @@ slow particles.
 
 ## Screenshots
 
-### Terminal view (default)
+### Terminal dock open
 
 | Light                                                             | Dark                                                            |
 | ----------------------------------------------------------------- | --------------------------------------------------------------- |
-| ![Terminal view, light](docs/screenshots/home-terminal-light.png) | ![Terminal view, dark](docs/screenshots/home-terminal-dark.png) |
+| ![Terminal dock, light](docs/screenshots/home-terminal-light.png) | ![Terminal dock, dark](docs/screenshots/home-terminal-dark.png) |
 
-### Browse view
+### Console collapsed
 
-| Light                                                         | Dark                                                        |
-| ------------------------------------------------------------- | ----------------------------------------------------------- |
-| ![Browse view, light](docs/screenshots/home-browse-light.png) | ![Browse view, dark](docs/screenshots/home-browse-dark.png) |
+| Light                                                               | Dark                                                              |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| ![Console collapsed, light](docs/screenshots/home-browse-light.png) | ![Console collapsed, dark](docs/screenshots/home-browse-dark.png) |
 
 Regenerate these with `make screenshots` — see
 [`docs/screenshots/README.md`](docs/screenshots/README.md).
@@ -56,6 +59,7 @@ npm run dev          # start the dev server
 make check           # sandbox config, project docs, format-check, lint, type-check, test, build
 npm run stats        # refresh the repository cards from the GitHub API (needs `gh`)
 make screenshots     # rebuild + capture the README images (needs Chrome)
+make favicons        # regenerate the favicon rasters from public/favicon.svg (needs Chrome)
 python3 scripts/fetch-fonts.py   # refresh the self-hosted webfonts
 ```
 
@@ -90,6 +94,8 @@ upgraded on the host (`make opencode-upgrade`).
   see `public/fonts/README.md`.
 - `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
   active theme colour.
+- `public/favicon.svg` — the tab icon, the same mark as the page logo. The PNG
+  fallbacks and `favicon.ico` are generated from it by `make favicons`.
 - `docs/screenshots/` — the images above; see
   [`docs/screenshots/README.md`](docs/screenshots/README.md) to regenerate them.
 

@@ -16,7 +16,7 @@ OPENCODE_ARGS ?=
 OPENCODE_INSTALL_URL ?= https://opencode.ai/install
 
 .PHONY: help check check-sandbox check-docs fmt lint typecheck test dev build preview clean \
-        stats preflight dev-up dev-down dev-log dev-build dev-shell dev-opencode \
+        stats favicons preflight dev-up dev-down dev-log dev-build dev-shell dev-opencode \
         dev-opencode-auto dev-restart reset shell opencode opencode-auto \
         opencode-version opencode-upgrade setup-host
 
@@ -60,6 +60,9 @@ stats: ## Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
 
 screenshots: build ## Capture the README screenshots into docs/screenshots/ (needs Chrome)
 	npm run screenshots
+
+favicons: ## Regenerate the favicon rasters from public/favicon.svg (needs Chrome)
+	npm run favicons
 
 clean: ## Remove build output and tool caches
 	rm -rf dist node_modules/.tmp node_modules/.vite

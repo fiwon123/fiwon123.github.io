@@ -40,8 +40,7 @@ export const en = {
     stars: 'Stars',
     updated: 'Updated',
     games: 'Games',
-    site: 'Site',
-    trailer: 'Trailer',
+    gamePage: 'Game page',
   },
   theme: {
     label: 'Theme',
@@ -59,25 +58,28 @@ export const en = {
   },
   terminal: {
     label: 'Terminal',
-    hint: 'Type a command and press Enter. Try `help`, `about`, `projects`, `skills` or `contact`.',
+    show: 'Show terminal',
+    hide: 'Hide terminal',
+    hint: 'Type a command and press Enter. Try `about`, `experience`, `projects`, `skills`, `contact` or `all`.',
     placeholder: 'type a command…',
     prompt: 'visitor@felipeinoue ~ $',
     welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
+    helpTitle: 'Available commands',
+    all: 'All sections',
     commands: {
       help: 'List the available commands',
       about: 'Who I am and what I do',
+      experience: 'Where I have worked',
       projects: 'Tools and projects',
       skills: 'Languages, data and tooling',
       contact: 'How to get in touch',
+      all: 'Show every section',
+      theme: 'Choose the colour preset',
+      mode: 'Choose light, dark or system',
+      lang: 'Choose the language',
       clear: 'Clear the output',
     },
-  },
-  view: {
-    toTerminal: 'Show terminal',
-    toBrowse: 'Browse normally',
-    welcomeBody:
-      'This page also runs as a terminal. Type a command to open a section — `about`, `projects`, `skills`, `contact` — or switch back to the conventional page.',
   },
   footer: {
     rights: 'All rights reserved.',
@@ -92,6 +94,7 @@ export const en = {
     close: 'Close',
     nextImage: 'Next image',
     previousImage: 'Previous image',
+    playTrailer: 'Play trailer',
     backToTop: 'Back to top',
   },
 }

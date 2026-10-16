@@ -100,6 +100,71 @@
   padding-left: 1.25rem;
 }
 
+/* The contact row: icon-only controls, the label as the accessible name and a
+   hover/focus tooltip. No URL text is shown. */
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+}
+
+.contactLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Comfortable hit area, larger than the glyph. */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-fg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The tooltip is a flipped fg/bg pair, so it is AA by the same `fg on bg`
+   measurement `tokens.test.ts` already enforces. */
+.tip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.5rem;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contactLink:hover .tip,
+.contactLink:focus-visible .tip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tip {
+    transition: opacity 0.12s ease-out;
+  }
+}
+
 .games {
   list-style: none;
   padding: 0;
@@ -150,6 +215,10 @@
 }
 
 .tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
@@ -159,6 +228,63 @@
     transform 0.18s ease,
     border-color 0.18s ease,
     box-shadow 0.18s ease;
+}
+
+/* The only place a group tint appears: a dot. The label keeps `--color-fg`, so
+   the tint only has to clear 3:1 as a non-text accent on the badge surface,
+   which `tokens.test.ts` recomputes from the palette. */
+.tag::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--tint, var(--color-accent));
+}
+
+.tagLang {
+  --tint: var(--color-tag-lang);
+}
+
+.tagData {
+  --tint: var(--color-tag-data);
+}
+
+.tagTool {
+  --tint: var(--color-tag-tool);
+}
+
+.tagGame {
+  --tint: var(--color-tag-game);
+}
+
+/* The badge is a link, but the label stays the page's foreground colour — there
+   is no global anchor rule, so without this it would render in the browser's
+   default link blue. */
+.tagLink {
+  color: var(--color-fg);
+  text-decoration: none;
+}
+
+.tagLink:hover,
+.tagLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The group blurb, revealed on hover or keyboard focus. It rides the shared
+   `.tip` pair (a flipped fg/bg, AA by the same measurement as body text) but
+   wraps, because a blurb is a sentence rather than a short label. */
+.tagTip {
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 2rem));
+  white-space: normal;
+  text-align: center;
+}
+
+.tag:hover .tip,
+.tag:focus-within .tip {
+  opacity: 1;
 }
 
 /* The highlight fades in on hover/focus. It is the tag that scales and the

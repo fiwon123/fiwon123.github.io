@@ -1,5 +1,4 @@
 import { useT } from '../i18n/hooks'
-import type { ViewMode } from '../lib/viewMode'
 import { Logo } from './Logo'
 import { Preferences } from './Preferences'
 
@@ -8,46 +7,57 @@ import styles from './Header.module.css'
 const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as const
 
 export interface HeaderProps {
-  view: ViewMode
-  onToggleView: () => void
+  dockOpen: boolean
+  /** Open the dock. The header only offers this while the dock is collapsed;
+   *  hiding it again is a control inside the panel. */
+  onShow: () => void
 }
 
-export function Header({ view, onToggleView }: HeaderProps) {
+export function Header({ dockOpen, onShow }: HeaderProps) {
   const t = useT()
-
-  const terminal = view === 'terminal'
-  const switchLabel = terminal ? t.view.toBrowse : t.view.toTerminal
 
   return (
     <header className={styles.header}>
-      <a className={styles.brand} href="#top">
-        <Logo />
-        <span>Felipe Inoue</span>
-      </a>
+      {/* Inside a centred, max-width row so brand, nav and actions sit closer
+          together on a wide screen instead of pinned to the viewport edges. */}
+      <div className={styles.inner}>
+        <a className={styles.brand} href="#top">
+          <Logo />
+          <span>Felipe Inoue</span>
+        </a>
 
-      {/* Hidden in terminal mode: the terminal is the navigation there, and the
-          switch below is the way back. The switch stays in both modes. */}
-      {!terminal && (
-        <nav aria-label={t.a11y.mainNav}>
-          <ul className={styles.nav}>
-            {NAV_ITEMS.map((item) => (
-              <li key={item}>
-                <a className={styles.navLink} href={`#${item}`}>
-                  {t.nav[item]}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+        <div className={styles.navWrap}>
+          <nav aria-label={t.a11y.mainNav}>
+            <ul className={styles.nav}>
+              {NAV_ITEMS.map((item) => (
+                <li key={item}>
+                  <a className={styles.navLink} href={`#${item}`}>
+                    {t.nav[item]}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
 
-      <Preferences />
-      {/* No aria-pressed: the label names where the switch goes, and a toggle
-          state alongside a changing label contradicts it ("Browse normally,
-          pressed" would describe neither mode). */}
-      <button type="button" className={styles.toggle} onClick={onToggleView}>
-        {switchLabel}
-      </button>
+        <div className={styles.actions}>
+          <Preferences />
+          {/* Only while collapsed: once the console is open, hiding it is a control
+              inside the panel, where the visitor already is. */}
+          {dockOpen ? null : (
+            <button
+              id="terminal-show"
+              type="button"
+              className={styles.toggle}
+              aria-expanded="false"
+              aria-controls="terminal-dock"
+              onClick={onShow}
+            >
+              {t.terminal.show}
+            </button>
+          )}
+        </div>
+      </div>
     </header>
   )
 }

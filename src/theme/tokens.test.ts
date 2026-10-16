@@ -20,6 +20,10 @@ const REQUIRED = [
   '--color-accent',
   '--color-accent-contrast',
   '--color-border',
+  '--color-tag-lang',
+  '--color-tag-data',
+  '--color-tag-tool',
+  '--color-tag-game',
 ] as const
 
 /** Pairs that must reach WCAG AA. `[foreground, background]`. */
@@ -31,6 +35,18 @@ const PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['--color-accent', '--color-bg'],
   ['--color-accent-contrast', '--color-accent'],
 ]
+
+/**
+ * Skill-badge tints. Each is a non-text accent (the badge's dot) on the badge's
+ * own `--color-surface` background, so it is gated at 3:1 (WCAG 1.4.11), not the
+ * 4.5:1 the text pairs above need.
+ */
+const TINTS = [
+  '--color-tag-lang',
+  '--color-tag-data',
+  '--color-tag-tool',
+  '--color-tag-game',
+] as const
 
 interface Palette {
   preset: string
@@ -171,6 +187,24 @@ describe('overlay chrome', () => {
         glyph,
         `${preset}/${mode}: overlay glyph = ${glyph.toFixed(2)}:1 (needs ${AA_NORMAL})`,
       ).toBeGreaterThanOrEqual(AA_NORMAL)
+    },
+  )
+})
+
+describe('skill badge tints', () => {
+  // The tint is the only colour the badge adds; the label stays `--color-fg`.
+  // It must read as a distinct mark against the badge surface, so 3:1, the
+  // non-text threshold, is the gate — recomputed from the palette, not assumed.
+  it.each(palettes)(
+    '$preset/$mode keeps every skill tint visible against the badge surface',
+    ({ preset, mode, colors }) => {
+      for (const tint of TINTS) {
+        const ratio = contrastRatio(parseHex(colors[tint]), parseHex(colors['--color-surface']))
+        expect(
+          ratio,
+          `${preset}/${mode}: ${tint} on --color-surface = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
+        ).toBeGreaterThanOrEqual(AA_NON_TEXT)
+      }
     },
   )
 })

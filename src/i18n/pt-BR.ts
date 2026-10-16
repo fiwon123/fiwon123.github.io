@@ -41,8 +41,7 @@ export const ptBR: Strings = {
     stars: 'Estrelas',
     updated: 'Atualizado',
     games: 'Jogos',
-    site: 'Site',
-    trailer: 'Trailer',
+    gamePage: 'Página do jogo',
   },
   theme: {
     label: 'Tema',
@@ -60,25 +59,28 @@ export const ptBR: Strings = {
   },
   terminal: {
     label: 'Terminal',
-    hint: 'Digite um comando e pressione Enter. Tente `help`, `about`, `projects`, `skills` ou `contact`.',
+    show: 'Mostrar terminal',
+    hide: 'Ocultar terminal',
+    hint: 'Digite um comando e pressione Enter. Tente `about`, `experience`, `projects`, `skills`, `contact` ou `all`.',
     placeholder: 'digite um comando…',
     prompt: 'visitante@felipeinoue ~ $',
     welcome: 'Bem-vindo. Digite `help` para listar os comandos.',
     unknown: 'comando não encontrado',
+    helpTitle: 'Comandos disponíveis',
+    all: 'Todas as seções',
     commands: {
       help: 'Lista os comandos disponíveis',
       about: 'Quem sou eu e o que faço',
+      experience: 'Onde eu trabalhei',
       projects: 'Ferramentas e projetos',
       skills: 'Linguagens, dados e ferramentas',
       contact: 'Como falar comigo',
+      all: 'Mostrar todas as seções',
+      theme: 'Escolhe o tema de cores',
+      mode: 'Escolhe claro, escuro ou sistema',
+      lang: 'Escolhe o idioma',
       clear: 'Limpa a saída',
     },
-  },
-  view: {
-    toTerminal: 'Mostrar terminal',
-    toBrowse: 'Navegar normalmente',
-    welcomeBody:
-      'Esta página também funciona como um terminal. Digite um comando para abrir uma seção — `about`, `projects`, `skills`, `contact` — ou volte para a página convencional.',
   },
   footer: {
     rights: 'Todos os direitos reservados.',
@@ -93,6 +95,7 @@ export const ptBR: Strings = {
     close: 'Fechar',
     nextImage: 'Próxima imagem',
     previousImage: 'Imagem anterior',
+    playTrailer: 'Reproduzir trailer',
     backToTop: 'Voltar ao topo',
   },
 }

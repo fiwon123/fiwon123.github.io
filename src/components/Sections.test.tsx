@@ -1,5 +1,9 @@
-import { act, cleanup, render } from '@testing-library/react'
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -149,7 +153,7 @@ describe('reveal class list', () => {
   })
 })
 
-describe('repository facts and game links (#20)', () => {
+describe('repository facts and game tiles (#20, #43)', () => {
   it('shows build-time facts on a GitHub card and omits them elsewhere', () => {
     withoutObserver()
     allowMotion()
@@ -166,7 +170,7 @@ describe('repository facts and game links (#20)', () => {
     expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
   })
 
-  it('renders a games list with a link per URL the entry carries', () => {
+  it('lists game names without sending visitors off-site', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Experience />)
@@ -175,17 +179,26 @@ describe('repository facts and game links (#20)', () => {
 
     const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
     expect(games.length).toBeGreaterThan(0)
-    const linkCount = games.reduce(
-      (total, game) => total + (game.site ? 1 : 0) + (game.trailer ? 1 : 0),
-      0,
-    )
     expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
-    expect(lists[0].querySelectorAll('a')).toHaveLength(linkCount)
-    // "Site" x6 is ambiguous in a screen reader's link list; each names its game.
-    const names = [...lists[0].querySelectorAll('a')].map((a) => a.getAttribute('aria-label') ?? '')
-    for (const game of games) {
-      expect(names.some((name) => name.includes(game.name))).toBe(true)
-    }
+    // The card names the titles and links out to nothing — the off-site anchors
+    // moved into the lightbox detail (#43).
+    expect(lists[0].querySelectorAll('a')).toHaveLength(0)
+    const listed = [...lists[0].querySelectorAll('li')].map((li) => li.textContent)
+    for (const game of games) expect(listed).toContain(game.name)
+  })
+
+  it('gives every shipped title its own named gallery tile', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Experience />)
+    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
+    const labels = [...container.querySelectorAll('button')].map(
+      (button) => button.getAttribute('aria-label') ?? '',
+    )
+    // One tile per title, each naming it — so a screen reader hears which game an
+    // image shows rather than "Open image" alone.
+    const gameTiles = labels.filter((label) => games.some((game) => label.includes(game.name)))
+    expect(gameTiles).toHaveLength(games.length)
   })
 
   it('links store tokens that have a URL and leaves the rest as icons', () => {
@@ -200,5 +213,46 @@ describe('repository facts and game links (#20)', () => {
     }
     // {sony} on VR Monkey has no URL, so it stays an icon, not a dead link.
     expect(container.querySelector('a[aria-label="PlayStation"]')).toBeNull()
+  })
+})
+
+const skillItems = skills.flatMap((group) => group.items)
+
+describe('skill badges (#44)', () => {
+  it('gives every skill an official URL and both blurbs', () => {
+    expect(skillItems.length).toBeGreaterThan(0)
+    for (const item of skillItems) {
+      expect(item.url, item.name).toMatch(/^https:\/\//)
+      expect(item.blurb.en.trim(), `${item.name} EN`).not.toBe('')
+      expect(item.blurb['pt-BR'].trim(), `${item.name} PT-BR`).not.toBe('')
+    }
+  })
+
+  it('links each badge to its reference with the blurb as its accessible name', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Skills />)
+    const links = [...container.querySelectorAll('a')]
+    expect(links).toHaveLength(skillItems.length)
+
+    for (const item of skillItems) {
+      const accessibleName = `${item.name} — ${item.blurb.en}`
+      const link = links.find((node) => node.getAttribute('aria-label') === accessibleName)
+      expect(link, accessibleName).toBeTruthy()
+      expect(link?.getAttribute('href'), item.name).toBe(item.url)
+      expect(link?.getAttribute('target'), item.name).toBe('_blank')
+      expect(link?.getAttribute('rel'), item.name).toBe('noopener noreferrer')
+      // The blurb also shows as a tooltip, hidden from the accessibility tree so
+      // the badge is not announced twice.
+      const tip = link?.parentElement?.querySelector('[aria-hidden="true"]')
+      expect(tip?.textContent, item.name).toBe(item.blurb.en)
+    }
+  })
+
+  it('keeps the badge stylesheet free of literal colours', () => {
+    const cssPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css')
+    const css = readFileSync(cssPath, 'utf8')
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
+    expect(css).not.toMatch(/\brgba?\(/i)
   })
 })

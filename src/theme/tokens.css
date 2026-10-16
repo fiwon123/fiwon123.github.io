@@ -27,6 +27,9 @@
 
   --radius: 10px;
   --max-width: 64rem;
+  /* The page frame: the header and the content/dock row share it, so the header
+     chrome lines up with the page instead of the viewport edges. */
+  --page-max: 88rem;
 
   --step-0: 1rem;
   --step-1: 1.25rem;
@@ -51,6 +54,10 @@
   --color-overlay-chrome-fg: #1a1a1a;
 }
 
+/* Skill-badge tints, one per skill group. Used only for the badge's non-text
+   dot — the label keeps `--color-fg` — so each only needs 3:1 (WCAG 1.4.11)
+   against `--color-surface`, the badge's own background. `tokens.test.ts`
+   recomputes that ratio per palette from these values. */
 :root,
 [data-theme='studio'][data-mode='light'] {
   color-scheme: light;
@@ -61,6 +68,10 @@
   --color-accent: #1d4ed8;
   --color-accent-contrast: #ffffff;
   --color-border: #cbd3dd;
+  --color-tag-lang: #2563eb;
+  --color-tag-data: #0f766e;
+  --color-tag-tool: #b45309;
+  --color-tag-game: #7c3aed;
 }
 
 [data-theme='studio'][data-mode='dark'] {
@@ -72,6 +83,10 @@
   --color-accent: #6ea8fe;
   --color-accent-contrast: #06121f;
   --color-border: #2a323d;
+  --color-tag-lang: #60a5fa;
+  --color-tag-data: #34d399;
+  --color-tag-tool: #fbbf24;
+  --color-tag-game: #c4b5fd;
 }
 
 [data-theme='paper'][data-mode='light'] {
@@ -83,6 +98,10 @@
   --color-accent: #8a4b12;
   --color-accent-contrast: #fff8ef;
   --color-border: #e3d7c3;
+  --color-tag-lang: #2563eb;
+  --color-tag-data: #0f766e;
+  --color-tag-tool: #b45309;
+  --color-tag-game: #7c3aed;
 }
 
 [data-theme='paper'][data-mode='dark'] {
@@ -94,6 +113,10 @@
   --color-accent: #e3a355;
   --color-accent-contrast: #2a1c09;
   --color-border: #3a3126;
+  --color-tag-lang: #60a5fa;
+  --color-tag-data: #34d399;
+  --color-tag-tool: #fbbf24;
+  --color-tag-game: #c4b5fd;
 }
 
 [data-theme='terminal'][data-mode='light'] {
@@ -105,6 +128,10 @@
   --color-accent: #0b6b3a;
   --color-accent-contrast: #f2fff7;
   --color-border: #c9cec4;
+  --color-tag-lang: #2563eb;
+  --color-tag-data: #0f766e;
+  --color-tag-tool: #b45309;
+  --color-tag-game: #7c3aed;
 }
 
 [data-theme='terminal'][data-mode='dark'] {
@@ -116,4 +143,8 @@
   --color-accent: #41e08a;
   --color-accent-contrast: #03150c;
   --color-border: #1b2a22;
+  --color-tag-lang: #60a5fa;
+  --color-tag-data: #34d399;
+  --color-tag-tool: #fbbf24;
+  --color-tag-game: #c4b5fd;
 }

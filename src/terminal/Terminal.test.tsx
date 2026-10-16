@@ -1,17 +1,20 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Terminal, type TerminalProps } from './Terminal'
+import { TerminalProvider } from './TerminalProvider'
 
 function renderTerminal(props: TerminalProps = {}) {
   render(
     <ThemeProvider>
       <LanguageProvider>
-        <Terminal {...props} />
+        <TerminalProvider>
+          <Terminal {...props} />
+        </TerminalProvider>
       </LanguageProvider>
     </ThemeProvider>,
   )
@@ -31,69 +34,98 @@ function input() {
 
 afterEach(cleanup)
 
+// Each case starts from a clean slate, so a language or theme set by one test
+// cannot leak into the next through the persisted preference.
+beforeEach(() => localStorage.clear())
+
 describe('Terminal', () => {
-  it('reports a recognised command to its caller', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('about')
-    expect(onCommand).toHaveBeenCalledWith('about')
-  })
-
-  it('reports an alias as the command it resolves to', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('sobre')
-    expect(onCommand).toHaveBeenCalledWith('about')
-  })
-
-  it('reports help, which is recognised but opens nothing', () => {
-    // Which commands move the page is the section mapping's business, not ours:
-    // `help` is reported and `sectionForCommand('help')` returns null.
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('help')
-    expect(onCommand).toHaveBeenCalledWith('help')
-  })
-
-  it('reports nothing for an unknown or empty command', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
-    submit('nonsense')
-    submit('   ')
-    expect(onCommand).not.toHaveBeenCalled()
-  })
-
-  it('focuses the input when it opens as the view', () => {
+  it('focuses the input when asked to', () => {
     renderTerminal({ autoFocus: true })
     expect(document.activeElement).toBe(input())
   })
 
-  it('does not steal focus when it is not the view', () => {
+  it('does not steal focus by default', () => {
     renderTerminal()
     expect(document.activeElement).not.toBe(input())
   })
 
-  it('keeps focus in the input after a command that opens a section', () => {
-    // The loop is type-command-type; moving focus into the section would need a
-    // click before the next command.
-    renderTerminal({ onCommand: vi.fn(), autoFocus: true })
+  it('keeps focus in the input after a command, ready for the next one', () => {
+    // The loop is type-command-type; moving focus out would need a click before
+    // the next command.
+    renderTerminal({ autoFocus: true })
     submit('projects')
     expect(document.activeElement).toBe(input())
   })
 
-  it('still answers a command with output', () => {
+  it('answers a command with output', () => {
     renderTerminal()
     submit('help')
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
   })
 
-  it('empties the output on clear, and still reports it', () => {
-    const onCommand = vi.fn()
-    renderTerminal({ onCommand })
+  it('prints an alias as the section it resolves to', () => {
+    renderTerminal()
+    submit('sobre')
+    expect(screen.getByText(`▸ ${en.nav.about}`)).toBeTruthy()
+  })
+
+  it('prints an unknown command as such', () => {
+    renderTerminal()
+    submit('nonsense')
+    expect(screen.getByText(`${en.terminal.unknown}: nonsense`)).toBeTruthy()
+  })
+
+  it('empties the output on clear', () => {
+    renderTerminal()
     submit('help')
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
     submit('clear')
     expect(screen.queryByText(en.terminal.commands.help)).toBeNull()
-    expect(onCommand).toHaveBeenLastCalledWith('clear')
+  })
+
+  it('sets the appearance mode from a command', () => {
+    renderTerminal()
+    submit('mode dark')
+    expect(document.documentElement.dataset.mode).toBe('dark')
+  })
+
+  it('sets the colour preset from a command', () => {
+    renderTerminal()
+    submit('theme paper')
+    expect(document.documentElement.dataset.theme).toBe('paper')
+  })
+
+  it('switches the language from a command', () => {
+    renderTerminal()
+    submit('lang pt')
+    expect(document.documentElement.lang).toBe('pt-BR')
+  })
+
+  it('lists the valid values when a settings command has no argument', () => {
+    renderTerminal()
+    submit('theme')
+    const listing = `${en.theme.label}: ${en.theme.presets.studio} · ${en.theme.presets.paper} · ${en.theme.presets.terminal}`
+    expect(screen.getByText(listing)).toBeTruthy()
+  })
+
+  it('answers a bad value with the valid ones and changes nothing', () => {
+    renderTerminal()
+    submit('mode blue')
+    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`
+    expect(screen.getByText(listing)).toBeTruthy()
+    expect(document.documentElement.dataset.mode).not.toBe('blue')
+  })
+
+  it('renders no control in its header when there is nothing to close', () => {
+    renderTerminal()
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+
+  it('renders a hide control when given one, and reports it', () => {
+    const onClose = vi.fn()
+    renderTerminal({ onClose })
+    const hide = screen.getByRole('button', { name: en.terminal.hide })
+    fireEvent.click(hide)
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
