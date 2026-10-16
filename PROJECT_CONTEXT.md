@@ -136,6 +136,18 @@ Each entry is settled; the reason is what stops it being re-opened.
   16/32/180/192/512 PNGs. A hand-maintained second copy of the icon is the way the
   tab and the page drift apart, and a capture harness that writes a blank or
   opaque-cornered file is worse than no harness. (2026-10-16)
+- **A game owns its image; the experience gallery is derived from the games** —
+  `GameLink.image` is the single place the title→image link lives, and the card
+  builds its tiles as `{ src: game.image, game }`, so an image path is never
+  written twice. The tile names its game in the accessible name and shows the name
+  as a tooltip on hover and on keyboard focus, and the lightbox gains the game's
+  detail (name, page link, trailer) only for a tile that carries a game.
+  (2026-10-16)
+- **The in-portfolio trailer is a facade, not an embed** — the lightbox shows the
+  still with a play control and only mounts the `youtube-nocookie.com` iframe when
+  it is pressed, so opening a gallery makes no third-party request. The pure
+  `youtubeId` helper decides whether a trailer is embeddable; a title whose link
+  is not a YouTube video simply gets no play control. (2026-10-16)
 
 ## Topology
 
