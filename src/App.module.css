@@ -1,21 +1,36 @@
-/* With the terminal docked, the page is content + console side by side: the
-   content column first, the console second (it stacks below on a narrow screen).
-   The wider max-width gives the content its ~60rem reading measure beside the
-   22–24rem console instead of squeezing it. */
-.withTerminal {
+/* Content and console are one row: the content column first, the dock second.
+   The row keeps the wider measure (the sections cap themselves at a ~60rem
+   reading measure and centre), so the only thing that changes when the dock
+   opens is the dock's own column — which animates rather than popping. On a
+   narrow screen the row stacks and the console sits below the content. */
+.layout {
   max-width: 88rem;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(22rem, 24rem);
+  margin: 0 auto;
+  padding: 0 var(--space-4) var(--space-12);
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  transition: gap 320ms ease;
+}
+
+.layout[data-dock='open'] {
   gap: var(--space-6);
-  align-items: start;
 }
 
 .page {
+  flex: 1 1 auto;
   min-width: 0;
 }
 
 @media (max-width: 68rem) {
-  .withTerminal {
-    grid-template-columns: minmax(0, 1fr);
+  .layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout {
+    transition: none;
   }
 }

@@ -8,10 +8,12 @@ const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as co
 
 export interface HeaderProps {
   dockOpen: boolean
-  onToggleDock: () => void
+  /** Open the dock. The header only offers this while the dock is collapsed;
+   *  hiding it again is a control inside the panel. */
+  onShow: () => void
 }
 
-export function Header({ dockOpen, onToggleDock }: HeaderProps) {
+export function Header({ dockOpen, onShow }: HeaderProps) {
   const t = useT()
 
   return (
@@ -37,17 +39,20 @@ export function Header({ dockOpen, onToggleDock }: HeaderProps) {
 
       <div className={styles.actions}>
         <Preferences />
-        {/* The button's label says what clicking it does, so the state is the
-            button's own meaning (expanded/collapsed), not a pressed toggle. */}
-        <button
-          type="button"
-          className={styles.toggle}
-          aria-expanded={dockOpen}
-          aria-controls="terminal-dock"
-          onClick={onToggleDock}
-        >
-          {dockOpen ? t.terminal.hide : t.terminal.show}
-        </button>
+        {/* Only while collapsed: once the console is open, hiding it is a control
+            inside the panel, where the visitor already is. */}
+        {dockOpen ? null : (
+          <button
+            id="terminal-show"
+            type="button"
+            className={styles.toggle}
+            aria-expanded="false"
+            aria-controls="terminal-dock"
+            onClick={onShow}
+          >
+            {t.terminal.show}
+          </button>
+        )}
       </div>
     </header>
   )

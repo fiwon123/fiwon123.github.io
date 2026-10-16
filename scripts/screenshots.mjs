@@ -38,13 +38,29 @@ import { extname, join, resolve, sep } from 'node:path'
 const PRESET = 'studio'
 const COMMON = ['data-testid="particles"', 'class="skip-link"', '<nav']
 // The page is always the conventional page; `dock` only decides whether the
-// console is beside it. So every capture carries the nav, and the terminal
-// captures additionally carry the live log — which the collapsed ones must not.
+// console is beside it. The console is never unmounted — its scrollback survives
+// a toggle — so the two states are told apart by the dock's own open flag, not by
+// whether the log is in the DOM: closed captures carry `data-open="false"`, and
+// the open ones `data-open="true"`, which the closed ones must not carry.
+const OPEN = 'data-open="true"'
+const CLOSED = 'data-open="false"'
 const CAPTURES = [
-  { name: 'home-terminal-light', dock: 'true', mode: 'light', expect: [...COMMON, 'role="log"'] },
-  { name: 'home-terminal-dark', dock: 'true', mode: 'dark', expect: [...COMMON, 'role="log"'] },
-  { name: 'home-browse-light', dock: 'false', mode: 'light', expect: COMMON, forbid: 'role="log"' },
-  { name: 'home-browse-dark', dock: 'false', mode: 'dark', expect: COMMON, forbid: 'role="log"' },
+  { name: 'home-terminal-light', dock: 'true', mode: 'light', expect: [...COMMON, OPEN] },
+  { name: 'home-terminal-dark', dock: 'true', mode: 'dark', expect: [...COMMON, OPEN] },
+  {
+    name: 'home-browse-light',
+    dock: 'false',
+    mode: 'light',
+    expect: [...COMMON, CLOSED],
+    forbid: OPEN,
+  },
+  {
+    name: 'home-browse-dark',
+    dock: 'false',
+    mode: 'dark',
+    expect: [...COMMON, CLOSED],
+    forbid: OPEN,
+  },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
 

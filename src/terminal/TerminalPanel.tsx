@@ -8,8 +8,11 @@ import { TerminalProvider } from './TerminalProvider'
 import styles from './TerminalPanel.module.css'
 
 export interface TerminalPanelProps {
-  /** Collapsed by the header toggle; kept mounted so the scrollback survives. */
-  hidden?: boolean
+  /** Whether the dock is open. The panel is always mounted so its scrollback
+   *  survives a toggle; `open` only drives the open/closed presentation. */
+  open: boolean
+  /** Collapse the dock from a control inside the panel. */
+  onHide: () => void
 }
 
 /**
@@ -19,9 +22,11 @@ export interface TerminalPanelProps {
  * A navigation command runs in the provider, and the provider calls back here to
  * scroll the named section into view; the console keeps focus and the section
  * arrives under it. The panel stays mounted while collapsed so toggling it does
- * not throw the scrollback away.
+ * not throw the scrollback away, so `open` is CSS-driven: while closed the
+ * aside is `inert` and `aria-hidden`, which keeps it out of the tab order and
+ * the accessibility tree without a `hidden` attribute to animate around.
  */
-export function TerminalPanel({ hidden = false }: TerminalPanelProps) {
+export function TerminalPanel({ open, onHide }: TerminalPanelProps) {
   const navigate = useCallback((id: SectionId) => {
     const target = document.getElementById(id)
     if (!target) return
@@ -32,9 +37,15 @@ export function TerminalPanel({ hidden = false }: TerminalPanelProps) {
   }, [])
 
   return (
-    <aside id="terminal-dock" className={styles.dock} hidden={hidden}>
+    <aside
+      id="terminal-dock"
+      className={styles.dock}
+      data-open={open ? 'true' : 'false'}
+      aria-hidden={!open || undefined}
+      inert={!open || undefined}
+    >
       <TerminalProvider onNavigate={navigate}>
-        <Terminal />
+        <Terminal onClose={onHide} />
       </TerminalProvider>
     </aside>
   )

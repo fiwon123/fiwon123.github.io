@@ -9,6 +9,8 @@ import styles from './Terminal.module.css'
 export interface TerminalProps {
   /** Focus the input on mount — entering terminal mode should be ready to type. */
   autoFocus?: boolean
+  /** Collapse the dock. Renders a control in the console's header when provided. */
+  onClose?: () => void
 }
 
 /**
@@ -16,7 +18,7 @@ export interface TerminalProps {
  * its history — the output and the section it opens live in the provider, so a
  * command can also be issued from the welcome screen's chips.
  */
-export function Terminal({ autoFocus = false }: TerminalProps) {
+export function Terminal({ autoFocus = false, onClose }: TerminalProps) {
   const t = useT()
   const { entries, run } = useTerminal()
   const [input, setInput] = useState('')
@@ -66,7 +68,14 @@ export function Terminal({ autoFocus = false }: TerminalProps) {
           {/* Not a heading: the console sits above the welcome, and the page's one
               h1 lives there — an h2 here would precede it. */}
           <p className={styles.title}>{t.terminal.label}</p>
-          <p className={styles.hint}>{t.terminal.hint}</p>
+          <div className={styles.headerActions}>
+            <p className={styles.hint}>{t.terminal.hint}</p>
+            {onClose ? (
+              <button type="button" className={styles.hide} onClick={onClose}>
+                {t.terminal.hide}
+              </button>
+            ) : null}
+          </div>
         </div>
 
         <div ref={screenRef} className={styles.screen}>

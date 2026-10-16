@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
@@ -61,14 +61,28 @@ function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  // Collapsing from the control inside the panel makes that control `inert`,
+  // which drops focus to <body>. Move it to the header control that re-opens the
+  // dock, so a keyboard visitor is not stranded. Runs after the commit, so the
+  // header control is already in the DOM. Only a close (not the initial mount).
+  const wasOpen = useRef(dockOpen)
+  useEffect(() => {
+    if (wasOpen.current && !dockOpen) {
+      document.getElementById('terminal-show')?.focus()
+    }
+    wasOpen.current = dockOpen
+  }, [dockOpen])
+
   return (
     <>
       {/* First focusable element: Tab once to reach it, Enter jumps to <main>. */}
       <SkipLink />
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
-      <Header dockOpen={dockOpen} onToggleDock={() => setDockOpen(!dockOpen)} />
-      <main id="content" className={dockOpen ? styles.withTerminal : undefined}>
+      <Header dockOpen={dockOpen} onShow={() => setDockOpen(true)} />
+      {/* One row: the content, then the dock. The dock's column animates open and
+          shut, so `data-dock` drives the layout without ever unmounting it. */}
+      <main id="content" className={styles.layout} data-dock={dockOpen ? 'open' : 'closed'}>
         <div className={styles.page}>
           <Hero />
           <About />
@@ -77,7 +91,7 @@ function App() {
           <Skills />
           <Contact />
         </div>
-        <TerminalPanel hidden={!dockOpen} />
+        <TerminalPanel open={dockOpen} onHide={() => setDockOpen(false)} />
       </main>
       <Footer />
       <BackToTop />
