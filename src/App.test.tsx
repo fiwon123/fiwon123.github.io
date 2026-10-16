@@ -82,29 +82,60 @@ describe('starting state', () => {
   })
 })
 
-describe('the dock toggle', () => {
-  function toggle() {
-    return screen.getByRole('button', { name: /terminal/i })
-  }
+describe('the dock control', () => {
+  const showButton = () => screen.queryByRole('button', { name: en.terminal.show })
+  const hideButton = () => screen.queryByRole('button', { name: en.terminal.hide })
 
-  it('collapses and re-opens the console, and persists the choice', () => {
+  it('starts open, with the hide control inside the panel and none in the header', () => {
     renderApp()
     expect(terminalInput()).toBeTruthy()
-    expect(toggle().getAttribute('aria-expanded')).toBe('true')
+    expect(showButton()).toBeNull()
+    expect(hideButton()).toBeTruthy()
+  })
 
-    fireEvent.click(toggle())
+  it('collapses from the control inside the panel and persists the choice', () => {
+    renderApp()
+    fireEvent.click(hideButton()!)
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(localStorage.getItem(DOCK_KEY)).toBe('false')
-    expect(toggle().getAttribute('aria-expanded')).toBe('false')
+    // Collapsed: the header offers the way back in, and the panel's own control is gone.
+    expect(showButton()).toBeTruthy()
+    expect(showButton()!.getAttribute('aria-expanded')).toBe('false')
+    expect(hideButton()).toBeNull()
+  })
 
-    fireEvent.click(toggle())
+  it('re-opens from the header control and persists the choice', () => {
+    localStorage.setItem(DOCK_KEY, 'false')
+    renderApp()
+    fireEvent.click(showButton()!)
     expect(terminalInput()).toBeTruthy()
     expect(localStorage.getItem(DOCK_KEY)).toBe('true')
   })
 
+  it('moves focus to the header control when the panel control collapses it', () => {
+    // The clicked control becomes `inert`, which would otherwise drop focus to
+    // <body> and strand a keyboard visitor.
+    renderApp()
+    const hide = hideButton()!
+    hide.focus()
+    fireEvent.click(hide)
+    expect(document.activeElement).toBe(showButton())
+  })
+
+  it('keeps the collapsed console mounted but out of the accessibility tree', () => {
+    // The scrollback has to survive a toggle, so the panel is not removed — it is
+    // hidden, and `aria-hidden` + `inert` keep it out of the tree and the tab order.
+    localStorage.setItem(DOCK_KEY, 'false')
+    renderApp()
+    const dock = document.getElementById('terminal-dock')
+    expect(dock).toBeTruthy()
+    expect(dock!.getAttribute('aria-hidden')).toBe('true')
+    expect(dock!.hasAttribute('inert')).toBe(true)
+  })
+
   it('keeps the page readable while the console is collapsed', () => {
     renderApp()
-    fireEvent.click(toggle())
+    fireEvent.click(hideButton()!)
     for (const id of SECTION_IDS) {
       expect(document.getElementById(id), `#${id}`).toBeTruthy()
     }

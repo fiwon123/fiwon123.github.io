@@ -7,15 +7,15 @@ import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Header } from './Header'
 
-function renderHeader(dockOpen: boolean, onToggleDock = vi.fn()) {
+function renderHeader(dockOpen: boolean, onShow = vi.fn()) {
   render(
     <ThemeProvider>
       <LanguageProvider>
-        <Header dockOpen={dockOpen} onToggleDock={onToggleDock} />
+        <Header dockOpen={dockOpen} onShow={onShow} />
       </LanguageProvider>
     </ThemeProvider>,
   )
-  return onToggleDock
+  return onShow
 }
 
 afterEach(cleanup)
@@ -29,22 +29,23 @@ describe('Header', () => {
     expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
   })
 
-  it('labels the toggle for what clicking it does, and exposes the state', () => {
+  it('offers the show control only while the console is collapsed', () => {
+    // Once the console is open, hiding it is a control inside the panel, so the
+    // header has no terminal button at all.
     renderHeader(true)
-    const hide = screen.getByRole('button', { name: en.terminal.hide })
-    expect(hide.getAttribute('aria-expanded')).toBe('true')
-    expect(hide.getAttribute('aria-controls')).toBe('terminal-dock')
+    expect(screen.queryByRole('button', { name: /terminal/i })).toBeNull()
     cleanup()
 
     renderHeader(false)
     const show = screen.getByRole('button', { name: en.terminal.show })
     expect(show.getAttribute('aria-expanded')).toBe('false')
+    expect(show.getAttribute('aria-controls')).toBe('terminal-dock')
   })
 
-  it('reports the toggle to its caller', () => {
-    const onToggle = renderHeader(true)
-    act(() => screen.getByRole('button', { name: en.terminal.hide }).click())
-    expect(onToggle).toHaveBeenCalledTimes(1)
+  it('reports the show control to its caller', () => {
+    const onShow = renderHeader(false)
+    act(() => screen.getByRole('button', { name: en.terminal.show }).click())
+    expect(onShow).toHaveBeenCalledTimes(1)
   })
 
   it('keeps theme and language reachable in both dock states', () => {

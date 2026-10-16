@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
@@ -77,5 +77,18 @@ describe('Terminal', () => {
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
     submit('clear')
     expect(screen.queryByText(en.terminal.commands.help)).toBeNull()
+  })
+
+  it('renders no control in its header when there is nothing to close', () => {
+    renderTerminal()
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+
+  it('renders a hide control when given one, and reports it', () => {
+    const onClose = vi.fn()
+    renderTerminal({ onClose })
+    const hide = screen.getByRole('button', { name: en.terminal.hide })
+    fireEvent.click(hide)
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
