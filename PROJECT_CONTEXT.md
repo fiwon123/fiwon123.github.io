@@ -129,6 +129,33 @@ Each entry is settled; the reason is what stops it being re-opened.
   in the Dockerfile** — so `check-sandbox.py` can execute the shipped file under
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
+- **The favicon is the page's own mark, and its rasters are generated, not drawn
+  twice** — `public/favicon.svg` is the same geometry and palette as `Logo.tsx`
+  (a test derives both from source and fails on drift), and `make favicons`
+  rasterises it in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
+  16/32/180/192/512 PNGs. A hand-maintained second copy of the icon is the way the
+  tab and the page drift apart, and a capture harness that writes a blank or
+  opaque-cornered file is worse than no harness. (2026-10-16)
+- **A game owns its image; the experience gallery is derived from the games** —
+  `GameLink.image` is the single place the title→image link lives, and the card
+  builds its tiles as `{ src: game.image, game }`, so an image path is never
+  written twice. The tile names its game in the accessible name and shows the name
+  as a tooltip on hover and on keyboard focus, and the lightbox gains the game's
+  detail (name, page link, trailer) only for a tile that carries a game.
+  (2026-10-16)
+- **The in-portfolio trailer is a facade, not an embed** — the lightbox shows the
+  still with a play control and only mounts the `youtube-nocookie.com` iframe when
+  it is pressed, so opening a gallery makes no third-party request. The pure
+  `youtubeId` helper decides whether a trailer is embeddable; a title whose link
+  is not a YouTube video simply gets no play control. (2026-10-16)
+- **A skill badge is a link, and its group colour is a dot, not the text** — each
+  skill carries a `url` and a bilingual `blurb`; the badge is an anchor to the
+  reference, with the blurb as its accessible name and a hover/focus tooltip, and
+  the group is shown by a single `--color-tag-*` dot while the label keeps
+  `--color-fg`. Only the dot is a non-text accent, so it must clear 3:1
+  (WCAG 1.4.11) on `--color-surface` — which is why the tints are a separate
+  token set gated by `tokens.test.ts` rather than a recolouring of the label.
+  (2026-10-16)
 
 ## Topology
 
@@ -151,7 +178,7 @@ src/
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
 docs/screenshots/  # Committed README images + how to regenerate them
 scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-fonts.py,
-                   #   repo-stats.mjs, screenshots.mjs, sandbox scripts)
+                   #   repo-stats.mjs, screenshots.mjs, favicons.mjs, favicon-ico.mjs, sandbox scripts)
 .opencode/         # Agent definitions, instructions, skills, gitignored session memory
 ```
 
@@ -170,6 +197,10 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 - **Screenshots**: `make screenshots` — rebuilds and captures the README images
   into `docs/screenshots/` with a real headless Chrome (see that directory's
   README); refuses to write a capture it cannot trust
+- **Favicons**: `make favicons` (or `npm run favicons`) — re-renders
+  `public/favicon.svg` into the committed rasters (`favicon.ico` as PNG-in-ICO,
+  16/32/180/192/512 PNGs) with a real headless Chrome; refuses a wrong-sized,
+  blank or opaque-cornered capture
 - **Sandbox**: `make dev-up` / `make dev-log` / `make opencode` / `make dev-down`
   (needs Docker; `make check-sandbox` validates the config without it)
 
@@ -181,24 +212,22 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   scroll-reveal (#17), the particle background (#18) and its visibility fix
   (#33), the terminal-first view (#19), repository cards (#20) and the stability
   pass (#21).
-- **In progress**: milestone `v1.2 — Terminal & details`. Merged to `dev` so far:
-  the two-column layout (#40), the centred header and SVG-first favicons (#41),
-  the particle reading-zone fade (#42), icon-only contact links (#45), and the
-  always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
-  polish`: the animated dock, readable console and in-panel hide control (#52),
-  one-section focus with `all` (#53), theme/appearance/language from the
-  terminal (#54), preference controls as icons (#55), and a header centred on the
-  page frame (#56).
+- **In progress**: milestone `v1.2 — Terminal & details` — feature-complete,
+  pending release. Merged to `dev`: the two-column layout (#40), the centred
+  header and SVG-first favicons (#41), the particle reading-zone fade (#42), the
+  game galleries with tile tooltips and in-portfolio trailers (#43), icon-only
+  contact links (#45), the always-docked terminal panel (#47) and skill badges
+  (#44). Milestone `v1.3 — Terminal controls & polish`: the animated dock,
+  readable console and in-panel hide control (#52), one-section focus with `all`
+  (#53), theme/appearance/language from the terminal (#54), preference controls
+  as icons (#55), and a header centred on the page frame (#56).
 
 ## Backlog
 
-With `v1.3` complete, what remains is the rest of `v1.2`; each item is a GitHub
-issue already filed.
+`v1.2` and `v1.3` are feature-complete; the only filed work left is a carry-over
+from `v1.1`:
 
-1. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
-   playback
-2. `#44` — skill badges with group tints, tooltips and official links
-3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
+1. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
 
 Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and

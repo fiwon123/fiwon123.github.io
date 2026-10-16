@@ -1,14 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+import type { GalleryItem } from '../content/types'
 import { useT } from '../i18n/hooks'
 import { positionLabel, step, type StepDirection } from '../lib/lightbox'
+import { youtubeId } from '../lib/youtube'
 
 import styles from './Lightbox.module.css'
 
 type LightboxProps = {
-  /** Image paths to show, in order. */
-  images: string[]
+  /** Images to show, in order; a `game` adds the detail block and a trailer. */
+  items: GalleryItem[]
   /** Index of the image currently shown. */
   index: number
   /** What the images belong to — used in the dialog's accessible name. */
@@ -27,15 +29,27 @@ const FOCUSABLE =
  * it, and it owns the three things a modal cannot get wrong: the keyboard
  * contract (Escape, arrows, a trapped Tab), focus (moved in on open, returned to
  * the thumbnail on close), and the scroll lock.
+ *
+ * An image linked to a shipped title also carries its detail: the title, a link
+ * to its page, and its trailer. The trailer is a facade — the still plus a play
+ * control, and only pressing play mounts the embed, so merely opening a gallery
+ * makes no third-party request. The playing index, not a boolean, is what tracks
+ * the facade: navigate to another image and the facade is gone by construction.
  */
-export function Lightbox({ images, index, title, onClose, onNavigate }: LightboxProps) {
+export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxProps) {
   const t = useT()
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const restoreFocusRef = useRef<HTMLElement | null>(null)
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null)
+
+  const item = items[index]
+  const game = item.game
+  const trailerId = game?.trailer ? youtubeId(game.trailer) : null
+  const playing = playingIndex === index && trailerId !== null
 
   const move = (direction: StepDirection) => {
-    const next = step(index, images.length, direction)
+    const next = step(index, items.length, direction)
     if (next !== null) onNavigate(next)
   }
 
@@ -87,13 +101,13 @@ export function Lightbox({ images, index, title, onClose, onNavigate }: Lightbox
 
       const dialog = dialogRef.current
       if (!dialog) return
-      const items = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE))
-      if (items.length === 0) {
+      const focusables = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE))
+      if (focusables.length === 0) {
         event.preventDefault()
         return
       }
-      const first = items[0]
-      const last = items[items.length - 1]
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
       const active = document.activeElement
       const outside = !dialog.contains(active)
       if (event.shiftKey && (active === first || outside)) {
@@ -116,7 +130,8 @@ export function Lightbox({ images, index, title, onClose, onNavigate }: Lightbox
     if (event.target === event.currentTarget) onClose()
   }
 
-  const multiple = images.length > 1
+  const multiple = items.length > 1
+  const heading = game?.name ?? title
 
   return createPortal(
     <div className={styles.backdrop} onClick={onBackdropClick}>
@@ -127,46 +142,85 @@ export function Lightbox({ images, index, title, onClose, onNavigate }: Lightbox
         aria-modal="true"
         aria-label={`${t.a11y.lightbox}: ${title}`}
       >
-        <img
-          className={styles.image}
-          src={images[index]}
-          alt={`${title} — ${index + 1}`}
-          decoding="async"
-        />
+        <div className={`${styles.stage} ${game ? styles.withDetail : ''}`}>
+          {playing ? (
+            <iframe
+              className={styles.frame}
+              src={`https://www.youtube-nocookie.com/embed/${trailerId}?autoplay=1`}
+              title={heading}
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
+            />
+          ) : (
+            <img
+              className={styles.image}
+              src={item.src}
+              alt={`${title} — ${index + 1}`}
+              decoding="async"
+            />
+          )}
 
-        <button
-          ref={closeRef}
-          type="button"
-          className={styles.close}
-          onClick={onClose}
-          aria-label={t.a11y.close}
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-
-        {multiple && (
-          <>
+          {trailerId !== null && !playing && (
             <button
               type="button"
-              className={`${styles.nav} ${styles.previous}`}
-              onClick={() => move('previous')}
-              aria-label={t.a11y.previousImage}
+              className={styles.play}
+              onClick={() => setPlayingIndex(index)}
+              aria-label={`${t.a11y.playTrailer}: ${heading}`}
             >
-              <span aria-hidden="true">‹</span>
+              <span aria-hidden="true">▶</span>
             </button>
-            <button
-              type="button"
-              className={`${styles.nav} ${styles.next}`}
-              onClick={() => move('next')}
-              aria-label={t.a11y.nextImage}
-            >
-              <span aria-hidden="true">›</span>
-            </button>
-          </>
+          )}
+
+          <button
+            ref={closeRef}
+            type="button"
+            className={styles.close}
+            onClick={onClose}
+            aria-label={t.a11y.close}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+
+          {multiple && (
+            <>
+              <button
+                type="button"
+                className={`${styles.nav} ${styles.previous}`}
+                onClick={() => move('previous')}
+                aria-label={t.a11y.previousImage}
+              >
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.nav} ${styles.next}`}
+                onClick={() => move('next')}
+                aria-label={t.a11y.nextImage}
+              >
+                <span aria-hidden="true">›</span>
+              </button>
+            </>
+          )}
+        </div>
+
+        {game && (
+          <div className={styles.detail}>
+            <p className={styles.detailName}>{game.name}</p>
+            {game.site && (
+              <a
+                className={styles.gameLink}
+                href={game.site}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t.labels.gamePage}
+              </a>
+            )}
+          </div>
         )}
 
         <p className={styles.caption} aria-live="polite">
-          {positionLabel(index, images.length)}
+          {positionLabel(index, items.length)}
         </p>
       </div>
     </div>,

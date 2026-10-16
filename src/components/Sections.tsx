@@ -1,6 +1,7 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
 import { about, contact, experience, projects, skills } from '../content'
+import type { ExperienceEntry, GalleryItem } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
 import { useReveal } from '../lib/useReveal'
@@ -56,6 +57,20 @@ function RepoFacts({ repo }: { repo: string | undefined }) {
       )}
     </p>
   )
+}
+
+/**
+ * The images for an experience entry: each shipped title that names its own
+ * image first (in the order the titles are listed), then any plain images the
+ * entry carries. Deriving the game tiles here is what keeps the image path in
+ * exactly one place — the title it belongs to.
+ */
+function experienceGallery(entry: ExperienceEntry): GalleryItem[] {
+  const games = (entry.games ?? []).flatMap((game) =>
+    game.image ? [{ src: game.image, game }] : [],
+  )
+  const plain = (entry.gallery ?? []).map((src) => ({ src }))
+  return [...games, ...plain]
 }
 
 export function Hero() {
@@ -135,23 +150,11 @@ export function Experience() {
                 {entry.games.map((game) => (
                   <li key={game.name} className={styles.game}>
                     <span className={styles.gameName}>{game.name}</span>
-                    {game.site && (
-                      <a href={game.site} aria-label={`${game.name} — ${t.labels.site}`}>
-                        {t.labels.site}
-                      </a>
-                    )}
-                    {game.trailer && (
-                      <a href={game.trailer} aria-label={`${game.name} — ${t.labels.trailer}`}>
-                        {t.labels.trailer}
-                      </a>
-                    )}
                   </li>
                 ))}
               </ul>
             )}
-            {entry.gallery && entry.gallery.length > 0 && (
-              <Gallery images={entry.gallery} title={entry.company} />
-            )}
+            <Gallery items={experienceGallery(entry)} title={entry.company} />
             {entry.tech.length > 0 && (
               <p className={styles.meta}>
                 {t.labels.tech}: {entry.tech.join(', ')}
@@ -184,7 +187,7 @@ export function Projects() {
             <RepoFacts repo={project.repo} />
             <p>{project.description[locale]}</p>
             {project.gallery && project.gallery.length > 0 && (
-              <Gallery images={project.gallery} title={project.name} />
+              <Gallery items={project.gallery.map((src) => ({ src }))} title={project.name} />
             )}
             {project.tech.length > 0 && (
               <p className={styles.meta}>
@@ -198,6 +201,14 @@ export function Projects() {
   )
 }
 
+/** Each skill group's tint class — the dot is the only place the colour appears. */
+const SKILL_TINTS: Record<string, string | undefined> = {
+  languages: styles.tagLang,
+  data: styles.tagData,
+  tooling: styles.tagTool,
+  'game-dev': styles.tagGame,
+}
+
 export function Skills() {
   const t = useT()
   const { locale } = useLanguage()
@@ -208,11 +219,26 @@ export function Skills() {
         <section key={group.id} className={styles.group}>
           <h3 className={styles.groupTitle}>{group.label[locale]}</h3>
           <ul className={styles.tags}>
-            {group.items.map((item) => (
-              <li key={item} className={styles.tag}>
-                {item}
-              </li>
-            ))}
+            {group.items.map((item) => {
+              const tint = SKILL_TINTS[group.id]
+              const blurb = item.blurb[locale]
+              return (
+                <li key={item.name} className={tint ? `${styles.tag} ${tint}` : styles.tag}>
+                  <a
+                    className={styles.tagLink}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${item.name} — ${blurb}`}
+                  >
+                    {item.name}
+                  </a>
+                  <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
+                    {blurb}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         </section>
       ))}
