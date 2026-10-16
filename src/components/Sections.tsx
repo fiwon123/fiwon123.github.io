@@ -11,12 +11,75 @@ import { InlineMarkup } from './InlineMarkup'
 
 import styles from './sections.module.css'
 
+/** Each skill group's tint class — the dot is the only place the colour appears. */
+const SKILL_TINTS: Record<string, string | undefined> = {
+  languages: styles.tagLang,
+  data: styles.tagData,
+  tooling: styles.tagTool,
+  'game-dev': styles.tagGame,
+}
+
+export function SkillBadges() {
+  const t = useT()
+  const { locale } = useLanguage()
+  return (
+    <div id="skills">
+      {skills.map((group) => (
+        <section key={group.id} className={styles.group}>
+          <h3 className={styles.groupTitle}>{group.label[locale]}</h3>
+          <ul className={styles.tags}>
+            {group.items.map((item) => {
+              const tint = SKILL_TINTS[group.id]
+              const blurb = item.blurb[locale]
+              return (
+                <li key={item.name} className={tint ? `${styles.tag} ${tint}` : styles.tag}>
+                  <a
+                    className={styles.tagLink}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${item.name} — ${blurb}`}
+                  >
+                    {item.name}
+                  </a>
+                  <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
+                    {blurb}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+export function ContactRow() {
+  return (
+    <ul className={styles.contact}>
+      {contact.map((link) => (
+        <li key={link.id}>
+          <a
+            className={styles.contactLink}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <BrandIcon name={link.icon as BrandIconName} />
+            <span className={styles.srOnly}>{link.label}</span>
+            <span className={styles.tip} aria-hidden="true">
+              {link.label}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /**
  * A section or card that fades in once, as it scrolls into view.
- *
- * The element always carries `reveal` and gains `reveal-visible` when revealed;
- * under reduced motion, or without an observer, the hook starts revealed — the
- * visible state is the default and the hidden one the exception.
  */
 function RevealSection({ className, ...rest }: ComponentPropsWithoutRef<'section'>) {
   const [ref, revealed] = useReveal<HTMLElement>()
@@ -33,10 +96,7 @@ function revealClass(className: string | undefined, revealed: boolean): string {
 }
 
 /**
- * The build-time repository facts for a card whose project names a `repo`:
- * primary language, stars, and the month of the last push. Renders nothing when
- * the snapshot has no entry, so a private, missing, or not-yet-collected repo
- * keeps the static card rather than showing a broken one.
+ * The build-time repository facts for a card whose project names a `repo`.
  */
 function RepoFacts({ repo }: { repo: string | undefined }) {
   const t = useT()
@@ -60,10 +120,7 @@ function RepoFacts({ repo }: { repo: string | undefined }) {
 }
 
 /**
- * The images for an experience entry: each shipped title that names its own
- * image first (in the order the titles are listed), then any plain images the
- * entry carries. Deriving the game tiles here is what keeps the image path in
- * exactly one place — the title it belongs to.
+ * The images for an experience entry.
  */
 function experienceGallery(entry: ExperienceEntry): GalleryItem[] {
   const games = (entry.games ?? []).flatMap((game) =>
@@ -88,8 +145,10 @@ export function Hero() {
         />
         <div className={styles.heroText}>
           <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
+          <ContactRow />
           <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
           <p className={styles.heroStack}>{t.hero.stack}</p>
+          <SkillBadges />
         </div>
       </div>
     </RevealSection>
@@ -145,15 +204,6 @@ export function Experience() {
                 ))}
               </ul>
             )}
-            {entry.games && entry.games.length > 0 && (
-              <ul className={styles.games} aria-label={t.labels.games}>
-                {entry.games.map((game) => (
-                  <li key={game.name} className={styles.game}>
-                    <span className={styles.gameName}>{game.name}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
             <Gallery items={experienceGallery(entry)} title={entry.company} />
             {entry.tech.length > 0 && (
               <p className={styles.meta}>
@@ -197,78 +247,6 @@ export function Projects() {
           </RevealArticle>
         ))}
       </div>
-    </RevealSection>
-  )
-}
-
-/** Each skill group's tint class — the dot is the only place the colour appears. */
-const SKILL_TINTS: Record<string, string | undefined> = {
-  languages: styles.tagLang,
-  data: styles.tagData,
-  tooling: styles.tagTool,
-  'game-dev': styles.tagGame,
-}
-
-export function Skills() {
-  const t = useT()
-  const { locale } = useLanguage()
-  return (
-    <RevealSection id="skills" className={styles.section}>
-      <h2>{t.nav.skills}</h2>
-      {skills.map((group) => (
-        <section key={group.id} className={styles.group}>
-          <h3 className={styles.groupTitle}>{group.label[locale]}</h3>
-          <ul className={styles.tags}>
-            {group.items.map((item) => {
-              const tint = SKILL_TINTS[group.id]
-              const blurb = item.blurb[locale]
-              return (
-                <li key={item.name} className={tint ? `${styles.tag} ${tint}` : styles.tag}>
-                  <a
-                    className={styles.tagLink}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${item.name} — ${blurb}`}
-                  >
-                    {item.name}
-                  </a>
-                  <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
-                    {blurb}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-      ))}
-    </RevealSection>
-  )
-}
-
-export function Contact() {
-  const t = useT()
-  return (
-    <RevealSection id="contact" className={styles.section}>
-      <h2>{t.nav.contact}</h2>
-      <ul className={styles.contact}>
-        {contact.map((link) => (
-          <li key={link.id}>
-            <a
-              className={styles.contactLink}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <BrandIcon name={link.icon as BrandIconName} />
-              <span className={styles.srOnly}>{link.label}</span>
-              <span className={styles.tip} aria-hidden="true">
-                {link.label}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
     </RevealSection>
   )
 }
