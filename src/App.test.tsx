@@ -235,6 +235,9 @@ describe('navigation commands focus their section', () => {
       'skills',
       'contact',
       'all',
+      'theme',
+      'mode',
+      'lang',
       'help',
       'clear',
     ]) {
@@ -256,6 +259,43 @@ describe('navigation commands focus their section', () => {
     submitCommand('nonsense')
     expect(screen.getByText(`${en.terminal.unknown}: nonsense`)).toBeTruthy()
     expect(terminalInput()).toBeTruthy()
+  })
+})
+
+describe('settings commands drive the same controls as the header', () => {
+  it('moves the appearance control when mode is set from the terminal', () => {
+    renderApp()
+    const control = screen.getByRole('combobox', { name: en.theme.modeLabel }) as HTMLSelectElement
+    submitCommand('mode dark')
+    expect(control.value).toBe('dark')
+  })
+
+  it('moves the theme control when the preset is set from the terminal', () => {
+    renderApp()
+    const control = screen.getByRole('combobox', { name: en.theme.label }) as HTMLSelectElement
+    submitCommand('theme terminal')
+    expect(control.value).toBe('terminal')
+  })
+
+  it('moves the language control and the document language from the terminal', () => {
+    renderApp()
+    submitCommand('lang pt')
+    const control = screen.getByRole('combobox', { name: 'Idioma' }) as HTMLSelectElement
+    expect(control.value).toBe('pt-BR')
+    expect(document.documentElement.lang).toBe('pt-BR')
+  })
+
+  it('reports a setting that was already the current value', () => {
+    renderApp()
+    submitCommand('theme paper')
+    expect(within(log()).getByText(`▸ ${en.theme.label}: ${en.theme.presets.paper}`)).toBeTruthy()
+  })
+
+  it('lists the valid values for a bare settings command', () => {
+    renderApp()
+    submitCommand('mode')
+    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`
+    expect(within(log()).getByText(listing)).toBeTruthy()
   })
 })
 

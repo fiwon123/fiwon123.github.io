@@ -6,6 +6,9 @@ export const COMMAND_NAMES = [
   'skills',
   'contact',
   'all',
+  'theme',
+  'mode',
+  'lang',
   'clear',
 ] as const
 
@@ -29,6 +32,16 @@ const ALIASES: Record<string, CommandName> = {
   all: 'all',
   home: 'all',
   tudo: 'all',
+  theme: 'theme',
+  tema: 'theme',
+  mode: 'mode',
+  modo: 'mode',
+  appearance: 'mode',
+  aparencia: 'mode',
+  lang: 'lang',
+  language: 'lang',
+  idioma: 'lang',
+  lingua: 'lang',
   clear: 'clear',
   limpar: 'clear',
 }

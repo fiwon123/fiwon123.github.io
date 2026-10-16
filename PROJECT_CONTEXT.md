@@ -83,6 +83,12 @@ Each entry is settled; the reason is what stops it being re-opened.
   is **not persisted**, so a reload is always the whole page, and while focused a
   nav link to a hidden section moves the focus there rather than landing on
   nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
+- **Terminal settings commands drive the same setters as the header controls**
+  (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
+  console is a second way in, never a second source of truth, so the terminal
+  and the controls cannot disagree. A bare command, or one whose value is not
+  recognised, prints the valid values and changes nothing, so a typo answers
+  with the choices instead of failing silently. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
@@ -173,7 +179,8 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the particle reading-zone fade (#42), icon-only contact links (#45), and the
   always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
   polish`: the animated dock, readable console and in-panel hide control (#52),
-  and one-section focus with `all` (#53).
+  one-section focus with `all` (#53), and theme/appearance/language from the
+  terminal (#54).
 
 ## Backlog
 
@@ -184,9 +191,8 @@ The rest of `v1.2`, then `v1.3`; each item is a GitHub issue already filed.
 2. `#44` — skill badges with group tints, tooltips and official links
 3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
-4. `#54` — set theme, appearance and language from the terminal
-5. `#55` — preference controls as icons (mode toggle, language flag, theme)
-6. `#56` — centre the header within a max-width
+4. `#55` — preference controls as icons (mode toggle, language flag, theme)
+5. `#56` — centre the header within a max-width
 
 Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
 `v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan

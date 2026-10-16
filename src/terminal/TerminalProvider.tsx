@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 
-import { useT } from '../i18n/hooks'
+import { useLanguage, useT } from '../i18n/hooks'
 import { focusForCommand, type FocusTarget } from '../lib/commandSections'
+import { useTheme } from '../theme/hooks'
 import { runCommand } from './commands'
 import { TerminalContext, type TerminalEntry } from './context'
 import { parseCommand } from './parser'
+import { runSetting } from './settings'
 
 interface TerminalProviderProps {
   children: ReactNode
@@ -23,11 +25,22 @@ interface TerminalProviderProps {
  * focus a section when the command names one. It knows nothing about the input
  * line — the console owns that and its history — so the same `run` answers both
  * a typed command and, in principle, any other caller.
+ *
+ * A settings command changes the theme or language through the same setters the
+ * header controls use, so the terminal and the controls stay one source of
+ * truth.
  */
 export function TerminalProvider({ children, onFocus }: TerminalProviderProps) {
   const t = useT()
+  const { setPreset, setMode } = useTheme()
+  const { setLocale } = useLanguage()
   const [entries, setEntries] = useState<TerminalEntry[]>([])
   const nextId = useRef(0)
+
+  const settings = useMemo(
+    () => ({ setPreset, setMode, setLocale }),
+    [setPreset, setMode, setLocale],
+  )
 
   const run = useCallback(
     (raw: string) => {
@@ -49,6 +62,14 @@ export function TerminalProvider({ children, onFocus }: TerminalProviderProps) {
         setEntries([])
         return
       }
+
+      const lines = runSetting(parsed.name, parsed.args, t, settings)
+      if (lines) {
+        // Settings commands keep their argument on the prompt (theme paper).
+        setEntries((prev) => [...prev, { id: nextId.current++, command: raw.trim(), lines }])
+        return
+      }
+
       setEntries((prev) => [
         ...prev,
         { id: nextId.current++, command: parsed.name, lines: runCommand(parsed.name, t) },
@@ -56,7 +77,7 @@ export function TerminalProvider({ children, onFocus }: TerminalProviderProps) {
       const target = focusForCommand(parsed.name)
       if (target) onFocus?.(target)
     },
-    [t, onFocus],
+    [t, onFocus, settings],
   )
 
   const value = useMemo(() => ({ entries, run }), [entries, run])

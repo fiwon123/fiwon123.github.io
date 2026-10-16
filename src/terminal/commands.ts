@@ -19,6 +19,10 @@ export interface TerminalLine {
  * section (the provider owns that) and confirms which one, so the scrollback
  * records the move; `all` restores the whole page. `clear` returns nothing —
  * the component handles it.
+ *
+ * The settings commands (`theme`, `mode`, `lang`) produce nothing here: they
+ * change state, so `runSetting` owns them and runs first. They are listed only
+ * so `help` can describe them and this switch stays exhaustive.
  */
 export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
   switch (name) {
@@ -41,6 +45,12 @@ export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
 
     case 'all':
       return [{ text: `▸ ${t.terminal.all}`, tone: 'accent' }]
+
+    case 'theme':
+    case 'mode':
+    case 'lang':
+      // State-changing commands; `runSetting` answers them before this runs.
+      return []
 
     case 'clear':
       return []
