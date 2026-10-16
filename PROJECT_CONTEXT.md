@@ -212,29 +212,25 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   scroll-reveal (#17), the particle background (#18) and its visibility fix
   (#33), the terminal-first view (#19), repository cards (#20) and the stability
   pass (#21).
-- **In progress**: milestone `v1.2 — Terminal & details` — feature-complete,
-  pending release. Merged to `dev`: the two-column layout (#40), the centred
-  header and SVG-first favicons (#41), the particle reading-zone fade (#42), the
-  game galleries with tile tooltips and in-portfolio trailers (#43), icon-only
-  contact links (#45), the always-docked terminal panel (#47) and skill badges
-  (#44). Milestone `v1.3 — Terminal controls & polish`: the animated dock,
-  readable console and in-panel hide control (#52), one-section focus with `all`
-  (#53), theme/appearance/language from the terminal (#54), preference controls
-  as icons (#55), and a header centred on the page frame (#56).
+- **Done**: v1.2 — Terminal & details — released to `main` (#66): the two-column
+  layout (#40), the centred header and SVG-first favicons (#41), the particle
+  reading-zone fade (#42), the game galleries with tile tooltips and in-portfolio
+  trailers (#43), icon-only contact links (#45), the always-docked terminal panel
+  (#47), skill badges (#44) and the `make shell` sandbox fix (#38).
+- **Done**: v1.3 — Terminal controls & polish — released to `main` (#62): the
+  animated dock, readable console and in-panel hide control (#52), one-section
+  focus with `all` (#53), theme/appearance/language from the terminal (#54),
+  preference controls as icons (#55), and a header centred on the page frame
+  (#56).
+- **Next**: no filed work — `v1.0`–`v1.3` are released. The plan is to add new
+  projects and possibly a new language track (e.g. Rust), on the released base.
 
 ## Backlog
 
-`v1.2` and `v1.3` are feature-complete; the only filed work left is a carry-over
-from `v1.1`:
-
-1. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
-   from v1.1)
-
-Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
-`v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan
-is to add new projects and possibly a new language track (e.g. Rust) —
-deliberately _after_ the polish, so the additions land on a base that already
-looks finished.
+No filed work: `v1.0`–`v1.3` are all released and their milestones hold no open
+issues. Milestone tracking lives on GitHub (issue #2). The plan is to add new
+projects and possibly a new language track (e.g. Rust) — deliberately _after_ the
+polish, so the additions land on a base that already looks finished.
 
 ## Notes
 
