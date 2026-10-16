@@ -15,11 +15,26 @@ export interface PlatformLink {
 /** Platforms whose `{token}` renders as a link when the entry carries a URL. */
 export type PlatformName = 'steam' | 'xbox' | 'gog' | 'epic' | 'sony'
 
-/** A shipped title with its public links. `site` and `trailer` are both optional. */
+/**
+ * A shipped title with its public links. `site`, `trailer` and `image` are all
+ * optional — a title with none is still listed by name.
+ */
 export interface GameLink {
   name: string
   site?: string
   trailer?: string
+  /** Image path under `public/` showing this title. Its gallery tile. */
+  image?: string
+}
+
+/**
+ * One gallery image. `src` is a path under `public/`; `game` links the image to
+ * the shipped title it shows, which is what gives it a tooltip and the lightbox
+ * its detail block. An image with no game opens the plain viewer.
+ */
+export interface GalleryItem {
+  src: string
+  game?: GameLink
 }
 
 export interface Project {

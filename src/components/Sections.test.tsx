@@ -149,7 +149,7 @@ describe('reveal class list', () => {
   })
 })
 
-describe('repository facts and game links (#20)', () => {
+describe('repository facts and game tiles (#20, #43)', () => {
   it('shows build-time facts on a GitHub card and omits them elsewhere', () => {
     withoutObserver()
     allowMotion()
@@ -166,7 +166,7 @@ describe('repository facts and game links (#20)', () => {
     expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
   })
 
-  it('renders a games list with a link per URL the entry carries', () => {
+  it('lists game names without sending visitors off-site', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Experience />)
@@ -175,17 +175,26 @@ describe('repository facts and game links (#20)', () => {
 
     const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
     expect(games.length).toBeGreaterThan(0)
-    const linkCount = games.reduce(
-      (total, game) => total + (game.site ? 1 : 0) + (game.trailer ? 1 : 0),
-      0,
-    )
     expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
-    expect(lists[0].querySelectorAll('a')).toHaveLength(linkCount)
-    // "Site" x6 is ambiguous in a screen reader's link list; each names its game.
-    const names = [...lists[0].querySelectorAll('a')].map((a) => a.getAttribute('aria-label') ?? '')
-    for (const game of games) {
-      expect(names.some((name) => name.includes(game.name))).toBe(true)
-    }
+    // The card names the titles and links out to nothing — the off-site anchors
+    // moved into the lightbox detail (#43).
+    expect(lists[0].querySelectorAll('a')).toHaveLength(0)
+    const listed = [...lists[0].querySelectorAll('li')].map((li) => li.textContent)
+    for (const game of games) expect(listed).toContain(game.name)
+  })
+
+  it('gives every shipped title its own named gallery tile', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Experience />)
+    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
+    const labels = [...container.querySelectorAll('button')].map(
+      (button) => button.getAttribute('aria-label') ?? '',
+    )
+    // One tile per title, each naming it — so a screen reader hears which game an
+    // image shows rather than "Open image" alone.
+    const gameTiles = labels.filter((label) => games.some((game) => label.includes(game.name)))
+    expect(gameTiles).toHaveLength(games.length)
   })
 
   it('links store tokens that have a URL and leaves the rest as icons', () => {

@@ -40,8 +40,7 @@ export const en = {
     stars: 'Stars',
     updated: 'Updated',
     games: 'Games',
-    site: 'Site',
-    trailer: 'Trailer',
+    gamePage: 'Game page',
   },
   theme: {
     label: 'Theme',
@@ -95,6 +94,7 @@ export const en = {
     close: 'Close',
     nextImage: 'Next image',
     previousImage: 'Previous image',
+    playTrailer: 'Play trailer',
     backToTop: 'Back to top',
   },
 }
