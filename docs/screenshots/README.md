@@ -1,15 +1,13 @@
 # Screenshots
 
 The images in this directory are referenced from the project README (the home
-page, in both themes, with the terminal dock open and collapsed). They are
-committed, not generated on the fly, so a visitor sees the site before running it.
+page with the terminal dock open and collapsed, in dark mode). They are committed,
+not generated on the fly, so a visitor sees the site before running it.
 
-| File                      | What it shows                            |
-| ------------------------- | ---------------------------------------- |
-| `home-terminal-light.png` | Terminal dock open, Studio preset, light |
-| `home-terminal-dark.png`  | Terminal dock open, Studio preset, dark  |
-| `home-browse-light.png`   | Console collapsed, Studio preset, light  |
-| `home-browse-dark.png`    | Console collapsed, Studio preset, dark   |
+| File                     | What it shows                           |
+| ------------------------ | --------------------------------------- |
+| `home-terminal-dark.png` | Terminal dock open, Studio preset, dark |
+| `home-browse-dark.png`   | Console collapsed, Studio preset, dark  |
 
 ## Regenerate
 
@@ -58,7 +56,10 @@ colours still draw, so every PNG comes out looking like a blank console. Install
 a font package on a bare host (e.g. `fonts-dejavu-core`) — the file size looks
 fine, the image does not.
 
-## Both themes
+## Dark only
 
-The default set is dark **and** light. A change verified in one theme only is
-unverified; see the visual-check rules in the project's agent instructions.
+The README set is **dark** — the site's default — captured as two states (dock open
+and collapsed). Light/dark _verification_ is a throwaway visual-QA concern, not a
+committed artifact: a change is checked in both themes while it is made, but only
+the dark capture is published. See the visual-check rules in the project's agent
+instructions.

@@ -42,18 +42,13 @@ const COMMON = ['data-testid="particles"', 'class="skip-link"', '<nav']
 // a toggle — so the two states are told apart by the dock's own open flag, not by
 // whether the log is in the DOM: closed captures carry `data-open="false"`, and
 // the open ones `data-open="true"`, which the closed ones must not carry.
+//
+// The README set is dark only (the site's default); light/dark *verification* is
+// a throwaway visual-QA concern, not a committed artifact.
 const OPEN = 'data-open="true"'
 const CLOSED = 'data-open="false"'
 const CAPTURES = [
-  { name: 'home-terminal-light', dock: 'true', mode: 'light', expect: [...COMMON, OPEN] },
   { name: 'home-terminal-dark', dock: 'true', mode: 'dark', expect: [...COMMON, OPEN] },
-  {
-    name: 'home-browse-light',
-    dock: 'false',
-    mode: 'light',
-    expect: [...COMMON, CLOSED],
-    forbid: OPEN,
-  },
   {
     name: 'home-browse-dark',
     dock: 'false',

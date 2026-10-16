@@ -1,21 +1,30 @@
-# felipeinoue.com
+# Personal Portfolio
 
-Personal portfolio of **Felipe Inoue** — a single-page static site built with
-**React + TypeScript + Vite**, deployed to GitHub Pages at
-<https://felipeinoue.com/>.
+[![CI](https://github.com/fiwon123/fiwon123.github.io/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/fiwon123/fiwon123.github.io/actions/workflows/ci.yml)
+[![Deploy](https://github.com/fiwon123/fiwon123.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/fiwon123/fiwon123.github.io/actions/workflows/pages.yml)
+[![Live](https://img.shields.io/badge/live-felipeinoue.com-1f6feb)](https://felipeinoue.com/)
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
+[![Node](https://img.shields.io/badge/Node-22-5fa04e?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
-![The page with the terminal docked, in dark mode](docs/screenshots/home-terminal-dark.png)
+A fast, accessible, bilingual **single-page portfolio** for **Felipe Inoue**,
+built with **React 19 + TypeScript + Vite** and served as a static site from
+GitHub Pages at <https://felipeinoue.com/>. There is no backend and no framework
+bloat — every section is rendered in the browser from typed content records.
 
-## What it is
+## Main page
 
-A one-page site for a backend and tooling developer. Every section is always
-rendered, and a **terminal** is docked beside the page: a real command line
-(`about`, `projects`, `skills`, …) that scrolls the page to the section a command
-names. The console is optional — a header toggle collapses it for visitors who
-would rather just read.
+![The portfolio home page with the terminal docked, in dark mode](docs/screenshots/home-terminal-dark.png)
 
-One page, English and Brazilian Portuguese, three colour presets in light, dark,
-or the system's choice, and a background of slow particles.
+## Purpose
+
+A portfolio has to present work, experience and contact details without the
+weight of a framework-built site, and it has to stay usable for people who
+navigate by keyboard or screen reader, read Portuguese, or want a dark page.
+Those constraints are usually the first to be dropped, so here they are
+**enforced by tests** instead of by intention: WCAG AA contrast, the skip link and
+the bilingual parity are all gated before anything is merged.
 
 ## Features
 
@@ -36,39 +45,46 @@ or the system's choice, and a background of slow particles.
 
 ## Screenshots
 
-### Terminal dock open
+The console collapses for visitors who would rather just read:
 
-| Light                                                             | Dark                                                            |
-| ----------------------------------------------------------------- | --------------------------------------------------------------- |
-| ![Terminal dock, light](docs/screenshots/home-terminal-light.png) | ![Terminal dock, dark](docs/screenshots/home-terminal-dark.png) |
+![The portfolio with the terminal dock collapsed, in dark mode](docs/screenshots/home-browse-dark.png)
 
-### Console collapsed
-
-| Light                                                               | Dark                                                              |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| ![Console collapsed, light](docs/screenshots/home-browse-light.png) | ![Console collapsed, dark](docs/screenshots/home-browse-dark.png) |
-
-Regenerate these with `make screenshots` — see
+Regenerate these with `make screenshots` (dark mode, the site's default) — see
 [`docs/screenshots/README.md`](docs/screenshots/README.md).
 
-## Development
+## Prerequisites
+
+- **Node.js 22+** and **npm 10+** — to build and run the site.
+- **Docker** _(optional)_ — only for the containerised dev sandbox
+  (`make dev-up` / `make opencode`).
+- **Google Chrome** _(optional)_ — only to regenerate the README screenshots
+  (`make screenshots`) and the favicon rasters (`make favicons`).
+- **GitHub CLI (`gh`)** _(optional)_ — only to refresh the repository cards
+  (`npm run stats`).
+
+## How to run
 
 ```bash
 npm install          # install dependencies
-npm run dev          # start the dev server
-make check           # sandbox config, project docs, format-check, lint, type-check, test, build
-npm run stats        # refresh the repository cards from the GitHub API (needs `gh`)
-make screenshots     # rebuild + capture the README images (needs Chrome)
-make favicons        # regenerate the favicon rasters from public/favicon.svg (needs Chrome)
+npm run dev          # start the dev server at http://localhost:5173
+npm run build        # build the static site into dist/
+npm run preview      # preview the production build
+make check           # the full gate: sandbox config, docs, format, lint, types, tests, build
+```
+
+`make check` is the local gate and the one CI runs — see [`AGENTS.md`](./AGENTS.md)
+for the conventions behind it. Regenerate a derived asset with:
+
+```bash
+npm run stats                    # refresh the repository cards (needs `gh`)
+make screenshots                 # rebuild + capture the README images (needs Chrome)
+make favicons                    # regenerate the favicon rasters (needs Chrome)
 python3 scripts/fetch-fonts.py   # refresh the self-hosted webfonts
 ```
 
-This repository previously held a Hugo site. The Hugo sources are preserved at
-the tag `archive/hugo`.
-
 ## Dev sandbox
 
-Docker is optional — `make dev` needs nothing but Node. To work inside a
+Docker is optional — `npm run dev` needs nothing but Node. To work inside a
 container instead (a machine with no Node, or to keep the host clean):
 
 ```bash
@@ -101,8 +117,9 @@ upgraded on the host (`make opencode-upgrade`).
 
 ## Documentation
 
-Project conventions, the branching model, the CI strategy, and the development
-workflow live in [`AGENTS.md`](./AGENTS.md).
+Project conventions, the branching model, the CI strategy and the development
+workflow live in [`AGENTS.md`](./AGENTS.md). The repository previously held a Hugo
+site; the Hugo sources are preserved at the tag `archive/hugo`.
 
 ## License
 
