@@ -6,23 +6,29 @@ import styles from './Header.module.css'
 
 const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as const
 
+import type { FocusTarget } from '../lib/commandSections'
+
 export interface HeaderProps {
-  dockOpen: boolean
-  /** Open the dock. The header only offers this while the dock is collapsed;
-   *  hiding it again is a control inside the panel. */
-  onShow: () => void
+  onNavigate?: (target: FocusTarget) => void
 }
 
-export function Header({ dockOpen, onShow }: HeaderProps) {
+export function Header({ onNavigate }: HeaderProps) {
   const t = useT()
 
   return (
     <header className={styles.header}>
-      {/* Inside a centred, max-width row so brand, nav and actions sit closer
-          together on a wide screen instead of pinned to the viewport edges. */}
       <div className={styles.inner}>
-        <a className={styles.brand} href="#top">
-          <Logo />
+        <a
+          className={styles.brand}
+          href="#top"
+          onClick={(e) => {
+            if (onNavigate) {
+              e.preventDefault()
+              onNavigate('all')
+            }
+          }}
+        >
+          <Logo size={36} />
           <span>Felipe Inoue</span>
         </a>
 
@@ -31,7 +37,16 @@ export function Header({ dockOpen, onShow }: HeaderProps) {
             <ul className={styles.nav}>
               {NAV_ITEMS.map((item) => (
                 <li key={item}>
-                  <a className={styles.navLink} href={`#${item}`}>
+                  <a
+                    className={styles.navLink}
+                    href={`#${item}`}
+                    onClick={(e) => {
+                      if (onNavigate) {
+                        e.preventDefault()
+                        onNavigate(item)
+                      }
+                    }}
+                  >
                     {t.nav[item]}
                   </a>
                 </li>
@@ -42,20 +57,6 @@ export function Header({ dockOpen, onShow }: HeaderProps) {
 
         <div className={styles.actions}>
           <Preferences />
-          {/* Only while collapsed: once the console is open, hiding it is a control
-              inside the panel, where the visitor already is. */}
-          {dockOpen ? null : (
-            <button
-              id="terminal-show"
-              type="button"
-              className={styles.toggle}
-              aria-expanded="false"
-              aria-controls="terminal-dock"
-              onClick={onShow}
-            >
-              {t.terminal.show}
-            </button>
-          )}
         </div>
       </div>
     </header>

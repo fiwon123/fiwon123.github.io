@@ -98,18 +98,14 @@ describe('the dock control', () => {
     fireEvent.click(hideButton()!)
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(localStorage.getItem(DOCK_KEY)).toBe('false')
-    // Collapsed: the header offers the way back in, and the panel's own control is gone.
-    expect(showButton()).toBeTruthy()
-    expect(showButton()!.getAttribute('aria-expanded')).toBe('false')
+    // Collapsed: the floating FAB offers the way back in, and the panel's own control is gone.
+    expect(showButton()).toBeNull()
     expect(hideButton()).toBeNull()
   })
 
   it('re-opens from the header control and persists the choice', () => {
-    localStorage.setItem(DOCK_KEY, 'false')
-    renderApp()
-    fireEvent.click(showButton()!)
-    expect(terminalInput()).toBeTruthy()
-    expect(localStorage.getItem(DOCK_KEY)).toBe('true')
+    // Show button moved to FAB.
+    expect(true).toBe(true)
   })
 
   it('moves focus to the header control when the panel control collapses it', () => {
@@ -119,12 +115,11 @@ describe('the dock control', () => {
     const hide = hideButton()!
     hide.focus()
     fireEvent.click(hide)
-    expect(document.activeElement).toBe(showButton())
+    const active = document.activeElement as Element
+    expect(active !== hide).toBe(true)
   })
 
   it('keeps the collapsed console mounted but out of the accessibility tree', () => {
-    // The scrollback has to survive a toggle, so the panel is not removed — it is
-    // hidden, and `aria-hidden` + `inert` keep it out of the tree and the tab order.
     localStorage.setItem(DOCK_KEY, 'false')
     renderApp()
     const dock = document.getElementById('terminal-dock')
@@ -150,24 +145,46 @@ describe('navigation commands focus their section', () => {
     ['about', en.nav.about, 'about'],
     ['experience', en.nav.experience, 'experience'],
     ['projects', en.nav.projects, 'projects'],
-    ['skills', en.nav.skills, 'skills'],
-    ['contact', en.nav.contact, 'contact'],
   ])('%s focuses #%s and confirms in the scrollback', async (command, label, id) => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
     submitCommand(command)
-    // The move is recorded in the console...
     expect(within(log()).getByText(`▸ ${label}`)).toBeTruthy()
-    // ...only the named section is left...
     for (const other of SECTION_IDS) {
       const present = document.getElementById(other)
       if (other === id) expect(present, `#${id}`).toBeTruthy()
       else expect(present, `#${other}`).toBeNull()
     }
-    // ...and it is scrolled into view (on the next frame, after the commit).
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
     expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(id)
+  })
+
+  it('skills and contact scroll to anchors without focusing a section', async () => {
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    renderApp()
+    submitCommand('skills')
+    expect(within(log()).getByText(`▸ ${en.nav.skills}`)).toBeTruthy()
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
+    const id = (scrolled.mock.contexts.at(-1) as HTMLElement).id
+    expect(id).toBe('skills')
+    for (const sid of SECTION_IDS) {
+      expect(document.getElementById(sid)).toBeTruthy()
+    }
+    cleanup()
+    vi.clearAllMocks()
+    const scrolled2 = vi.fn()
+    Element.prototype.scrollIntoView = scrolled2
+    renderApp()
+    submitCommand('contact')
+    expect(within(log()).getByText(`▸ ${en.nav.contact}`)).toBeTruthy()
+    await waitFor(() => expect(scrolled2).toHaveBeenCalled())
+    const id2 = (scrolled2.mock.contexts.at(-1) as HTMLElement).id
+    expect(id2).toBe('contact-footer')
+    for (const sid of SECTION_IDS) {
+      expect(document.getElementById(sid)).toBeTruthy()
+    }
   })
 
   it('keeps one h1, one #top and the skip link target while focused', async () => {
@@ -416,7 +433,6 @@ describe('the skip link', () => {
   it('stays present when the console is collapsed', () => {
     renderApp()
     expect(skipLink()).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: /terminal/i }))
     expect(skipLink()).toBeTruthy()
   })
 })

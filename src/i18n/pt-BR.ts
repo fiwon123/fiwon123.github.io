@@ -63,7 +63,7 @@ export const ptBR: Strings = {
     hide: 'Ocultar terminal',
     hint: 'Digite um comando e pressione Enter. Tente `about`, `experience`, `projects`, `skills`, `contact` ou `all`.',
     placeholder: 'digite um comando…',
-    prompt: 'visitante@felipeinoue ~ $',
+    prompt: 'visitante@portfolio ~ $',
     welcome: 'Bem-vindo. Digite `help` para listar os comandos.',
     unknown: 'comando não encontrado',
     helpTitle: 'Comandos disponíveis',
