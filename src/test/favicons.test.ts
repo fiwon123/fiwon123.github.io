@@ -22,10 +22,10 @@ function attrs(tag: string): Record<string, string> {
 function tags(source: string, name: string): string[] {
   return [...source.matchAll(new RegExp(`<${name}\\b[^>]*>`, 'g'))].map((m) => m[0])
 }
-/** The `--color-*` values of the terminal-dark palette block. */
-function terminalDark(): Record<string, string> {
-  const block = /\[data-theme='terminal'\]\[data-mode='dark'\]\s*\{([^}]*)\}/.exec(tokens)
-  if (!block) throw new Error('terminal-dark token block not found')
+/** The `--color-*` values of the studio-dark palette block. */
+function studioDark(): Record<string, string> {
+  const block = /\[data-theme='studio'\]\[data-mode='dark'\]\s*\{([^}]*)\}/.exec(tokens)
+  if (!block) throw new Error('studio-dark token block not found')
   return Object.fromEntries(
     [...block[1].matchAll(/(--color-[a-z-]+):\s*(#[0-9a-fA-F]{3,8})/g)].map((m) => [m[1], m[2]]),
   )
@@ -47,8 +47,8 @@ function parseIco(buffer: Buffer) {
 
 /**
  * The tab icon must be the page mark, not a lookalike: it is the same geometry as
- * `Logo.tsx`, painted with the terminal-dark palette. Parsing both files keeps the
- * two from drifting apart.
+ * `Logo.tsx`, painted with the studio-dark palette (the default preset's dark
+ * mode). Parsing both files keeps the two from drifting apart.
  */
 describe('favicon.svg matches the page logo', () => {
   it('uses the same viewBox and the same glyph paths as Logo.tsx', () => {
@@ -78,8 +78,8 @@ describe('favicon.svg matches the page logo', () => {
     }
   })
 
-  it('paints the box and the caret with the terminal-dark palette', () => {
-    const palette = terminalDark()
+  it('paints the box and the caret with the studio-dark palette', () => {
+    const palette = studioDark()
     const box = attrs(tags(svg, 'rect')[0])
     expect(box.fill).toBe(palette['--color-surface'])
     expect(box.stroke).toBe(palette['--color-border'])
