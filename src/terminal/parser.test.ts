@@ -8,7 +8,6 @@ describe('parseCommand', () => {
     expect(parseCommand('about')).toEqual({ kind: 'command', name: 'about', args: [] })
     expect(parseCommand('experience')).toEqual({ kind: 'command', name: 'experience', args: [] })
     expect(parseCommand('projects')).toEqual({ kind: 'command', name: 'projects', args: [] })
-    expect(parseCommand('skills')).toEqual({ kind: 'command', name: 'skills', args: [] })
     expect(parseCommand('contact')).toEqual({ kind: 'command', name: 'contact', args: [] })
     expect(parseCommand('all')).toEqual({ kind: 'command', name: 'all', args: [] })
     expect(parseCommand('theme')).toEqual({ kind: 'command', name: 'theme', args: [] })
@@ -45,9 +44,14 @@ describe('parseCommand', () => {
     expect(parseCommand('sobre')).toEqual({ kind: 'command', name: 'about', args: [] })
     expect(parseCommand('experiencia')).toEqual({ kind: 'command', name: 'experience', args: [] })
     expect(parseCommand('projetos')).toEqual({ kind: 'command', name: 'projects', args: [] })
-    expect(parseCommand('habilidades')).toEqual({ kind: 'command', name: 'skills', args: [] })
     expect(parseCommand('contato')).toEqual({ kind: 'command', name: 'contact', args: [] })
     expect(parseCommand('limpar')).toEqual({ kind: 'command', name: 'clear', args: [] })
+  })
+
+  it('no longer recognises the removed skills command in either language', () => {
+    // The skills block is gone (#87), so its command is not a command anymore.
+    expect(parseCommand('skills')).toEqual({ kind: 'unknown', word: 'skills' })
+    expect(parseCommand('habilidades')).toEqual({ kind: 'unknown', word: 'habilidades' })
   })
 
   it('is case-insensitive and trims whitespace', () => {

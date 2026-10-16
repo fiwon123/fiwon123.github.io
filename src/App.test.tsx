@@ -178,31 +178,24 @@ describe('navigation commands focus their section', () => {
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
   })
 
-  it('skills and contact scroll to anchors without focusing a section', async () => {
+  it('contact scrolls to the footer anchor without focusing a section', async () => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
-    submitCommand('skills')
-    expect(within(log()).getByText(`▸ ${en.nav.skills}`)).toBeTruthy()
-    await waitFor(() => expect(scrolled).toHaveBeenCalled())
-    const id = (scrolled.mock.contexts.at(-1) as HTMLElement).id
-    expect(id).toBe('skills')
-    for (const sid of SECTION_IDS) {
-      expect(document.getElementById(sid)).toBeTruthy()
-    }
-    cleanup()
-    vi.clearAllMocks()
-    const scrolled2 = vi.fn()
-    Element.prototype.scrollIntoView = scrolled2
-    renderApp()
     submitCommand('contact')
     expect(within(log()).getByText(`▸ ${en.nav.contact}`)).toBeTruthy()
-    await waitFor(() => expect(scrolled2).toHaveBeenCalled())
-    const id2 = (scrolled2.mock.contexts.at(-1) as HTMLElement).id
-    expect(id2).toBe('contact-footer')
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
+    const id = (scrolled.mock.contexts.at(-1) as HTMLElement).id
+    expect(id).toBe('contact-footer')
     for (const sid of SECTION_IDS) {
       expect(document.getElementById(sid)).toBeTruthy()
     }
+  })
+
+  it('reports the removed skills command as unknown', () => {
+    renderApp()
+    submitCommand('skills')
+    expect(within(log()).getByText(new RegExp(en.terminal.unknown))).toBeTruthy()
   })
 
   it('keeps one h1, one #top and the skip link target while focused', async () => {
@@ -267,7 +260,6 @@ describe('navigation commands focus their section', () => {
       'about',
       'experience',
       'projects',
-      'skills',
       'contact',
       'all',
       'theme',

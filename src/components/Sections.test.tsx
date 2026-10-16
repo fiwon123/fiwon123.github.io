@@ -7,7 +7,7 @@ import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { about, experience, projects, skills } from '../content'
+import { about, experience, projects } from '../content'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { About, Experience, Hero, Projects } from './Sections'
 
@@ -118,7 +118,7 @@ describe('reveal wiring', () => {
     for (const card of cards.slice(1)) expect([...card.classList]).not.toContain('reveal-visible')
   })
 
-  it('renders one card per project and one tag per skill', () => {
+  it('renders one card per project and keeps only the project Tech line', () => {
     withoutObserver()
     allowMotion()
     const { container: projectTree } = renderSection(<Projects />)
@@ -193,44 +193,32 @@ describe('repository facts and game tiles (#20, #43)', () => {
   })
 })
 
-const skillItems = skills.flatMap((group) => group.items)
-
-describe('skill badges (#44)', () => {
-  it('gives every skill an official URL and both blurbs', () => {
-    expect(skillItems.length).toBeGreaterThan(0)
-    for (const item of skillItems) {
-      expect(item.url, item.name).toMatch(/^https:\/\//)
-      expect(item.blurb.en.trim(), `${item.name} EN`).not.toBe('')
-      expect(item.blurb['pt-BR'].trim(), `${item.name} PT-BR`).not.toBe('')
-    }
-  })
-
-  it('links each badge to its reference with the blurb as its accessible name', () => {
+describe('skill badges removed (#87)', () => {
+  it('renders no skills block and no skill links in the hero', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Hero />)
-    // The hero also carries the contact row; the skill badges are the links
-    // whose accessible name pairs a skill with its blurb ("Rust — …").
-    const links = [...container.querySelectorAll('a')].filter((node) =>
+    // The block is gone entirely: no `#skills` anchor, and the only links left
+    // are the contact row (each labelled with its own name, no ` — ` separator).
+    expect(container.querySelector('#skills')).toBeNull()
+    const skillLinks = [...container.querySelectorAll('a')].filter((node) =>
       (node.getAttribute('aria-label') ?? '').includes(' — '),
     )
-    expect(links).toHaveLength(skillItems.length)
-
-    for (const item of skillItems) {
-      const accessibleName = `${item.name} — ${item.blurb.en}`
-      const link = links.find((node) => node.getAttribute('aria-label') === accessibleName)
-      expect(link, accessibleName).toBeTruthy()
-      expect(link?.getAttribute('href'), item.name).toBe(item.url)
-      expect(link?.getAttribute('target'), item.name).toBe('_blank')
-      expect(link?.getAttribute('rel'), item.name).toBe('noopener noreferrer')
-      // The blurb also shows as a tooltip, hidden from the accessibility tree so
-      // the badge is not announced twice.
-      const tip = link?.parentElement?.querySelector('[aria-hidden="true"]')
-      expect(tip?.textContent, item.name).toBe(item.blurb.en)
-    }
+    expect(skillLinks).toHaveLength(0)
   })
 
-  it('keeps the badge stylesheet free of literal colours', () => {
+  it('keeps the per-project Tech line on the project cards', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const cards = [...container.querySelectorAll('article')]
+    const withTech = cards.filter((card) => card.textContent?.includes('Tech:'))
+    expect(withTech.length).toBeGreaterThan(0)
+  })
+})
+
+describe('section stylesheet', () => {
+  it('stays free of literal colours, so every value is a token', () => {
     const cssPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css')
     const css = readFileSync(cssPath, 'utf8')
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)

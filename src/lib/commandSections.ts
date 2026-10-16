@@ -14,19 +14,18 @@ export type SectionId = (typeof SECTION_IDS)[number]
  */
 export const ALL = 'all'
 
-export type ScrollTarget = 'contact' | 'skills'
+export type ScrollTarget = 'contact'
 
 export type FocusTarget = SectionId | typeof ALL | ScrollTarget
 
 /**
  * What a command does to the page: focus one section, restore the whole page
- * (`all`), or scroll to a special anchor (`contact`, `skills`).
+ * (`all`), or scroll to a special anchor (`contact`).
  */
 const FOCUS_BY_COMMAND: Partial<Record<CommandName, FocusTarget>> = {
   about: 'about',
   experience: 'experience',
   projects: 'projects',
-  skills: 'skills',
   contact: 'contact',
 }
 

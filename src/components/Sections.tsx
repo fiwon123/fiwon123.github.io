@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { about, contact, experience, projects, skills } from '../content'
+import { about, contact, experience, projects } from '../content'
 import type { ExperienceEntry, GalleryItem } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
@@ -10,49 +10,6 @@ import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
 
 import styles from './sections.module.css'
-
-/** Each skill group's tint class — the dot is the only place the colour appears. */
-const SKILL_TINTS: Record<string, string | undefined> = {
-  languages: styles.tagLang,
-  data: styles.tagData,
-  tooling: styles.tagTool,
-  'game-dev': styles.tagGame,
-}
-
-export function SkillBadges() {
-  const { locale } = useLanguage()
-  return (
-    <div id="skills">
-      {skills.map((group) => (
-        <section key={group.id} className={styles.group}>
-          <h3 className={styles.groupTitle}>{group.label[locale]}</h3>
-          <ul className={styles.tags}>
-            {group.items.map((item) => {
-              const tint = SKILL_TINTS[group.id]
-              const blurb = item.blurb[locale]
-              return (
-                <li key={item.name} className={tint ? `${styles.tag} ${tint}` : styles.tag}>
-                  <a
-                    className={styles.tagLink}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${item.name} — ${blurb}`}
-                  >
-                    {item.name}
-                  </a>
-                  <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
-                    {blurb}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-      ))}
-    </div>
-  )
-}
 
 export function ContactRow() {
   return (
@@ -147,7 +104,6 @@ export function Hero() {
           <ContactRow />
           <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
           <p className={styles.heroStack}>{t.hero.stack}</p>
-          <SkillBadges />
         </div>
       </div>
     </RevealSection>
