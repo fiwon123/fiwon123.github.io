@@ -18,24 +18,24 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  /* Fade particles away over the centred reading column so text stays readable. */
-  -webkit-mask-image: radial-gradient(
-    ellipse 120% 200% at 50% 50%,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0) calc(50% - clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 1) calc(50% - clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 1) calc(50% + clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 0) calc(50% + clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 0) 100%
+  /* Keep particles in left/right gutters so reading column stays clear. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 16%,
+    black 26%,
+    black 74%,
+    transparent 84%,
+    transparent 100%
   );
-  mask-image: radial-gradient(
-    ellipse 120% 200% at 50% 50%,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0) calc(50% - clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 1) calc(50% - clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 1) calc(50% + clamp(16rem, 28vw, 24rem)),
-    rgba(0, 0, 0, 0) calc(50% + clamp(24rem, 40vw, 34rem)),
-    rgba(0, 0, 0, 0) 100%
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 16%,
+    black 26%,
+    black 74%,
+    transparent 84%,
+    transparent 100%
   );
 }
 
