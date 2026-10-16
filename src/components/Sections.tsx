@@ -145,15 +145,7 @@ export function Experience() {
                 ))}
               </ul>
             )}
-            {entry.games && entry.games.length > 0 && (
-              <ul className={styles.games} aria-label={t.labels.games}>
-                {entry.games.map((game) => (
-                  <li key={game.name} className={styles.game}>
-                    <span className={styles.gameName}>{game.name}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+
             <Gallery items={experienceGallery(entry)} title={entry.company} />
             {entry.tech.length > 0 && (
               <p className={styles.meta}>

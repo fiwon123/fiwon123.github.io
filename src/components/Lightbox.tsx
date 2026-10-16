@@ -42,6 +42,7 @@ export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxP
   const closeRef = useRef<HTMLButtonElement>(null)
   const restoreFocusRef = useRef<HTMLElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
+  const [imageAspect, setImageAspect] = useState<number | null>(null)
 
   const item = items[index]
   const game = item.game
@@ -142,7 +143,7 @@ export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxP
         aria-modal="true"
         aria-label={`${t.a11y.lightbox}: ${title}`}
       >
-        <div className={`${styles.stage} ${game ? styles.withDetail : ''}`}>
+        <div className={`${styles.stage} ${game ? styles.withDetail : ''}`} style={imageAspect ? ({ ['--ar' as unknown]: imageAspect }) as React.CSSProperties : undefined}>
           {playing ? (
             <iframe
               className={styles.frame}
@@ -157,6 +158,12 @@ export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxP
               src={item.src}
               alt={`${title} — ${index + 1}`}
               decoding="async"
+              onLoad={(e) => {
+                const img = e.currentTarget
+                if (img.naturalWidth && img.naturalHeight) {
+                  setImageAspect(img.naturalWidth / img.naturalHeight)
+                }
+              }}
             />
           )}
 
