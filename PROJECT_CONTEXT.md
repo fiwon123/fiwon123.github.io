@@ -171,6 +171,14 @@ Each entry is settled; the reason is what stops it being re-opened.
   it is pressed, so opening a gallery makes no third-party request. The pure
   `youtubeId` helper decides whether a trailer is embeddable; a title whose link
   is not a YouTube video simply gets no play control. (2026-10-16)
+- **A `Tech:` entry is a linked tag, and the name is a union, not a string**
+  (#98) — `TechName` in `content/types.ts` lists every technology, and
+  `TECHNOLOGIES` is `Record<TechName, { url, blurb }>`, so a name with no entry —
+  or a typo in a project — is a `tsc` error rather than a blank tag. The blurb is
+  both the link's accessible name and its hover/focus tooltip (the tip is
+  `aria-hidden`, so it is not read twice), and the tag carries a plain border with
+  no tint, so no non-text accent has to clear 3:1 and no `--color-tag-*` token is
+  resurrected. (2026-10-16)
 - **A skill badge is a link, and its group colour is a dot, not the text** — each
   skill carries a `url` and a bilingual `blurb`; the badge is an anchor to the
   reference, with the blurb as its accessible name and a hover/focus tooltip, and
