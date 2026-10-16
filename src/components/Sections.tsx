@@ -20,7 +20,6 @@ const SKILL_TINTS: Record<string, string | undefined> = {
 }
 
 export function SkillBadges() {
-  const t = useT()
   const { locale } = useLanguage()
   return (
     <div id="skills">
