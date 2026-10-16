@@ -203,10 +203,6 @@ export function Experience() {
                 ))}
               </ul>
             )}
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/dev
             <Gallery items={experienceGallery(entry)} title={entry.company} />
             {entry.tech.length > 0 && (
               <p className={styles.meta}>
