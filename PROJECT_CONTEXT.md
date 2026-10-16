@@ -105,6 +105,18 @@ Each entry is settled; the reason is what stops it being re-opened.
   (`data-mode`), not a theme: a preset is an identity, a reading is how you read
   it, and folding them into one axis (the #100 proposal) would have made every
   preset a separate theme. (2026-10-16)
+- **The page is a light/dark reading column on a dark chrome frame** (#101) — the
+  palette splits into a **reading** set (`--color-bg`/`-surface`/`-fg`/`-fg-muted`/
+  `-border`, the centred column) and a **chrome** set (`--color-chrome-bg`/
+  `-surface`/`-fg`/`-muted`/`-border`/`-accent`, the page sides, header and
+  footer). Chrome is dark in **both** readings — the light/dark choice is a reading
+  feature, not a page-wide one — but keeps each preset's hue, so the frame still
+  has an identity. The frame carries its **own** accent because a reading accent is
+  tuned for the reading surface and the light ones fall under 3:1 on chrome
+  (studio 2.90, paper 2.79, violet 2.73): `tokens.test.ts` gates text on both
+  surfaces (4.5:1) and the chrome accent as a non-text boundary (3:1), and
+  `surfaces.test.ts` pins which selector paints which surface so the split cannot
+  silently revert. The overlay pair is unchanged. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
@@ -139,12 +151,12 @@ Each entry is settled; the reason is what stops it being re-opened.
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
-  twice** — `public/favicon.svg` is the same geometry and palette as `Logo.tsx`
-  (a test derives both from source and fails on drift), and `make favicons`
-  rasterises it in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
-  16/32/180/192/512 PNGs. A hand-maintained second copy of the icon is the way the
-  tab and the page drift apart, and a capture harness that writes a blank or
-  opaque-cornered file is worse than no harness. (2026-10-16)
+  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
+  the studio-dark palette (a test derives both from source and fails on drift),
+  and `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
+  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs. A hand-maintained second copy of
+  the icon is the way the tab and the page drift apart, and a capture harness that
+  writes a blank or opaque-cornered file is worse than no harness. (2026-10-16)
 - **A game owns its image; the experience gallery is derived from the games** —
   `GameLink.image` is the single place the title→image link lives, and the card
   builds its tiles as `{ src: game.image, game }`, so an image path is never

@@ -35,8 +35,9 @@ the bilingual parity are all gated before anything is merged.
 - **One page, optional console** — every section always renders; the terminal
   dock is toggled per visitor and remembered.
 - **Five theme presets** (Studio, Paper, Terminal, Violet, Ember) × light/dark
-  (no system; dark is the default), applied before first paint so there is no
-  flash of the wrong palette.
+  (no system; dark is the default): a light/dark reading column on a dark,
+  preset-tinted chrome frame, applied before first paint so there is no flash of
+  the wrong palette.
 - **Bilingual** — EN and PT-BR, with the document language kept in sync.
 - **Repository cards** — language, stars and last-push date, read from a
   build-time snapshot (`npm run stats`), never from the browser.
