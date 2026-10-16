@@ -178,7 +178,7 @@ describe('navigation commands focus their section', () => {
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
   })
 
-  it('contact scrolls to the footer anchor without focusing a section', async () => {
+  it('contact scrolls to the hero contact row without focusing a section', async () => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
@@ -186,7 +186,7 @@ describe('navigation commands focus their section', () => {
     expect(within(log()).getByText(`▸ ${en.nav.contact}`)).toBeTruthy()
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
     const id = (scrolled.mock.contexts.at(-1) as HTMLElement).id
-    expect(id).toBe('contact-footer')
+    expect(id).toBe('contact')
     for (const sid of SECTION_IDS) {
       expect(document.getElementById(sid)).toBeTruthy()
     }
@@ -329,7 +329,7 @@ describe('settings commands drive the same controls as the header', () => {
 describe('contact links', () => {
   it('renders icon-only links named by their label, with no URL text', () => {
     renderApp()
-    const section = document.getElementById('contact-footer')
+    const section = document.getElementById('contact')
     expect(section).toBeTruthy()
     const links = within(section!).getAllByRole('link')
     expect(links).toHaveLength(contact.length)
@@ -339,6 +339,20 @@ describe('contact links', () => {
       // The URL is the label's job; the row shows only the brand mark.
       expect(link.textContent).not.toContain('http')
     }
+  })
+
+  it('renders the links only in the hero, not the footer', () => {
+    renderApp()
+    // The footer used to duplicate the row under `#contact-footer`; it now holds
+    // only the copyright / built-with / source lines.
+    const footer = document.querySelector('footer') as HTMLElement
+    expect(footer).toBeTruthy()
+    // The one footer link is the repo source; the contact links are gone.
+    expect(within(footer).queryAllByRole('link')).toHaveLength(1)
+    expect(document.getElementById('contact-footer')).toBeNull()
+    // The single contact row is the hero's, and it still holds every link.
+    const hero = document.getElementById('contact') as HTMLElement
+    expect(within(hero).getAllByRole('link')).toHaveLength(contact.length)
   })
 })
 
@@ -388,7 +402,7 @@ describe('document structure', () => {
     // `<main id="about">` and the About `<section id="about">` used to collide,
     // which sent every #about link to the top of the page.
     renderApp()
-    for (const id of ['content', 'top', ...SECTION_IDS]) {
+    for (const id of ['content', 'top', 'contact', ...SECTION_IDS]) {
       expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)
     }
   })

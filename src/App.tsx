@@ -60,7 +60,7 @@ function App() {
     if (target === 'contact') {
       setFocus(null)
       requestAnimationFrame(() => {
-        openSection('contact-footer')
+        openSection('contact')
       })
       return
     }
