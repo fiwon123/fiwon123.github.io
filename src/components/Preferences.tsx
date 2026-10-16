@@ -7,11 +7,10 @@ import { LOCALES, type Locale } from '../types'
 
 import styles from './Preferences.module.css'
 
-/** How a click moves the appearance on: light → dark → system → light. */
+/** How a click moves the appearance on: light → dark → light. */
 const NEXT_MODE: Record<Mode, Mode> = {
   light: 'dark',
-  dark: 'system',
-  system: 'light',
+  dark: 'light',
 }
 
 /** The flag shown beside the short code, one per language. */
@@ -21,20 +20,14 @@ const FLAGS: Record<Locale, string> = {
 }
 
 /**
- * The colour-preset glyph: a paint palette drawn in `currentColor`, its wells
- * punched out with the surface colour behind it so they read as holes.
- */
-
-/**
  * The appearance glyph: a circle that reflects the current mode — empty for
- * light, filled for dark, half-filled for system.
+ * light, filled for dark.
  */
 function ModeIcon({ mode }: { mode: Mode }) {
   return (
     <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
       {mode === 'dark' ? <circle cx="12" cy="12" r="9" fill="currentColor" /> : null}
-      {mode === 'system' ? <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" /> : null}
     </svg>
   )
 }

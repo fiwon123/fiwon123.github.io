@@ -321,7 +321,7 @@ describe('settings commands drive the same controls as the header', () => {
   it('lists the valid values for a bare settings command', () => {
     renderApp()
     submitCommand('mode')
-    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark} · ${en.theme.modes.system}`
+    const listing = `${en.theme.modeLabel}: ${en.theme.modes.light} · ${en.theme.modes.dark}`
     expect(within(log()).getByText(listing)).toBeTruthy()
   })
 })
