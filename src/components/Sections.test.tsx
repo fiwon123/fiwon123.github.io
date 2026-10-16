@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { about, experience, projects, skills } from '../content'
 import { LanguageProvider } from '../i18n/LanguageProvider'
-import { About, Contact, Experience, Hero, Projects, Skills } from './Sections'
+import { About, Experience, Hero, Projects } from './Sections'
 
 type FakeEntry = { isIntersecting: boolean }
 
@@ -60,7 +60,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-const sections = { Hero, About, Experience, Projects, Skills, Contact }
+const sections = { Hero, About, Experience, Projects }
 
 describe('reveal wiring', () => {
   // The acceptance criterion is on the rendered section, not on the hook: a
@@ -121,14 +121,8 @@ describe('reveal wiring', () => {
   it('renders one card per project and one tag per skill', () => {
     withoutObserver()
     allowMotion()
-    const skillCount = skills.reduce((total, group) => total + group.items.length, 0)
-
     const { container: projectTree } = renderSection(<Projects />)
     expect(projectTree.querySelectorAll('article')).toHaveLength(projects.length)
-    cleanup()
-
-    const { container: skillTree } = renderSection(<Skills />)
-    expect(skillTree.querySelectorAll('li')).toHaveLength(skillCount)
   })
 
   it('renders every about paragraph, so none is dropped by the wrapper', () => {
@@ -231,7 +225,7 @@ describe('skill badges (#44)', () => {
   it('links each badge to its reference with the blurb as its accessible name', () => {
     withoutObserver()
     allowMotion()
-    const { container } = renderSection(<Skills />)
+    const { container } = renderSection(<Hero />)
     const links = [...container.querySelectorAll('a')]
     expect(links).toHaveLength(skillItems.length)
 

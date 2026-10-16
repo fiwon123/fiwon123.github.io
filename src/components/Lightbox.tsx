@@ -146,7 +146,7 @@ export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxP
         <div
           className={`${styles.stage} ${game ? styles.withDetail : ''}`}
           style={
-            imageAspect ? ({ ['--ar' as unknown]: imageAspect } as React.CSSProperties) : undefined
+            imageAspect ? ({ '--ar': imageAspect } as React.CSSProperties) : undefined
           }
         >
           {playing ? (

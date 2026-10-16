@@ -1,5 +1,3 @@
-import { PARTICLE_ALPHA } from './particles'
-
 export function dprFor(d: number | undefined): number {
   const dpr = typeof d === 'number' && d > 0 ? d : 1
   return Math.min(2, dpr)
@@ -14,12 +12,18 @@ export function readAccent(s: any): string {
   }
 }
 
+export const FALLBACK_COLOR = 'rgb(128 128 128)'
+
+export const MAX_DPR = 2
+
+export const PARTICLE_ALPHA = 0.2
 /** Keep the cap small so meteors feel sparse. */
 export const METEOR_MAX = 14
+export const PARTICLE_MAX = METEOR_MAX
 export const METEOR_MIN = 6
-const METEOR_AREA = 20000
-
-export const PARTICLE_AREA = 20000 // unused in effect logic for count; but keep
+export const PARTICLE_MIN = METEOR_MIN
+export const METEOR_AREA = 20000
+export const PARTICLE_AREA = METEOR_AREA
 
 const TRAIL_LEN = 0.22
 const HEAD_SIZE_MIN = 2
@@ -71,14 +75,12 @@ export function createField(
   const meteors: Meteor[] = []
   const gutter = gutterForWidth(width)
   for (let i = 0; i < size; i++) {
-    meteors.push(spawn(meteors, i, width, height, gutter, r))
+    meteors.push(spawn(width, height, gutter, r))
   }
   return { meteors, count: size }
 }
 
 function spawn(
-  meteors: Meteor[],
-  i: number,
   width: number,
   height: number,
   gutter: number,
@@ -119,7 +121,7 @@ export function step(
     m.x += m.vx * seconds
     m.y += m.vy * seconds
     if (m.life > m.maxLife || m.x < -200 || m.x > width + 200 || m.y > height + 200) {
-      field.meteors[i] = spawn(field.meteors, i, width, height, gutter, r)
+      field.meteors[i] = spawn(width, height, gutter, r)
     }
   }
 }

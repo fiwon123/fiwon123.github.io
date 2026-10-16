@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { cleanup, act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { PARTICLE_AREA, PARTICLE_MAX, PARTICLE_MIN, countFor } from '../lib/particles'
+import { PARTICLE_AREA, PARTICLE_MAX, PARTICLE_MIN, countFor } from '../lib/meteors'
 import { REDUCED_MOTION_QUERY } from '../lib/reveal'
 import { useTheme } from '../theme/hooks'
 import { ThemeProvider } from '../theme/ThemeProvider'
