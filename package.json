@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "stats": "node scripts/repo-stats.mjs",
     "screenshots": "node scripts/screenshots.mjs",
+    "favicons": "node scripts/favicons.mjs",
     "lint": "oxlint",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
