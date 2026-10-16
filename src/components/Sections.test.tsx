@@ -1,5 +1,9 @@
-import { act, cleanup, render } from '@testing-library/react'
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -209,5 +213,46 @@ describe('repository facts and game tiles (#20, #43)', () => {
     }
     // {sony} on VR Monkey has no URL, so it stays an icon, not a dead link.
     expect(container.querySelector('a[aria-label="PlayStation"]')).toBeNull()
+  })
+})
+
+const skillItems = skills.flatMap((group) => group.items)
+
+describe('skill badges (#44)', () => {
+  it('gives every skill an official URL and both blurbs', () => {
+    expect(skillItems.length).toBeGreaterThan(0)
+    for (const item of skillItems) {
+      expect(item.url, item.name).toMatch(/^https:\/\//)
+      expect(item.blurb.en.trim(), `${item.name} EN`).not.toBe('')
+      expect(item.blurb['pt-BR'].trim(), `${item.name} PT-BR`).not.toBe('')
+    }
+  })
+
+  it('links each badge to its reference with the blurb as its accessible name', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Skills />)
+    const links = [...container.querySelectorAll('a')]
+    expect(links).toHaveLength(skillItems.length)
+
+    for (const item of skillItems) {
+      const accessibleName = `${item.name} — ${item.blurb.en}`
+      const link = links.find((node) => node.getAttribute('aria-label') === accessibleName)
+      expect(link, accessibleName).toBeTruthy()
+      expect(link?.getAttribute('href'), item.name).toBe(item.url)
+      expect(link?.getAttribute('target'), item.name).toBe('_blank')
+      expect(link?.getAttribute('rel'), item.name).toBe('noopener noreferrer')
+      // The blurb also shows as a tooltip, hidden from the accessibility tree so
+      // the badge is not announced twice.
+      const tip = link?.parentElement?.querySelector('[aria-hidden="true"]')
+      expect(tip?.textContent, item.name).toBe(item.blurb.en)
+    }
+  })
+
+  it('keeps the badge stylesheet free of literal colours', () => {
+    const cssPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css')
+    const css = readFileSync(cssPath, 'utf8')
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
+    expect(css).not.toMatch(/\brgba?\(/i)
   })
 })

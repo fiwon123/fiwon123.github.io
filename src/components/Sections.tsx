@@ -201,6 +201,14 @@ export function Projects() {
   )
 }
 
+/** Each skill group's tint class — the dot is the only place the colour appears. */
+const SKILL_TINTS: Record<string, string | undefined> = {
+  languages: styles.tagLang,
+  data: styles.tagData,
+  tooling: styles.tagTool,
+  'game-dev': styles.tagGame,
+}
+
 export function Skills() {
   const t = useT()
   const { locale } = useLanguage()
@@ -211,11 +219,26 @@ export function Skills() {
         <section key={group.id} className={styles.group}>
           <h3 className={styles.groupTitle}>{group.label[locale]}</h3>
           <ul className={styles.tags}>
-            {group.items.map((item) => (
-              <li key={item} className={styles.tag}>
-                {item}
-              </li>
-            ))}
+            {group.items.map((item) => {
+              const tint = SKILL_TINTS[group.id]
+              const blurb = item.blurb[locale]
+              return (
+                <li key={item.name} className={tint ? `${styles.tag} ${tint}` : styles.tag}>
+                  <a
+                    className={styles.tagLink}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${item.name} — ${blurb}`}
+                  >
+                    {item.name}
+                  </a>
+                  <span className={`${styles.tip} ${styles.tagTip}`} aria-hidden="true">
+                    {blurb}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         </section>
       ))}
