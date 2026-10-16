@@ -148,6 +148,14 @@ Each entry is settled; the reason is what stops it being re-opened.
   it is pressed, so opening a gallery makes no third-party request. The pure
   `youtubeId` helper decides whether a trailer is embeddable; a title whose link
   is not a YouTube video simply gets no play control. (2026-10-16)
+- **A skill badge is a link, and its group colour is a dot, not the text** — each
+  skill carries a `url` and a bilingual `blurb`; the badge is an anchor to the
+  reference, with the blurb as its accessible name and a hover/focus tooltip, and
+  the group is shown by a single `--color-tag-*` dot while the label keeps
+  `--color-fg`. Only the dot is a non-text accent, so it must clear 3:1
+  (WCAG 1.4.11) on `--color-surface` — which is why the tints are a separate
+  token set gated by `tokens.test.ts` rather than a recolouring of the label.
+  (2026-10-16)
 
 ## Topology
 
@@ -204,24 +212,22 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   scroll-reveal (#17), the particle background (#18) and its visibility fix
   (#33), the terminal-first view (#19), repository cards (#20) and the stability
   pass (#21).
-- **In progress**: milestone `v1.2 — Terminal & details`. Merged to `dev` so far:
-  the two-column layout (#40), the centred header and SVG-first favicons (#41),
-  the particle reading-zone fade (#42), icon-only contact links (#45), and the
-  always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
-  polish`: the animated dock, readable console and in-panel hide control (#52),
-  one-section focus with `all` (#53), theme/appearance/language from the
-  terminal (#54), preference controls as icons (#55), and a header centred on the
-  page frame (#56).
+- **In progress**: milestone `v1.2 — Terminal & details` — feature-complete,
+  pending release. Merged to `dev`: the two-column layout (#40), the centred
+  header and SVG-first favicons (#41), the particle reading-zone fade (#42), the
+  game galleries with tile tooltips and in-portfolio trailers (#43), icon-only
+  contact links (#45), the always-docked terminal panel (#47) and skill badges
+  (#44). Milestone `v1.3 — Terminal controls & polish`: the animated dock,
+  readable console and in-panel hide control (#52), one-section focus with `all`
+  (#53), theme/appearance/language from the terminal (#54), preference controls
+  as icons (#55), and a header centred on the page frame (#56).
 
 ## Backlog
 
-With `v1.3` complete, what remains is the rest of `v1.2`; each item is a GitHub
-issue already filed.
+`v1.2` and `v1.3` are feature-complete; the only filed work left is a carry-over
+from `v1.1`:
 
-1. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
-   playback
-2. `#44` — skill badges with group tints, tooltips and official links
-3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
+1. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
 
 Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
