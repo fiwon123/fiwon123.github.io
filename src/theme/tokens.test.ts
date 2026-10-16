@@ -189,19 +189,19 @@ describe('overlay chrome', () => {
 
 /**
  * The particle background draws the **chrome** accent (`--color-chrome-accent`)
- * at `PARTICLE_ALPHA` in the page gutters. Since #101 the centred reading column
- * is opaque, so a particle is only ever seen over the **chrome** — body text in
- * the column sits on the reading surface, above the layer. The budget is therefore
+ * at `PARTICLE_ALPHA` over the frame. Since #101 the centred reading column is
+ * opaque, so a particle is only ever seen over the **chrome** — body text in the
+ * column sits on the reading surface, above the layer. The budget is therefore
  * recomputed against `--color-chrome-bg`, with the chrome text as the foreground,
  * exactly like the scrim above. (The particle reads the chrome accent, not the
  * reading one, so it stays visible in light mode where the reading accent is dark.)
  *
- * The tightest palette is studio (dark and light agree: chrome is mode-independent):
- * its accent over the studio chrome drops `--color-chrome-muted` under 4.5:1 at
- * alpha 0.306. The shipped constant is 0.2 — the head is drawn at up to
- * `PARTICLE_ALPHA * 1.2` (0.24) — and the gate below caps the constant at 0.23, so
- * even the peak stays under the threshold and `PARTICLE_ALPHA` cannot be raised in
- * isolation.
+ * The lifecycle fade in `alphaAt` peaks at exactly 1, so `PARTICLE_ALPHA` **is**
+ * the drawn maximum — the gate below caps that constant directly rather than a
+ * multiple of it. The tightest palette is studio (dark and light agree: chrome is
+ * mode-independent): its accent over the studio chrome drops `--color-chrome-muted`
+ * under 4.5:1 at alpha 0.306, so the constant is capped at 0.23 and cannot be
+ * raised in isolation.
  *
  * `throughParticle` is source-over: what a particle does to the surface
  * underneath it.

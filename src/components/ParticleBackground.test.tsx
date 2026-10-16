@@ -86,6 +86,7 @@ function installContext() {
     lineWidth: 0,
     moveTo: () => {},
     lineTo: () => {},
+    quadraticCurveTo: () => {},
     stroke: () => {},
     fill: () => {
       log.push({ kind: 'fill', alpha: ctx.globalAlpha, fillStyle: String(ctx.fillStyle) })
@@ -215,32 +216,23 @@ describe('ParticleBackground', () => {
     expect(css).toMatch(/@media print[\s\S]*display:\s*none/)
   })
 
-  it('masks the reading column out and keeps the gutters visible (#88)', () => {
-    // The meteors spawn in the left/right gutters, so the mask must be the
-    // rounded (gutters-black, centre-transparent) way round. #82 shipped the
-    // inverse and drew them where the mask was transparent.
+  it('fades a radial hole over the reading column and keeps the edges visible (#96)', () => {
+    // Particles are born on every edge and cross the whole frame, so the cleared
+    // area is a soft disc around the text — a radial core, not two fixed gutters.
     const mask = /mask-image:\s*([\s\S]*?);/.exec(css)?.[1] ?? ''
     expect(mask, 'no mask-image declaration').not.toBe('')
+    expect(mask).toMatch(/radial-gradient/)
+    expect(mask, 'a banded linear gradient is the old shape').not.toMatch(/linear-gradient/)
+    expect(mask).toMatch(/at\s+50%\s+50%/)
     const stops = [...mask.matchAll(/(black|transparent)\s+(\d+)%/g)].map(
       (match) => [match[1], Number(match[2])] as const,
     )
-    expect(stops.length, 'the mask has no stops').toBeGreaterThanOrEqual(4)
-
+    expect(stops.length, 'the mask has no stops').toBeGreaterThanOrEqual(2)
     const colorAt = (position: number) => stops.find(([, at]) => at === position)?.[0]
-    // Edges: gutters are visible.
-    expect(colorAt(0), 'left edge').toBe('black')
-    expect(colorAt(100), 'right edge').toBe('black')
-    // Centre: the reading column is faded out — a transparent stop on each side
-    // of the midpoint, so the middle of the viewport is masked away.
-    const transparent = stops.filter(([color]) => color === 'transparent').map(([, at]) => at)
-    expect(
-      transparent.some((at) => at < 50),
-      'transparent stop left of centre',
-    ).toBe(true)
-    expect(
-      transparent.some((at) => at > 50),
-      'transparent stop right of centre',
-    ).toBe(true)
+    // Centre: fully transparent, so the middle of the viewport is masked away.
+    expect(colorAt(0), 'centre of the mask').toBe('transparent')
+    // Edge: fully opaque, so the field is visible around the column.
+    expect(colorAt(100), 'edge of the mask').toBe('black')
   })
 
   it('clears the canvas every frame so the trails do not accumulate (#88)', () => {
@@ -301,8 +293,8 @@ describe('ParticleBackground', () => {
     const fills = takeLog().filter((event) => event.kind === 'fill')
     // A 400x400 phone-size window: countFor clamps into [METEOR_MIN, METEOR_MAX].
     const expected = countFor(400, 400)
-    expect(expected).toBeGreaterThanOrEqual(6)
-    expect(expected).toBeLessThanOrEqual(14)
+    expect(expected).toBeGreaterThanOrEqual(METEOR_MIN)
+    expect(expected).toBeLessThanOrEqual(METEOR_MAX)
     const small = document.querySelectorAll('canvas').length
     expect(small).toBe(1)
     expect(fills.length).toBe(expected)
