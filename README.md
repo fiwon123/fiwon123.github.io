@@ -59,6 +59,7 @@ npm run dev          # start the dev server
 make check           # sandbox config, project docs, format-check, lint, type-check, test, build
 npm run stats        # refresh the repository cards from the GitHub API (needs `gh`)
 make screenshots     # rebuild + capture the README images (needs Chrome)
+make favicons        # regenerate the favicon rasters from public/favicon.svg (needs Chrome)
 python3 scripts/fetch-fonts.py   # refresh the self-hosted webfonts
 ```
 
@@ -93,6 +94,8 @@ upgraded on the host (`make opencode-upgrade`).
   see `public/fonts/README.md`.
 - `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
   active theme colour.
+- `public/favicon.svg` — the tab icon, the same mark as the page logo. The PNG
+  fallbacks and `favicon.ico` are generated from it by `make favicons`.
 - `docs/screenshots/` — the images above; see
   [`docs/screenshots/README.md`](docs/screenshots/README.md) to regenerate them.
 

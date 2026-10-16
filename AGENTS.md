@@ -58,7 +58,7 @@ src/
   types.ts         # Shared types
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
 docs/screenshots/  # Committed README images + regeneration notes
-scripts/           # Gates and tooling (check-docs.py, check-sandbox.py, fetch-fonts.py, repo-stats.mjs, screenshots.mjs)
+scripts/           # Gates and tooling (check-docs.py, check-sandbox.py, fetch-fonts.py, repo-stats.mjs, screenshots.mjs, favicons.mjs, favicon-ico.mjs)
 ```
 
 ## Development Commands
@@ -72,6 +72,7 @@ npm run build         # Build for production (outputs dist/)
 npm run preview       # Preview production build
 npm run stats         # Refresh src/content/repoStats.json from the GitHub API (needs `gh`)
 npm run screenshots   # Capture the README images into docs/screenshots/ (needs Chrome)
+npm run favicons      # Regenerate the favicon rasters from public/favicon.svg (needs Chrome)
 npm run lint          # Lint with oxlint
 npm run fmt           # Format with oxfmt
 npm run fmt:check     # Check formatting
@@ -88,6 +89,7 @@ make fmt              # npm run fmt
 make lint             # npm run lint
 make stats            # npm run stats
 make screenshots      # npm run build && npm run screenshots
+make favicons         # npm run favicons
 make help             # Show Makefile targets
 ```
 
@@ -134,6 +136,7 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - **Repository cards**: language/stars/last-push come from the committed build-time snapshot (`src/content/repoStats.json`, `npm run stats`); the browser never calls the GitHub API, and a repo with no snapshot entry keeps the static card
 - **Accessibility**: a skip link is the first focusable element and targets `<main id="content">`; focus-visible styles on every control; `document.documentElement.lang` tracks the chosen language
 - **README screenshots**: committed images under `docs/screenshots/`, reproduced by `make screenshots` (`scripts/screenshots.mjs`), which refuses to write a capture it cannot trust
+- **Favicons**: the tab icon is the page's own mark — `public/favicon.svg` is generated from the same geometry/palette as `Logo.tsx` (a test derives both and fails on drift), and the rasters (`favicon.ico` as PNG-in-ICO, 16/32/180/192/512 PNGs) are reproduced by `make favicons` (`scripts/favicons.mjs`), which refuses a wrong-sized, blank or opaque-cornered capture; the SVG is listed first in `index.html`
 - **Formatting/Linting**: oxlint + oxfmt (0.x tools pinned via lockfile)
 - **Tests**: Unit tests for pure logic (parser/history), i18n parity, theme contrast/tokens, entry smoke test
 
