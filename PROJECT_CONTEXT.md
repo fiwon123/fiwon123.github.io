@@ -129,6 +129,13 @@ Each entry is settled; the reason is what stops it being re-opened.
   in the Dockerfile** — so `check-sandbox.py` can execute the shipped file under
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
+- **The favicon is the page's own mark, and its rasters are generated, not drawn
+  twice** — `public/favicon.svg` is the same geometry and palette as `Logo.tsx`
+  (a test derives both from source and fails on drift), and `make favicons`
+  rasterises it in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
+  16/32/180/192/512 PNGs. A hand-maintained second copy of the icon is the way the
+  tab and the page drift apart, and a capture harness that writes a blank or
+  opaque-cornered file is worse than no harness. (2026-10-16)
 
 ## Topology
 
@@ -151,7 +158,7 @@ src/
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
 docs/screenshots/  # Committed README images + how to regenerate them
 scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-fonts.py,
-                   #   repo-stats.mjs, screenshots.mjs, sandbox scripts)
+                   #   repo-stats.mjs, screenshots.mjs, favicons.mjs, favicon-ico.mjs, sandbox scripts)
 .opencode/         # Agent definitions, instructions, skills, gitignored session memory
 ```
 
@@ -170,6 +177,10 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 - **Screenshots**: `make screenshots` — rebuilds and captures the README images
   into `docs/screenshots/` with a real headless Chrome (see that directory's
   README); refuses to write a capture it cannot trust
+- **Favicons**: `make favicons` (or `npm run favicons`) — re-renders
+  `public/favicon.svg` into the committed rasters (`favicon.ico` as PNG-in-ICO,
+  16/32/180/192/512 PNGs) with a real headless Chrome; refuses a wrong-sized,
+  blank or opaque-cornered capture
 - **Sandbox**: `make dev-up` / `make dev-log` / `make opencode` / `make dev-down`
   (needs Docker; `make check-sandbox` validates the config without it)
 
