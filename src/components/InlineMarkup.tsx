@@ -44,13 +44,19 @@ export function InlineMarkup({ text, platforms }: InlineMarkupProps) {
       const platform = platforms?.find((link) => link.name === icon[1])
       if (platform) {
         nodes.push(
-          <a key={index} href={platform.url} aria-label={PLATFORM_LABELS[platform.name]}>
+          <a key={index} href={platform.url}>
             <BrandIcon name={platform.name} />
+            <span aria-hidden="true"> {PLATFORM_LABELS[platform.name]}</span>
           </a>,
         )
         return
       }
-      nodes.push(<BrandIcon key={index} name={icon[1] as BrandIconName} />)
+      nodes.push(
+        <Fragment key={index}>
+          <BrandIcon name={icon[1] as BrandIconName} />
+          <span aria-hidden="true"> {PLATFORM_LABELS[icon[1] as PlatformName] || icon[1]}</span>
+        </Fragment>,
+      )
       return
     }
     nodes.push(<Fragment key={index}>{part}</Fragment>)
