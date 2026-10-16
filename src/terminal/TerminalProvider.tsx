@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 
-import { useLanguage, useT } from '../i18n/hooks'
+import { useT } from '../i18n/hooks'
 import { sectionForCommand, type SectionId } from '../lib/commandSections'
 import { runCommand } from './commands'
 import { TerminalContext, type TerminalEntry } from './context'
@@ -8,22 +8,24 @@ import { parseCommand } from './parser'
 
 interface TerminalProviderProps {
   children: ReactNode
+  /**
+   * Called with the section a navigation command names. The provider owns the
+   * scrollback; the page owns the scrolling, so the panel supplies this.
+   */
+  onNavigate?: (id: SectionId) => void
 }
 
 /**
- * The console's output and the section it last opened, held above both the
- * console and the page it drives.
+ * The console's scrollback, held above the console that reads it.
  *
- * The point of lifting it: a command can be issued from *outside* the console —
- * the welcome screen's command chips — and still print into the same scrollback
- * the typed ones use. `run` knows nothing about the input line; the console owns
- * that and its history.
+ * Its one job is output: parse a command, print its lines, and tell the page to
+ * scroll when the command names a section. It knows nothing about the input line
+ * — the console owns that and its history — so the same `run` answers both a
+ * typed command and, in principle, any other caller.
  */
-export function TerminalProvider({ children }: TerminalProviderProps) {
+export function TerminalProvider({ children, onNavigate }: TerminalProviderProps) {
   const t = useT()
-  const { locale } = useLanguage()
   const [entries, setEntries] = useState<TerminalEntry[]>([])
-  const [activeSection, setActiveSection] = useState<SectionId | null>(null)
   const nextId = useRef(0)
 
   const run = useCallback(
@@ -44,19 +46,19 @@ export function TerminalProvider({ children }: TerminalProviderProps) {
       }
       if (parsed.name === 'clear') {
         setEntries([])
-        setActiveSection(null)
         return
       }
       setEntries((prev) => [
         ...prev,
-        { id: nextId.current++, command: parsed.name, lines: runCommand(parsed.name, t, locale) },
+        { id: nextId.current++, command: parsed.name, lines: runCommand(parsed.name, t) },
       ])
-      setActiveSection(sectionForCommand(parsed.name))
+      const section = sectionForCommand(parsed.name)
+      if (section) onNavigate?.(section)
     },
-    [t, locale],
+    [t, onNavigate],
   )
 
-  const value = useMemo(() => ({ entries, activeSection, run }), [entries, activeSection, run])
+  const value = useMemo(() => ({ entries, run }), [entries, run])
 
   return <TerminalContext.Provider value={value}>{children}</TerminalContext.Provider>
 }

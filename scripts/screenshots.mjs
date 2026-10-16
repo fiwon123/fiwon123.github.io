@@ -32,24 +32,20 @@ import { extname, join, resolve, sep } from 'node:path'
 
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 // One entry per README image. Keys are the localStorage values the app reads
-// (mirroring src/theme/presets.ts, src/lib/viewMode.ts, src/i18n/context.ts).
+// (mirroring src/theme/presets.ts, src/lib/terminalDock.ts, src/i18n/context.ts).
 // `expect` strings must appear in the rendered DOM — they are the fail-loud
 // guard, chosen so a page that did not mount (no React) cannot satisfy them.
 const PRESET = 'studio'
-const COMMON = ['data-testid="particles"', 'class="skip-link"']
+const COMMON = ['data-testid="particles"', 'class="skip-link"', '<nav']
+// The page is always the conventional page; `dock` only decides whether the
+// console is beside it. So every capture carries the nav, and the terminal
+// captures additionally carry the live log — which the collapsed ones must not.
 const CAPTURES = [
-  {
-    name: 'home-terminal-light',
-    view: 'terminal',
-    mode: 'light',
-    expect: [...COMMON, 'role="log"'],
-  },
-  { name: 'home-terminal-dark', view: 'terminal', mode: 'dark', expect: [...COMMON, 'role="log"'] },
-  { name: 'home-browse-light', view: 'browse', mode: 'light', expect: [...COMMON, '<nav'] },
-  { name: 'home-browse-dark', view: 'browse', mode: 'dark', expect: [...COMMON, '<nav'] },
+  { name: 'home-terminal-light', dock: 'true', mode: 'light', expect: [...COMMON, 'role="log"'] },
+  { name: 'home-terminal-dark', dock: 'true', mode: 'dark', expect: [...COMMON, 'role="log"'] },
+  { name: 'home-browse-light', dock: 'false', mode: 'light', expect: COMMON, forbid: 'role="log"' },
+  { name: 'home-browse-dark', dock: 'false', mode: 'dark', expect: COMMON, forbid: 'role="log"' },
 ]
-// A page that failed to mount keeps #root empty, so this must also hold:
-const FORBID_TERMINAL_NAV = { view: 'terminal', forbid: '<nav' }
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DIST = resolve('dist')
@@ -102,11 +98,11 @@ const SETTLE_CSS =
   '<style>*,*::before,*::after{transition:none !important;animation:none !important}' +
   '.reveal{opacity:1 !important;transform:none !important}</style>'
 
-function prelude({ preset, mode, view, lang }) {
+function prelude({ preset, mode, dock, lang }) {
   const seed = {
     'portfolio.v1.theme': preset,
     'portfolio.v1.mode': mode,
-    'portfolio.v1.view': view,
+    'portfolio.v1.dock': dock,
     'portfolio.v1.lang': lang,
   }
   const body = Object.entries(seed)
@@ -204,8 +200,8 @@ for (const capture of CAPTURES) {
   for (const needle of capture.expect) {
     if (!html.includes(needle)) problems.push(`expected marker absent: ${needle}`)
   }
-  if (capture.view === FORBID_TERMINAL_NAV.view && html.includes(FORBID_TERMINAL_NAV.forbid)) {
-    problems.push(`unexpected marker present: ${FORBID_TERMINAL_NAV.forbid}`)
+  if (capture.forbid && html.includes(capture.forbid)) {
+    problems.push(`unexpected marker present: ${capture.forbid}`)
   }
 
   // Capture run (only if the page proved it mounted).

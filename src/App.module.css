@@ -1,0 +1,21 @@
+/* With the terminal docked, the page is content + console side by side: the
+   content column first, the console second (it stacks below on a narrow screen).
+   The wider max-width gives the content its ~60rem reading measure beside the
+   22–24rem console instead of squeezing it. */
+.withTerminal {
+  max-width: 88rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 24rem);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.page {
+  min-width: 0;
+}
+
+@media (max-width: 68rem) {
+  .withTerminal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

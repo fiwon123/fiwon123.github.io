@@ -69,9 +69,18 @@ Each entry is settled; the reason is what stops it being re-opened.
 - **i18n in typed records, one module per language, `en.ts` as source of truth** —
   `pt-BR.ts` is typed `: Strings`, so a missing or misspelled key is a `tsc`
   error rather than a blank string in production.
-- **Theme and view mode are separate axes with separate storage keys**
-  (`portfolio.v1.mode` and `portfolio.v1.view`) — dark mode and terminal-first
-  browsing are independent: a visitor can want either without the other.
+- **The page is one conventional page; the terminal is a dock, not a mode**
+  (`portfolio.v1.dock`) — every section is always rendered, and the console sits
+  beside it (or below on a phone) and scrolls the page rather than replacing it.
+  An earlier two-presentation "view mode" hid the page behind the console; it
+  meant a visitor could not see the work and the console at once, and the first
+  version of that idea had `#section` and a translated string doing work a DOM
+  element should do. The dock keeps the terminal optional without making the
+  content conditional. (2026-10-16)
+- **Theme and dock are separate axes with separate storage keys**
+  (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
+  console is open are independent: a visitor can want either without the other,
+  and the dock key migrates the `portfolio.v1.view` value it replaced. (2026-10-16)
 - **Motion ships with zero runtime dependencies** (hand-rolled
   `IntersectionObserver` and canvas) and every motion feature is **fail-open**
   under `prefers-reduced-motion` — an animation library would outweigh the whole
@@ -148,21 +157,29 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 ## Status
 
 - **Done**: v1.0 — the Hugo site rewritten as React + TS + Vite, live at
-  felipeinoue.com.
-- **In progress**: milestone `v1.1 — Polish & Sandbox`. Merged to `dev` so far:
-  branding (#14), the dev sandbox (#15) and its uid fix (#25), the image lightbox
-  (#16), scroll-reveal (#17), the particle background (#18) and its visibility
-  fix (#33), the terminal-first view (#19), and repository cards (#20).
+  felipeinoue.com. v1.1 — Polish & Sandbox — released to `main` (#37): branding
+  (#14), the dev sandbox (#15) and its uid fix (#25), the image lightbox (#16),
+  scroll-reveal (#17), the particle background (#18) and its visibility fix
+  (#33), the terminal-first view (#19), repository cards (#20) and the stability
+  pass (#21).
+- **In progress**: milestone `v1.2 — Terminal & details`. Merged to `dev` so far:
+  the two-column layout (#40), the centred header and SVG-first favicons (#41),
+  the particle reading-zone fade (#42), and icon-only contact links (#45).
 
 ## Backlog
 
-Build order for the rest of `v1.1`; each item is a GitHub issue already filed.
+Build order for the rest of `v1.2`; each item is a GitHub issue already filed.
 
-1. `#21` — v1.1 stability pass (accessibility, performance, docs), folding in the
-   skip link (#30)
+1. `#47` — always-docked terminal panel: the console scrolls the page instead of
+   replacing it, retiring the two-presentation view switch
+2. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
+   playback
+3. `#44` — skill badges with group tints, tooltips and official links
+4. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
+   from v1.1)
 
-Milestone tracking lives on GitHub (milestone `v1.1 — Polish & Sandbox`, issue #2).
-After `v1.1` is released, the plan is to add new projects and possibly a new
+Milestone tracking lives on GitHub (milestone `v1.2 — Terminal & details`, issue
+#2). After `v1.2` is released, the plan is to add new projects and possibly a new
 language track (e.g. Rust) — deliberately _after_ the polish, so the additions
 land on a base that already looks finished.
 

@@ -60,6 +60,8 @@ export const ptBR: Strings = {
   },
   terminal: {
     label: 'Terminal',
+    show: 'Mostrar terminal',
+    hide: 'Ocultar terminal',
     hint: 'Digite um comando e pressione Enter. Tente `help`, `about`, `experience`, `projects`, `skills` ou `contact`.',
     placeholder: 'digite um comando…',
     prompt: 'visitante@felipeinoue ~ $',
@@ -75,13 +77,6 @@ export const ptBR: Strings = {
       contact: 'Como falar comigo',
       clear: 'Limpa a saída',
     },
-  },
-  view: {
-    toTerminal: 'Mostrar terminal',
-    toBrowse: 'Navegar normalmente',
-    welcomeBody:
-      'Esta página também funciona como um terminal. Digite um comando para conhecer meu trabalho — `about`, `experience`, `projects`, `skills`, `contact` — ou volte para a página convencional.',
-    commandsLabel: 'Comandos',
   },
   footer: {
     rights: 'Todos os direitos reservados.',

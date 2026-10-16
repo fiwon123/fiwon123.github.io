@@ -1,0 +1,15 @@
+/* The dock is the page grid's second column. It is sticky so the console stays
+   in reach while a long section scrolls beside it. */
+.dock {
+  position: sticky;
+  top: var(--space-4);
+  min-width: 0;
+}
+
+/* On a narrow screen the grid stacks and the console stops being pinned — a
+   sticky band over a phone viewport is unusable. */
+@media (max-width: 68rem) {
+  .dock {
+    position: static;
+  }
+}
