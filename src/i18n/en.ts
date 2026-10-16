@@ -62,7 +62,7 @@ export const en = {
     hide: 'Hide terminal',
     hint: 'Type a command and press Enter. Try `about`, `experience`, `projects`, `skills`, `contact` or `all`.',
     placeholder: 'type a command…',
-    prompt: 'visitor@felipeinoue ~ $',
+    prompt: 'visitor@portfolio ~ $',
     welcome: 'Welcome. Type `help` to list the commands.',
     unknown: 'command not found',
     helpTitle: 'Available commands',

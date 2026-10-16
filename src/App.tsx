@@ -4,8 +4,9 @@ import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { ParticleBackground } from './components/ParticleBackground'
-import { About, Contact, Experience, Hero, Projects, Skills } from './components/Sections'
+import { About, Experience, Hero, Projects } from './components/Sections'
 import { SkipLink } from './components/SkipLink'
+import { TerminalFab } from './components/TerminalFab'
 import { useT } from './i18n/hooks'
 import {
   ALL,
@@ -25,9 +26,8 @@ const SECTION_COMPONENTS: Record<SectionId, ComponentType> = {
   about: About,
   experience: Experience,
   projects: Projects,
-  skills: Skills,
-  contact: Contact,
 }
+
 
 function sectionFromHash(): SectionId | null {
   const id = window.location.hash.replace(/^#/, '')
@@ -58,10 +58,18 @@ function App() {
   // Focus a section, or restore the whole page (`all`). The page owns this, so a
   // command never has to know how the sections are rendered.
   const handleFocus = useCallback((target: FocusTarget) => {
+    if (target === 'contact' || target === 'skills') {
+      setFocus(null)
+      requestAnimationFrame(() => {
+        openSection(target === 'contact' ? 'contact-footer' : target)
+      })
+      return
+    }
     const next = target === ALL ? null : target
     setFocus(next)
-    // After the commit: `all` brings the hero back, so land on `#top`.
-    requestAnimationFrame(() => openSection(next ?? 'top'))
+    requestAnimationFrame(() => {
+      openSection(next ?? 'top')
+    })
   }, [])
 
   // A `#section` deep link (or a nav click) scrolls to the section. It acts on
@@ -97,7 +105,13 @@ function App() {
   }, [])
 
   // Collapsing from the control inside the panel makes that control `inert`,
-  // which drops focus to <body>. (FAB replaces header show button; focus is returned to a reasonable spot.)
+  // which drops focus to <body>. Move it to the header control that re-opens the
+  // dock, so a keyboard visitor is not stranded. Runs after the commit, so the
+  // header control is already in the DOM. Only a close (not the initial mount).
+  const wasOpen = useRef(dockOpen)
+  useEffect(() => {
+    wasOpen.current = dockOpen
+  }, [dockOpen])
 
   const Focused = focus ? SECTION_COMPONENTS[focus] : null
 
@@ -135,6 +149,7 @@ function App() {
       </main>
       <Footer />
       <BackToTop />
+      <TerminalFab open={dockOpen} onOpen={() => setDockOpen(true)} />
     </>
   )
 }

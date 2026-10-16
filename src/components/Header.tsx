@@ -9,14 +9,10 @@ const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as co
 import type { FocusTarget } from '../lib/commandSections'
 
 export interface HeaderProps {
-  dockOpen: boolean
-  /** Open the dock. The header only offers this while the dock is collapsed;
-   *  hiding it again is a control inside the panel. */
-  onShow: () => void
   onNavigate?: (target: FocusTarget) => void
 }
 
-export function Header({ dockOpen, onShow, onNavigate }: HeaderProps) {
+export function Header({ onNavigate }: HeaderProps) {
   const t = useT()
 
   return (
