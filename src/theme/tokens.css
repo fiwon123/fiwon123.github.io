@@ -30,6 +30,7 @@
   /* The page frame: the header and the content/dock row share it, so the header
      chrome lines up with the page instead of the viewport edges. */
   --page-max: 88rem;
+  --header-h: 3.5rem;
 
   --step-0: 1rem;
   --step-1: 1.25rem;

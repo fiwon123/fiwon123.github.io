@@ -72,24 +72,21 @@ export function Preferences() {
       <legend className={styles.srOnly}>{t.preferences.label}</legend>
 
       <div className={styles.field}>
-        <label className={styles.label} htmlFor={presetId}>
+        <label className={styles.srOnly} htmlFor={presetId}>
           {t.theme.label}
         </label>
-        <span className={styles.control}>
-          <ThemeIcon />
-          <select
-            className={styles.select}
-            id={presetId}
-            value={preset}
-            onChange={(event) => setPreset(event.target.value as Preset)}
-          >
-            {PRESETS.map((value) => (
-              <option key={value} value={value}>
-                {t.theme.presets[value]}
-              </option>
-            ))}
-          </select>
-        </span>
+        <select
+          className={styles.select}
+          id={presetId}
+          value={preset}
+          onChange={(event) => setPreset(event.target.value as Preset)}
+        >
+          {PRESETS.map((value) => (
+            <option key={value} value={value}>
+              {t.theme.presets[value]}
+            </option>
+          ))}
+        </select>
       </div>
 
       <button

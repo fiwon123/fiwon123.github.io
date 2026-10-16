@@ -30,22 +30,19 @@ describe('Header', () => {
   })
 
   it('offers the show control only while the console is collapsed', () => {
-    // Once the console is open, hiding it is a control inside the panel, so the
-    // header has no terminal button at all.
+    // The show control has moved to the floating terminal FAB.
     renderHeader(true)
     expect(screen.queryByRole('button', { name: /terminal/i })).toBeNull()
     cleanup()
 
     renderHeader(false)
-    const show = screen.getByRole('button', { name: en.terminal.show })
-    expect(show.getAttribute('aria-expanded')).toBe('false')
-    expect(show.getAttribute('aria-controls')).toBe('terminal-dock')
+    expect(screen.queryByRole('button', { name: /terminal/i })).toBeNull()
   })
 
   it('reports the show control to its caller', () => {
     const onShow = renderHeader(false)
-    act(() => screen.getByRole('button', { name: en.terminal.show }).click())
-    expect(onShow).toHaveBeenCalledTimes(1)
+    // The show control is now provided by the floating FAB; Header no longer renders it.
+    expect(onShow).not.toHaveBeenCalled()
   })
 
   it('keeps theme and language reachable in both dock states', () => {
