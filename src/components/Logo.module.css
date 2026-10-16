@@ -3,15 +3,17 @@
   flex: none;
 }
 
+/* The mark sits in the header, which is chrome — so it uses the chrome pair,
+   not the reading one, and stays stable across both readings. */
 .box {
-  fill: var(--color-surface);
-  stroke: var(--color-border);
+  fill: var(--color-chrome-surface);
+  stroke: var(--color-chrome-border);
   stroke-width: 1.5;
 }
 
 .caret {
   fill: none;
-  stroke: var(--color-accent);
+  stroke: var(--color-chrome-accent);
   stroke-width: 2.8;
   stroke-linecap: round;
   stroke-linejoin: round;

@@ -139,14 +139,13 @@ function stubMatchMedia(reduce: { matches: boolean }) {
 }
 
 /**
- * Accents keyed by the `data-theme|data-mode` pair the ThemeProvider stamps on
- * <html> — both move the token, so the re-read must notice either.
+ * Chrome accents keyed by the `data-theme` the ThemeProvider stamps on <html>.
+ * The chrome accent is mode-independent (#101: the frame is dark in both
+ * readings), so the re-read notices the preset, not the mode.
  */
 const ACCENTS: Record<string, string> = {
-  'studio|light': 'rgb(59 130 246)',
-  'studio|dark': 'rgb(96 165 250)',
-  'paper|light': 'rgb(180 83 9)',
-  'paper|dark': 'rgb(227 163 85)',
+  studio: 'rgb(110 168 254)',
+  paper: 'rgb(227 163 85)',
 }
 
 const realGetComputedStyle = window.getComputedStyle.bind(window)
@@ -154,9 +153,9 @@ const realGetComputedStyle = window.getComputedStyle.bind(window)
 function stubAccents() {
   window.getComputedStyle = ((element: Element) => ({
     getPropertyValue: (name: string) => {
-      if (element !== document.documentElement || name !== '--color-accent') return ''
-      const { theme, mode } = document.documentElement.dataset
-      return ACCENTS[`${theme ?? ''}|${mode ?? ''}`] ?? ''
+      if (element !== document.documentElement || name !== '--color-chrome-accent') return ''
+      const { theme } = document.documentElement.dataset
+      return ACCENTS[theme ?? ''] ?? ''
     },
   })) as unknown as typeof window.getComputedStyle
 }
@@ -356,7 +355,7 @@ describe('ParticleBackground', () => {
     expect(after).toBeLessThanOrEqual(METEOR_MAX)
   })
 
-  it('re-reads the accent on the frame the theme or the mode changes', () => {
+  it('re-reads the chrome accent when the theme changes', () => {
     stubAccents()
     render(
       <ThemeProvider>
@@ -370,7 +369,7 @@ describe('ParticleBackground', () => {
     // Frame 1 runs resize() first (it logs the transform), so find the write.
     expect(first.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['studio|dark'],
+      value: ACCENTS.studio,
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'studio' }))
@@ -378,27 +377,26 @@ describe('ParticleBackground', () => {
     const second = takeLog()
     expect(second.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|dark'],
+      value: ACCENTS.paper,
+    })
+    expect(second.filter((event) => event.kind === 'fill')[0]).toMatchObject({
+      fillStyle: ACCENTS.paper,
     })
 
-    // The mode stamps data-mode, not data-theme: the re-read keys on both.
-    // mode starts at `dark` (the default); the click moves it to light.
+    // The chrome accent is mode-independent (#101), so toggling the reading keeps
+    // the same particle colour — it must not fall back to the dark reading accent.
     fireEvent.click(screen.getByRole('button', { name: 'dark' }))
     flushFrames(1)
     expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|light'],
+      value: ACCENTS.paper,
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'light' }))
     flushFrames(1)
-    const third = takeLog()
-    expect(third.find((event) => event.kind === 'fillStyle')).toEqual({
+    expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|dark'],
-    })
-    expect(third.filter((event) => event.kind === 'fill')[0]).toMatchObject({
-      fillStyle: ACCENTS['paper|dark'],
+      value: ACCENTS.paper,
     })
   })
 
