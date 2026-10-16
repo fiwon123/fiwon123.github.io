@@ -140,7 +140,11 @@ export function Hero() {
         />
         <div className={styles.heroText}>
           <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
-          <ContactRow />
+          {/* The contact row's own anchor, so the `contact` command lands on the
+              row rather than the top of the hero (`#top`). */}
+          <div id="contact">
+            <ContactRow />
+          </div>
           <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
           <p className={styles.heroStack}>{t.hero.stack}</p>
         </div>

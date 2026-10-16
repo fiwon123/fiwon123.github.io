@@ -1,5 +1,4 @@
 import { useT } from '../i18n/hooks'
-import { ContactRow } from './Sections'
 
 import styles from './Footer.module.css'
 
@@ -23,9 +22,6 @@ export function Footer() {
     // and there is only one, so a label would be redundant — and the one that
     // was here ("Footer") was an English string in a bilingual page.
     <footer className={styles.footer}>
-      <div id="contact-footer">
-        <ContactRow />
-      </div>
       <p className={styles.text}>{rights}</p>
       <p className={styles.text}>{t.footer.builtWith}</p>
       <p className={styles.text}>
