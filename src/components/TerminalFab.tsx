@@ -11,13 +11,7 @@ export function TerminalFab({ open, onOpen }: TerminalFabProps) {
   const t = useT()
   if (open) return null
   return (
-    <button
-      id="terminal-fab"
-      type="button"
-      className={styles.fab}
-      aria-label={t.terminal.show}
-      onClick={onOpen}
-    >
+    <button id="terminal-fab" type="button" className={styles.fab} onClick={onOpen}>
       <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <rect
           x="3"
@@ -38,6 +32,7 @@ export function TerminalFab({ open, onOpen }: TerminalFabProps) {
           strokeLinejoin="round"
         />
       </svg>
+      <span className={styles.label}>{t.terminal.show}</span>
     </button>
   )
 }
