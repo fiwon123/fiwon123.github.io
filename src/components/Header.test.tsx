@@ -26,8 +26,8 @@ describe('Header', () => {
   })
 
   it('links only the filterable sections', () => {
-    // Skills (hero) and Contact (footer) are one scroll away and are not sections
-    // a command can focus, so they carry no nav entry.
+    // Contact (footer) is one scroll away and is not a section a command can
+    // focus, so it carries no nav entry.
     renderHeader()
     const nav = screen.getByRole('navigation', { name: en.a11y.mainNav })
     const labels = within(nav)

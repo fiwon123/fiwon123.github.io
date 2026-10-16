@@ -39,7 +39,6 @@ export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
     case 'about':
     case 'experience':
     case 'projects':
-    case 'skills':
     case 'contact':
       return [{ text: `▸ ${t.nav[name]}`, tone: 'accent' }]
 

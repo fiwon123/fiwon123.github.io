@@ -57,10 +57,10 @@ function App() {
   // Focus a section, or restore the whole page (`all`). The page owns this, so a
   // command never has to know how the sections are rendered.
   const handleFocus = useCallback((target: FocusTarget) => {
-    if (target === 'contact' || target === 'skills') {
+    if (target === 'contact') {
       setFocus(null)
       requestAnimationFrame(() => {
-        openSection(target === 'contact' ? 'contact-footer' : target)
+        openSection('contact-footer')
       })
       return
     }

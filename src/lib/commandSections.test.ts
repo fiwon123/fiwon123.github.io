@@ -11,8 +11,7 @@ describe('focusForCommand', () => {
     expect(focusForCommand('all')).toBe(ALL)
   })
 
-  it('scrolls to skills and contact anchors', () => {
-    expect(focusForCommand('skills')).toBe('skills')
+  it('scrolls to the contact anchor', () => {
     expect(focusForCommand('contact')).toBe('contact')
   })
 
@@ -30,7 +29,6 @@ describe('isSectionId', () => {
   it('rejects anything else', () => {
     expect(isSectionId('top')).toBe(false)
     expect(isSectionId('all')).toBe(false)
-    expect(isSectionId('skills')).toBe(false)
     expect(isSectionId('contact')).toBe(false)
     expect(isSectionId('')).toBe(false)
   })
