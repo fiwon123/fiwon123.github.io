@@ -5,6 +5,7 @@ export const COMMAND_NAMES = [
   'projects',
   'skills',
   'contact',
+  'all',
   'clear',
 ] as const
 
@@ -25,6 +26,9 @@ const ALIASES: Record<string, CommandName> = {
   habilidades: 'skills',
   contact: 'contact',
   contato: 'contact',
+  all: 'all',
+  home: 'all',
+  tudo: 'all',
   clear: 'clear',
   limpar: 'clear',
 }

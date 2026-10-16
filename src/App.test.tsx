@@ -145,30 +145,99 @@ describe('the dock control', () => {
 
 const log = () => screen.getByRole('log')
 
-describe('navigation commands scroll to their section', () => {
+describe('navigation commands focus their section', () => {
   it.each([
     ['about', en.nav.about, 'about'],
     ['experience', en.nav.experience, 'experience'],
     ['projects', en.nav.projects, 'projects'],
     ['skills', en.nav.skills, 'skills'],
     ['contact', en.nav.contact, 'contact'],
-  ])('%s confirms in the scrollback and scrolls to #%s', (command, label, id) => {
+  ])('%s focuses #%s and confirms in the scrollback', async (command, label, id) => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
     submitCommand(command)
-    // The jump is recorded in the console...
+    // The move is recorded in the console...
     expect(within(log()).getByText(`▸ ${label}`)).toBeTruthy()
-    // ...and the named section is scrolled into view.
-    expect(scrolled).toHaveBeenCalled()
+    // ...only the named section is left...
+    for (const other of SECTION_IDS) {
+      const present = document.getElementById(other)
+      if (other === id) expect(present, `#${id}`).toBeTruthy()
+      else expect(present, `#${other}`).toBeNull()
+    }
+    // ...and it is scrolled into view (on the next frame, after the commit).
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
     expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(id)
+  })
+
+  it('keeps one h1, one #top and the skip link target while focused', async () => {
+    renderApp()
+    submitCommand('projects')
+    await waitFor(() => expect(document.getElementById('projects')).toBeTruthy())
+    const headings = document.querySelectorAll('h1')
+    expect(headings).toHaveLength(1)
+    expect(headings[0]?.textContent).toBe(en.hero.greeting)
+    expect(document.querySelectorAll('#top')).toHaveLength(1)
+    // The skip link still resolves to exactly one <main>.
+    const targets = document.querySelectorAll('#content')
+    expect(targets).toHaveLength(1)
+    expect(targets[0].tagName.toLowerCase()).toBe('main')
+  })
+
+  it('restores the whole page with all, and confirms the move', async () => {
+    renderApp()
+    submitCommand('projects')
+    await waitFor(() => expect(document.getElementById('about')).toBeNull())
+
+    submitCommand('all')
+    expect(within(log()).getByText(`▸ ${en.terminal.all}`)).toBeTruthy()
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id), `#${id}`).toBeTruthy()
+    }
+    expect(document.querySelectorAll('h1')).toHaveLength(1)
+  })
+
+  it('restores the whole page with the home alias', async () => {
+    renderApp()
+    submitCommand('about')
+    await waitFor(() => expect(document.getElementById('projects')).toBeNull())
+    submitCommand('home')
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id), `#${id}`).toBeTruthy()
+    }
+  })
+
+  it('switches the focused section when a nav link points to another', async () => {
+    renderApp()
+    submitCommand('about')
+    await waitFor(() => expect(document.getElementById('projects')).toBeNull())
+    // A nav link to a hidden section would otherwise land on nothing, so the
+    // hash landing on it moves the focus there (jsdom does not navigate anchors,
+    // so the hash is set directly).
+    try {
+      window.location.hash = '#projects'
+      window.dispatchEvent(new Event('hashchange'))
+      await waitFor(() => expect(document.getElementById('projects')).toBeTruthy())
+      expect(document.getElementById('about')).toBeNull()
+    } finally {
+      window.location.hash = ''
+    }
   })
 
   it('lists the commands with help', () => {
     renderApp()
     submitCommand('help')
     expect(within(log()).getByText(en.terminal.helpTitle)).toBeTruthy()
-    for (const name of ['about', 'experience', 'projects', 'skills', 'contact', 'help', 'clear']) {
+    for (const name of [
+      'about',
+      'experience',
+      'projects',
+      'skills',
+      'contact',
+      'all',
+      'help',
+      'clear',
+    ]) {
       expect(within(log()).getByText(name, { selector: 'span' })).toBeTruthy()
     }
   })

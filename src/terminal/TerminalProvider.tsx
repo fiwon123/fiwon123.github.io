@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import { useT } from '../i18n/hooks'
-import { sectionForCommand, type SectionId } from '../lib/commandSections'
+import { focusForCommand, type FocusTarget } from '../lib/commandSections'
 import { runCommand } from './commands'
 import { TerminalContext, type TerminalEntry } from './context'
 import { parseCommand } from './parser'
@@ -9,21 +9,22 @@ import { parseCommand } from './parser'
 interface TerminalProviderProps {
   children: ReactNode
   /**
-   * Called with the section a navigation command names. The provider owns the
-   * scrollback; the page owns the scrolling, so the panel supplies this.
+   * Called with what a navigation command does to the page — focus one section,
+   * or restore them all (`all`). The provider owns the scrollback; the page owns
+   * the focus, so the panel supplies this.
    */
-  onNavigate?: (id: SectionId) => void
+  onFocus?: (target: FocusTarget) => void
 }
 
 /**
  * The console's scrollback, held above the console that reads it.
  *
  * Its one job is output: parse a command, print its lines, and tell the page to
- * scroll when the command names a section. It knows nothing about the input line
- * — the console owns that and its history — so the same `run` answers both a
- * typed command and, in principle, any other caller.
+ * focus a section when the command names one. It knows nothing about the input
+ * line — the console owns that and its history — so the same `run` answers both
+ * a typed command and, in principle, any other caller.
  */
-export function TerminalProvider({ children, onNavigate }: TerminalProviderProps) {
+export function TerminalProvider({ children, onFocus }: TerminalProviderProps) {
   const t = useT()
   const [entries, setEntries] = useState<TerminalEntry[]>([])
   const nextId = useRef(0)
@@ -52,10 +53,10 @@ export function TerminalProvider({ children, onNavigate }: TerminalProviderProps
         ...prev,
         { id: nextId.current++, command: parsed.name, lines: runCommand(parsed.name, t) },
       ])
-      const section = sectionForCommand(parsed.name)
-      if (section) onNavigate?.(section)
+      const target = focusForCommand(parsed.name)
+      if (target) onFocus?.(target)
     },
-    [t, onNavigate],
+    [t, onFocus],
   )
 
   const value = useMemo(() => ({ entries, run }), [entries, run])

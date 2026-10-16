@@ -9,13 +9,22 @@ export const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contac
 export type SectionId = (typeof SECTION_IDS)[number]
 
 /**
- * The section a navigation command opens.
+ * The terminal's "show the whole page" target. A section command focuses one
+ * section and hides the rest; `all` clears that focus again.
+ */
+export const ALL = 'all'
+
+export type FocusTarget = SectionId | typeof ALL
+
+/**
+ * What a command does to the page: focus one section, restore the whole page
+ * (`all`), or nothing.
  *
- * `help` and `clear` act on the scrollback only — they name no section — so they
- * are absent from the map rather than mapped to `null`, and `sectionForCommand`
+ * `help` and `clear` act on the scrollback only — they name no target — so they
+ * are absent from the map rather than mapped to `null`, and `focusForCommand`
  * returns `null` for them.
  */
-const SECTION_BY_COMMAND: Partial<Record<CommandName, SectionId>> = {
+const FOCUS_BY_COMMAND: Partial<Record<CommandName, SectionId>> = {
   about: 'about',
   experience: 'experience',
   projects: 'projects',
@@ -23,8 +32,9 @@ const SECTION_BY_COMMAND: Partial<Record<CommandName, SectionId>> = {
   contact: 'contact',
 }
 
-export function sectionForCommand(name: CommandName): SectionId | null {
-  return SECTION_BY_COMMAND[name] ?? null
+export function focusForCommand(name: CommandName): FocusTarget | null {
+  if (name === ALL) return ALL
+  return FOCUS_BY_COMMAND[name] ?? null
 }
 
 export function isSectionId(value: string): value is SectionId {
