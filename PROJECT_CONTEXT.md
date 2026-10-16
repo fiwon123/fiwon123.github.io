@@ -280,12 +280,29 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   focus with `all` (#53), theme/appearance/language from the terminal (#54),
   preference controls as icons (#55), and a header centred on the page frame
   (#56).
-- **Next**: no filed work — `v1.0`–`v1.3` are released. The plan is to add new
+- **Done**: v1.4 — Maintenance — released to `main` (#73): CI gating for release
+  PRs (#67), a reworked README (#71), and the Context/docs sync (#69).
+- **Done**: v1.5 — Polish — released to `main` (#109): a sticky header with a
+  larger brand and a bare theme select (#74), terminal UX (floating FAB, icon
+  hide, click-to-focus, prompt + type scale) (#76), the contact/skills restructure
+  with hero contact and skill badges (#78), gallery/lightbox equal sizing and
+  platform icon+name (#80), the sparse gutter meteor trails (#82), and the green-
+  check restore (#84).
+- **Done**: v1.6 — Content & visibility — released to `main` (#109): header/About
+  navigation with the hero shown alongside About (#86), the hero skills block
+  removed (#87), the meteor background made visible again (#88), a discoverable
+  terminal show button (#89), and the studio-dark favicon palette (#90).
+- **Done**: v1.7 — Ambient & themes — released to `main` (#109): `system` retired
+  and the presets grown to five (#102), the light reading column over dark chrome
+  (#101), the rebuilt ambient particle field (#96), the lightbox FLIP zoom from
+  the clicked thumbnail (#97), linked `Tech:` tags (#98), and the hero-owned
+  contact row with the `contact` command aimed at it (#99).
+- **Next**: no filed work — `v1.0`–`v1.7` are released. The plan is to add new
   projects and possibly a new language track (e.g. Rust), on the released base.
 
 ## Backlog
 
-No filed work: `v1.0`–`v1.3` are all released and their milestones hold no open
+No filed work: `v1.0`–`v1.7` are all released and their milestones hold no open
 issues. Milestone tracking lives on GitHub (issue #2). The plan is to add new
 projects and possibly a new language track (e.g. Rust) — deliberately _after_ the
 polish, so the additions land on a base that already looks finished.
