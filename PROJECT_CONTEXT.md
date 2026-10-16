@@ -148,6 +148,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   it costs a full-viewport compositing layer, and it would turn the scrim into a
   mixture rather than the pure alpha blend the contrast guard recomputes.
   (2026-10-15)
+- **The lightbox opens with a one-shot FLIP from the clicked thumbnail** (#97) —
+  the gallery captures the tile's viewport rect and hands it to the viewer, which
+  draws the image over it (a centre-aligned translate + scale from
+  `zoomTransform`) and then clears the transform so a CSS transition settles it.
+  The zoom waits until the image's real aspect is known, so it never starts from
+  the placeholder box, and the image is held back until then rather than flashing
+  in place; it runs once per mount, so navigating between images does not replay
+  it, and it is skipped entirely under reduced motion (the image simply appears,
+  never left at a transform). Closing goes through one path (`requestClose`) that
+  fades the scrim and unmounts on a timer, so a missed transition cannot leave the
+  page scroll-locked. (2026-10-16)
 - **Repository facts come from a committed build-time snapshot**
   (`src/content/repoStats.json`), never a browser API call — no runtime token, no
   rate limit, no third-party origin between the visitor and the page, and the site
