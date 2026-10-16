@@ -89,6 +89,13 @@ Each entry is settled; the reason is what stops it being re-opened.
   and the controls cannot disagree. A bare command, or one whose value is not
   recognised, prints the valid values and changes nothing, so a typo answers
   with the choices instead of failing silently. (2026-10-16)
+- **The preference controls carry their meaning in an icon, not a visible label**
+  — the appearance is a single button that cycles light → dark → system and the
+  language a select of flag + short code, so the bar reads without spelling out
+  "Appearance" and "Language"; the theme select keeps its visible label and gains
+  a palette glyph. Each control keeps an accessible name — the mode button also a
+  `title` — so dropping the label costs sighted users nothing that the icon does
+  not say. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
@@ -179,8 +186,8 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the particle reading-zone fade (#42), icon-only contact links (#45), and the
   always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
   polish`: the animated dock, readable console and in-panel hide control (#52),
-  one-section focus with `all` (#53), and theme/appearance/language from the
-  terminal (#54).
+  one-section focus with `all` (#53), theme/appearance/language from the
+  terminal (#54), and preference controls as icons (#55).
 
 ## Backlog
 
@@ -191,8 +198,7 @@ The rest of `v1.2`, then `v1.3`; each item is a GitHub issue already filed.
 2. `#44` — skill badges with group tints, tooltips and official links
 3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
-4. `#55` — preference controls as icons (mode toggle, language flag, theme)
-5. `#56` — centre the header within a max-width
+4. `#56` — centre the header within a max-width
 
 Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
 `v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan
