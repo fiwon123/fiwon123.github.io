@@ -4,7 +4,7 @@
    opens is the dock's own column — which animates rather than popping. On a
    narrow screen the row stacks and the console sits below the content. */
 .layout {
-  max-width: 88rem;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 var(--space-4) var(--space-12);
   display: flex;

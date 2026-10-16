@@ -187,18 +187,19 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
   polish`: the animated dock, readable console and in-panel hide control (#52),
   one-section focus with `all` (#53), theme/appearance/language from the
-  terminal (#54), and preference controls as icons (#55).
+  terminal (#54), preference controls as icons (#55), and a header centred on the
+  page frame (#56).
 
 ## Backlog
 
-The rest of `v1.2`, then `v1.3`; each item is a GitHub issue already filed.
+With `v1.3` complete, what remains is the rest of `v1.2`; each item is a GitHub
+issue already filed.
 
 1. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
    playback
 2. `#44` — skill badges with group tints, tooltips and official links
 3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
    from v1.1)
-4. `#56` — centre the header within a max-width
 
 Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
 `v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan
