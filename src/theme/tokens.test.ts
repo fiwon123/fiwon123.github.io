@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { PARTICLE_ALPHA } from '../lib/particles'
+import { PARTICLE_ALPHA } from '../lib/meteors'
 import { AA_NORMAL, contrastRatio, parseHex, type Rgb } from './contrast'
 import { PRESETS } from './presets'
 

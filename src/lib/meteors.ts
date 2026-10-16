@@ -1,25 +1,20 @@
-import { PARTICLE_ALPHA } from './particles'
+/** Fallback when the accent token cannot be read (e.g. no stylesheet applied). */
+export const FALLBACK_COLOR = 'rgb(128 128 128)'
 
-export function dprFor(d: number | undefined): number {
-  const dpr = typeof d === 'number' && d > 0 ? d : 1
-  return Math.min(2, dpr)
-}
+/** A canvas backing store at DPR 4 is fill cost, not crispness. */
+export const MAX_DPR = 2
 
-export function readAccent(s: any): string {
-  try {
-    const raw = s.getPropertyValue('--color-accent').trim()
-    return raw.length > 0 ? raw : 'rgb(128 128 128)'
-  } catch {
-    return 'rgb(128 128 128)'
-  }
-}
+/** Strongest a meteor may draw: the accent at this alpha (tokens.test.ts caps it). */
+export const PARTICLE_ALPHA = 0.2
 
-/** Keep the cap small so meteors feel sparse. */
+/** Hard cap: a large screen must not cost more than a small one. */
 export const METEOR_MAX = 14
-export const METEOR_MIN = 6
-const METEOR_AREA = 20000
 
-export const PARTICLE_AREA = 20000 // unused in effect logic for count; but keep
+/** Floor, so a small window still shows a couple of trails rather than one. */
+export const METEOR_MIN = 6
+
+/** One meteor per this many CSS pixels of area, before the cap. */
+export const METEOR_AREA = 20000
 
 const TRAIL_LEN = 0.22
 const HEAD_SIZE_MIN = 2
@@ -28,6 +23,18 @@ const SPEED_MIN = 120 // px/s approx
 const SPEED_MAX = 280
 
 const TAU = Math.PI * 2
+
+/** The device pixel ratio, capped at `MAX_DPR` (never 0/NaN, at least 1). */
+export function dprFor(d: number | undefined): number {
+  const dpr = typeof d === 'number' && d > 0 ? d : 1
+  return Math.min(MAX_DPR, dpr)
+}
+
+/** Read the accent token, falling back when the token is absent or blank. */
+export function readAccent(style: CSSStyleDeclaration): string {
+  const raw = style.getPropertyValue('--color-accent').trim()
+  return raw.length > 0 ? raw : FALLBACK_COLOR
+}
 
 export interface Meteor {
   x: number
@@ -71,19 +78,12 @@ export function createField(
   const meteors: Meteor[] = []
   const gutter = gutterForWidth(width)
   for (let i = 0; i < size; i++) {
-    meteors.push(spawn(meteors, i, width, height, gutter, r))
+    meteors.push(spawn(width, height, gutter, r))
   }
   return { meteors, count: size }
 }
 
-function spawn(
-  meteors: Meteor[],
-  i: number,
-  width: number,
-  height: number,
-  gutter: number,
-  r: Random,
-): Meteor {
+function spawn(width: number, height: number, gutter: number, r: Random): Meteor {
   const fromLeft = r() < 0.5
   const x = fromLeft ? -40 - r() * gutter : width + 40 + r() * gutter
   const y = r() * (height * 0.3)
@@ -119,7 +119,7 @@ export function step(
     m.x += m.vx * seconds
     m.y += m.vy * seconds
     if (m.life > m.maxLife || m.x < -200 || m.x > width + 200 || m.y > height + 200) {
-      field.meteors[i] = spawn(field.meteors, i, width, height, gutter, r)
+      field.meteors[i] = spawn(width, height, gutter, r)
     }
   }
 }

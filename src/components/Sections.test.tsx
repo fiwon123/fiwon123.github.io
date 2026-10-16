@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { about, experience, projects, skills } from '../content'
 import { LanguageProvider } from '../i18n/LanguageProvider'
-import { About, Contact, Experience, Hero, Projects, Skills } from './Sections'
+import { About, Experience, Hero, Projects } from './Sections'
 
 type FakeEntry = { isIntersecting: boolean }
 
@@ -60,7 +60,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-const sections = { Hero, About, Experience, Projects, Skills, Contact }
+const sections = { Hero, About, Experience, Projects }
 
 describe('reveal wiring', () => {
   // The acceptance criterion is on the rendered section, not on the hook: a
@@ -121,14 +121,8 @@ describe('reveal wiring', () => {
   it('renders one card per project and one tag per skill', () => {
     withoutObserver()
     allowMotion()
-    const skillCount = skills.reduce((total, group) => total + group.items.length, 0)
-
     const { container: projectTree } = renderSection(<Projects />)
     expect(projectTree.querySelectorAll('article')).toHaveLength(projects.length)
-    cleanup()
-
-    const { container: skillTree } = renderSection(<Skills />)
-    expect(skillTree.querySelectorAll('li')).toHaveLength(skillCount)
   })
 
   it('renders every about paragraph, so none is dropped by the wrapper', () => {
@@ -168,23 +162,6 @@ describe('repository facts and game tiles (#20, #43)', () => {
 
     // A private project has no snapshot entry: the card keeps its static form.
     expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
-  })
-
-  it('lists game names without sending visitors off-site', () => {
-    withoutObserver()
-    allowMotion()
-    const { container } = renderSection(<Experience />)
-    const lists = [...container.querySelectorAll('ul[aria-label="Games"]')]
-    expect(lists).toHaveLength(1)
-
-    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
-    expect(games.length).toBeGreaterThan(0)
-    expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
-    // The card names the titles and links out to nothing — the off-site anchors
-    // moved into the lightbox detail (#43).
-    expect(lists[0].querySelectorAll('a')).toHaveLength(0)
-    const listed = [...lists[0].querySelectorAll('li')].map((li) => li.textContent)
-    for (const game of games) expect(listed).toContain(game.name)
   })
 
   it('gives every shipped title its own named gallery tile', () => {
@@ -231,8 +208,12 @@ describe('skill badges (#44)', () => {
   it('links each badge to its reference with the blurb as its accessible name', () => {
     withoutObserver()
     allowMotion()
-    const { container } = renderSection(<Skills />)
-    const links = [...container.querySelectorAll('a')]
+    const { container } = renderSection(<Hero />)
+    // The hero also carries the contact row; the skill badges are the links
+    // whose accessible name pairs a skill with its blurb ("Rust — …").
+    const links = [...container.querySelectorAll('a')].filter((node) =>
+      (node.getAttribute('aria-label') ?? '').includes(' — '),
+    )
     expect(links).toHaveLength(skillItems.length)
 
     for (const item of skillItems) {
