@@ -7,7 +7,9 @@ import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { about, experience, projects } from '../content'
+import { about, experience, projects, TECHNOLOGIES } from '../content'
+import type { TechName } from '../content/types'
+import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { About, Experience, Hero, Projects } from './Sections'
 
@@ -58,6 +60,7 @@ function classesOf(container: HTMLElement, tag: string): string[][] {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  localStorage.clear()
 })
 
 const sections = { Hero, About, Experience, Projects }
@@ -214,6 +217,105 @@ describe('skill badges removed (#87)', () => {
     const cards = [...container.querySelectorAll('article')]
     const withTech = cards.filter((card) => card.textContent?.includes('Tech:'))
     expect(withTech.length).toBeGreaterThan(0)
+  })
+})
+
+describe('tech tags (#98)', () => {
+  const TECH_NAMES = new Set(Object.keys(TECHNOLOGIES))
+
+  /** The tag anchors inside a card — those whose visible text is a tech name. */
+  function tagAnchors(card: Element): HTMLAnchorElement[] {
+    return [...card.querySelectorAll('a')].filter((a) =>
+      TECH_NAMES.has(a.textContent ?? ''),
+    ) as HTMLAnchorElement[]
+  }
+
+  function cardFor(container: HTMLElement, heading: string): Element {
+    const card = [...container.querySelectorAll('article')].find(
+      (node) => node.querySelector('h3')?.textContent === heading,
+    )
+    if (!card) throw new Error(`no card for ${heading}`)
+    return card
+  }
+
+  it('renders one tag per technology, linked to its official site, on both card types', () => {
+    withoutObserver()
+    allowMotion()
+    const projectsTree = renderSection(<Projects />).container
+    for (const project of projects) {
+      const tags = tagAnchors(cardFor(projectsTree, project.name))
+      expect(
+        tags.map((tag) => tag.textContent),
+        project.name,
+      ).toEqual(project.tech)
+      for (const tag of tags) {
+        const name = tag.textContent as TechName
+        expect(tag.getAttribute('href'), name).toBe(TECHNOLOGIES[name].url)
+        expect(tag.getAttribute('target'), name).toBe('_blank')
+        expect(tag.getAttribute('rel'), name).toBe('noopener noreferrer')
+      }
+    }
+    cleanup()
+
+    const experienceTree = renderSection(<Experience />).container
+    for (const entry of experience) {
+      const tags = tagAnchors(cardFor(experienceTree, entry.company))
+      expect(
+        tags.map((tag) => tag.textContent),
+        entry.company,
+      ).toEqual(entry.tech)
+    }
+  })
+
+  it('gives a tag its blurb as the accessible name and the tooltip', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const tag = tagAnchors(container)[0]
+    expect(tag).toBeTruthy()
+    const name = tag.textContent as TechName
+    const blurb = TECHNOLOGIES[name].blurb.en
+    expect(tag.getAttribute('aria-label')).toBe(`${name} — ${blurb}`)
+    // The tooltip is present but hidden from assistive tech — the accessible
+    // name already carries it, so it is not read twice.
+    const tip = tag.parentElement?.querySelector('[aria-hidden="true"]')
+    expect(tip?.textContent).toBe(blurb)
+  })
+
+  it('reads the blurb in the chosen language', () => {
+    withoutObserver()
+    allowMotion()
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt-BR')
+    const { container } = renderSection(<Projects />)
+    const tag = tagAnchors(container)[0]
+    const name = tag.textContent as TechName
+    const blurb = TECHNOLOGIES[name].blurb['pt-BR']
+    expect(tag.getAttribute('aria-label')).toBe(`${name} — ${blurb}`)
+    expect(tag.parentElement?.querySelector('[aria-hidden="true"]')?.textContent).toBe(blurb)
+  })
+
+  it('keeps the Tech label beside the tags', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const card = container.querySelector('article') as Element
+    expect(card.textContent).toContain('Tech:')
+  })
+
+  it('names every technology with a real URL and both blurbs', () => {
+    // `Record<TechName, …>` makes a missing entry a compile error; this catches
+    // an empty value the type cannot.
+    for (const [name, tech] of Object.entries(TECHNOLOGIES)) {
+      expect(tech.url, name).toMatch(/^https:\/\/\S+$/)
+      expect(tech.blurb.en.length, name).toBeGreaterThan(0)
+      expect(tech.blurb['pt-BR'].length, name).toBeGreaterThan(0)
+    }
+    // And every name a card uses resolves — the runtime twin of the union.
+    const used = [
+      ...projects.flatMap((project) => project.tech),
+      ...experience.flatMap((entry) => entry.tech),
+    ]
+    for (const name of used) expect(TECHNOLOGIES[name], name).toBeTruthy()
   })
 })
 
