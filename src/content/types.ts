@@ -16,6 +16,30 @@ export interface PlatformLink {
 export type PlatformName = 'steam' | 'xbox' | 'gog' | 'epic' | 'sony'
 
 /**
+ * Every technology a card may name. This union is the source of truth for the
+ * names; `TECHNOLOGIES` (`./technologies`) is `Record<TechName, …>`, so naming a
+ * technology here with no entry there — or a typo in content — is a `tsc` error.
+ */
+export type TechName =
+  | 'Go'
+  | 'TypeScript'
+  | 'Postgres'
+  | 'Next.js'
+  | 'React'
+  | 'Vite'
+  | 'GitHub Actions'
+  | 'GitHub Pages'
+  | 'Unity'
+  | 'Game Maker'
+  | 'Pico-8'
+  | 'C#'
+  | 'BepInEx'
+  | 'Python'
+  | 'URP'
+  | 'HDRP'
+  | 'REST'
+
+/**
  * A shipped title with its public links. `site`, `trailer` and `image` are all
  * optional — a title with none is still listed by name.
  */
@@ -41,7 +65,8 @@ export interface Project {
   id: string
   name: string
   description: Localized<string>
-  tech: string[]
+  /** Named technologies, each rendered as a linked tag via `TECHNOLOGIES`. */
+  tech: TechName[]
   source: ProjectSource
   /** Public URL. Absent for private projects. */
   url?: string
@@ -95,7 +120,8 @@ export interface ExperienceEntry {
   games?: GameLink[]
   /** Image paths under `public/`, shown as a gallery. */
   gallery?: string[]
-  tech: string[]
+  /** Named technologies, each rendered as a linked tag via `TECHNOLOGIES`. */
+  tech: TechName[]
 }
 
 export interface ContactLink {
