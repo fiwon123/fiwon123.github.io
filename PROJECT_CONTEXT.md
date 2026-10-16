@@ -83,6 +83,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   is **not persisted**, so a reload is always the whole page, and while focused a
   nav link to a hidden section moves the focus there rather than landing on
   nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
+- **The contact links live in the hero, and the `contact` command targets them**
+  (#99) — the footer used to render a second `ContactRow` under `#contact-footer`;
+  it now carries only the copyright / built-with / source lines, and the command
+  scrolls to the hero row's own `#contact` anchor (not `#top`, so it lands on the
+  row). One row, one source, no dead anchor. (2026-10-16)
 - **Terminal settings commands drive the same setters as the header controls**
   (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
   console is a second way in, never a second source of truth, so the terminal
