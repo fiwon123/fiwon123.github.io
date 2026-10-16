@@ -4,7 +4,9 @@ import { Preferences } from './Preferences'
 
 import styles from './Header.module.css'
 
-const NAV_ITEMS = ['about', 'experience', 'projects', 'skills', 'contact'] as const
+// Only the filterable sections: Skills lives in the hero and Contact in the
+// footer, so both are already one scroll away and need no nav entry.
+const NAV_ITEMS = ['about', 'experience', 'projects'] as const
 
 import type { FocusTarget } from '../lib/commandSections'
 

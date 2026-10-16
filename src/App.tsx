@@ -67,7 +67,9 @@ function App() {
     const next = target === ALL ? null : target
     setFocus(next)
     requestAnimationFrame(() => {
-      openSection(next ?? 'top')
+      // The About focus renders the hero above the About section, so the start
+      // of that view is the hero (`#top`), not the About heading.
+      openSection(next === 'about' ? 'top' : (next ?? 'top'))
     })
   }, [])
 
@@ -138,11 +140,16 @@ function App() {
             </>
           ) : (
             <>
-              {/* Focusing filters the hero out, but the page keeps one `#top` and
-                  one h1 so the heading outline, the skip link and back-to-top all
-                  still resolve. */}
-              <span id="top" />
-              <h1 className={styles.srOnly}>{t.hero.greeting}</h1>
+              {/* An About focus keeps the hero above the About section, so the
+                  srOnly stand-in for the h1 (and the `#top` anchor) is only
+                  needed for the sections that filter the hero out. */}
+              {focus !== 'about' && (
+                <>
+                  <span id="top" />
+                  <h1 className={styles.srOnly}>{t.hero.greeting}</h1>
+                </>
+              )}
+              {focus === 'about' && <Hero />}
               {Focused ? <Focused /> : null}
             </>
           )}
