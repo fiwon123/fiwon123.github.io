@@ -25,8 +25,8 @@ tests here instead of by intention.
 ## Goal
 
 A visitor can explore the content either through an interactive terminal or
-through conventional navigation, switch language (EN/PT-BR) and theme (3 presets
-× light/dark/system), and read everything at WCAG AA contrast — with the whole
+through conventional navigation, switch language (EN/PT-BR) and theme (5 presets
+× light/dark), and read everything at WCAG AA contrast — with the whole
 site served as static files.
 
 ## Stack
@@ -90,12 +90,21 @@ Each entry is settled; the reason is what stops it being re-opened.
   recognised, prints the valid values and changes nothing, so a typo answers
   with the choices instead of failing silently. (2026-10-16)
 - **The preference controls carry their meaning in an icon, not a visible label**
-  — the appearance is a single button that cycles light → dark → system and the
-  language a select of flag + short code, so the bar reads without spelling out
-  "Appearance" and "Language"; the theme select keeps its visible label and gains
-  a palette glyph. Each control keeps an accessible name — the mode button also a
-  `title` — so dropping the label costs sighted users nothing that the icon does
-  not say. (2026-10-16)
+  — the appearance is a single button that cycles light ↔ dark and the language a
+  select of flag + short code, so the bar reads without spelling out "Appearance"
+  and "Language"; the theme and language selects keep an accessible name (and the
+  theme options name the presets). Each control keeps an accessible name — the
+  mode button also a `title` — so dropping the label costs sighted users nothing
+  that the icon does not say. (2026-10-16)
+- **Two theme axes: 5 presets × 2 readings, and no `system`** — `PRESETS` grew
+  from Studio/Paper/Terminal to add Violet and Ember, and `MODES` collapsed from
+  `light`/`dark`/`system` to `light`/`dark` (#102). `system` was a third of the
+  appearance button's cycle spent on a reading nobody chose and the site could not
+  show differently from the OS; dropping it makes the control a two-state toggle
+  and the default `dark`, the site's signature look. Light/dark stays a **mode**
+  (`data-mode`), not a theme: a preset is an identity, a reading is how you read
+  it, and folding them into one axis (the #100 proposal) would have made every
+  preset a separate theme. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,

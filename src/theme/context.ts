@@ -1,14 +1,12 @@
 import { createContext } from 'react'
 
-import type { Mode, Preset, ResolvedMode } from './presets'
+import type { Mode, Preset } from './presets'
 
 export interface ThemeContextValue {
   /** The chosen palette preset. */
   preset: Preset
-  /** The chosen mode, which may be `system`. */
+  /** The chosen reading. Never `system` — a mode is always a concrete value. */
   mode: Mode
-  /** `mode` with `system` resolved against the OS preference. */
-  resolvedMode: ResolvedMode
   setPreset: (preset: Preset) => void
   setMode: (mode: Mode) => void
 }

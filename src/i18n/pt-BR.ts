@@ -45,8 +45,14 @@ export const ptBR: Strings = {
   theme: {
     label: 'Tema',
     modeLabel: 'Aparência',
-    presets: { studio: 'Studio', paper: 'Paper', terminal: 'Terminal' },
-    modes: { light: 'Claro', dark: 'Escuro', system: 'Sistema' },
+    presets: {
+      studio: 'Studio',
+      paper: 'Paper',
+      terminal: 'Terminal',
+      violet: 'Violeta',
+      ember: 'Brasa',
+    },
+    modes: { light: 'Claro', dark: 'Escuro' },
   },
   language: {
     label: 'Idioma',
@@ -75,7 +81,7 @@ export const ptBR: Strings = {
       contact: 'Como falar comigo',
       all: 'Mostrar todas as seções',
       theme: 'Escolhe o tema de cores',
-      mode: 'Escolhe claro, escuro ou sistema',
+      mode: 'Escolhe claro ou escuro',
       lang: 'Escolhe o idioma',
       clear: 'Limpa a saída',
     },

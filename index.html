@@ -31,26 +31,22 @@
     <!--
       Apply the stored theme before first paint, so there is no flash of the
       wrong palette. The keys and values mirror src/theme/presets.ts — keep
-      them in sync. Colours stay in CSS; this only sets two data attributes.
+      them in sync (a test pins the two lists together). Colours stay in CSS;
+      this only sets two data attributes. `system` is gone, so a leftover value
+      falls through to the default reading.
     -->
     <script>
       ;(() => {
         try {
           const root = document.documentElement
-          const presets = ['studio', 'paper', 'terminal']
-          const modes = ['light', 'dark', 'system']
+          const presets = ['studio', 'paper', 'terminal', 'violet', 'ember']
+          const modes = ['light', 'dark']
           let preset = localStorage.getItem('portfolio.v1.theme')
           let mode = localStorage.getItem('portfolio.v1.mode')
           if (!presets.includes(preset)) preset = 'studio'
-          if (!modes.includes(mode)) mode = 'system'
-          const resolved =
-            mode === 'system'
-              ? window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light'
-              : mode
+          if (!modes.includes(mode)) mode = 'dark'
           root.dataset.theme = preset
-          root.dataset.mode = resolved
+          root.dataset.mode = mode
         } catch {
           /* first paint falls back to the :root palette */
         }

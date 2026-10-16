@@ -44,8 +44,14 @@ export const en = {
   theme: {
     label: 'Theme',
     modeLabel: 'Appearance',
-    presets: { studio: 'Studio', paper: 'Paper', terminal: 'Terminal' },
-    modes: { light: 'Light', dark: 'Dark', system: 'System' },
+    presets: {
+      studio: 'Studio',
+      paper: 'Paper',
+      terminal: 'Terminal',
+      violet: 'Violet',
+      ember: 'Ember',
+    },
+    modes: { light: 'Light', dark: 'Dark' },
   },
   language: {
     label: 'Language',
@@ -74,7 +80,7 @@ export const en = {
       contact: 'How to get in touch',
       all: 'Show every section',
       theme: 'Choose the colour preset',
-      mode: 'Choose light, dark or system',
+      mode: 'Choose light or dark',
       lang: 'Choose the language',
       clear: 'Clear the output',
     },

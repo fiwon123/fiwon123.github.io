@@ -370,7 +370,7 @@ describe('ParticleBackground', () => {
     // Frame 1 runs resize() first (it logs the transform), so find the write.
     expect(first.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['studio|light'],
+      value: ACCENTS['studio|dark'],
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'studio' }))
@@ -378,13 +378,12 @@ describe('ParticleBackground', () => {
     const second = takeLog()
     expect(second.find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',
-      value: ACCENTS['paper|light'],
+      value: ACCENTS['paper|dark'],
     })
 
     // The mode stamps data-mode, not data-theme: the re-read keys on both.
-    // mode starts at `system` (resolved light); first click pins `light` — same
-    // resolved stamp, so nothing changes — the second click moves it to dark.
-    fireEvent.click(screen.getByRole('button', { name: 'system' }))
+    // mode starts at `dark` (the default); the click moves it to light.
+    fireEvent.click(screen.getByRole('button', { name: 'dark' }))
     flushFrames(1)
     expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
       kind: 'fillStyle',

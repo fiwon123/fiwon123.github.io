@@ -21,8 +21,8 @@ Need a fast, accessible, themeable single-page portfolio to present work and con
 
 A terminal is docked beside the page (or below on a phone): visitors explore the
 content conventionally, or type a command that focuses one section (`all`
-restores the whole page), switch language (EN/PT-BR) and theme (3 presets ×
-light/dark/system), with WCAG AA contrast.
+restores the whole page), switch language (EN/PT-BR) and theme (5 presets ×
+light/dark), with WCAG AA contrast.
 
 ### Main Technology
 
@@ -131,7 +131,7 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - **Issue-first**: Every change tracked via GitHub issue → branch → PR → merge
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `ci:`
 - **Bilingual content**: EN and PT-BR live in the same typed records (never separate files); `en.ts` is source of truth, `pt-BR.ts` typed `: Strings`
-- **Themes**: 3 presets (Studio/Paper/Terminal) × 3 modes (light/dark/system); persisted with `portfolio.v1.*` keys; WCAG AA contrast enforced in tests
+- **Themes**: 5 presets (Studio/Paper/Terminal/Violet/Ember) × 2 readings (light/dark, no `system`; default dark); persisted with `portfolio.v1.*` keys; WCAG AA contrast enforced in tests
 - **Terminal**: Docked beside the page, not a mode that hides it — pure parser/history modules, EN/PT-BR aliases, accessible (`role="log" aria-live="polite"`), a navigation command focuses one section (`all` restores the whole page, and the focus is not persisted), and the dock toggle is persisted (`portfolio.v1.dock`)
 - **Repository cards**: language/stars/last-push come from the committed build-time snapshot (`src/content/repoStats.json`, `npm run stats`); the browser never calls the GitHub API, and a repo with no snapshot entry keeps the static card
 - **Game gallery**: a game owns its image (`GameLink.image`) and the experience gallery is derived from the games, so a path is never written twice; a tile names its game in the accessible name and shows it as a hover/focus tooltip, the lightbox carries the game's detail (name, page link, trailer), and the trailer is a facade — the `youtube-nocookie.com` embed mounts only when play is pressed, so opening a gallery makes no third-party request (`youtubeId` decides embeddability)
