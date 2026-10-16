@@ -1,15 +1,15 @@
 # Screenshots
 
 The images in this directory are referenced from the project README (the home
-page, in both themes and both views). They are committed, not generated on the
-fly, so a visitor sees the site before running it.
+page, in both themes, with the terminal dock open and collapsed). They are
+committed, not generated on the fly, so a visitor sees the site before running it.
 
-| File                      | What it shows                       |
-| ------------------------- | ----------------------------------- |
-| `home-terminal-light.png` | Terminal view, Studio preset, light |
-| `home-terminal-dark.png`  | Terminal view, Studio preset, dark  |
-| `home-browse-light.png`   | Browse view, Studio preset, light   |
-| `home-browse-dark.png`    | Browse view, Studio preset, dark    |
+| File                      | What it shows                            |
+| ------------------------- | ---------------------------------------- |
+| `home-terminal-light.png` | Terminal dock open, Studio preset, light |
+| `home-terminal-dark.png`  | Terminal dock open, Studio preset, dark  |
+| `home-browse-light.png`   | Console collapsed, Studio preset, light  |
+| `home-browse-dark.png`    | Console collapsed, Studio preset, dark   |
 
 ## Regenerate
 
@@ -34,7 +34,7 @@ rendered. This harness **refuses to write an image it cannot trust** and exits
 non-zero:
 
 - it dumps the rendered DOM first and requires mount markers React can only
-  produce (`data-testid="particles"`, `class="skip-link"`, and per-view ones) —
+  produce (`data-testid="particles"`, `class="skip-link"`, and per-capture ones) —
   a page that did not mount has none of them, so the capture is never taken;
 - it rejects a PNG below a size floor (a blank or single-colour image compresses
   far below it);

@@ -100,6 +100,71 @@
   padding-left: 1.25rem;
 }
 
+/* The contact row: icon-only controls, the label as the accessible name and a
+   hover/focus tooltip. No URL text is shown. */
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+}
+
+.contactLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Comfortable hit area, larger than the glyph. */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-fg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The tooltip is a flipped fg/bg pair, so it is AA by the same `fg on bg`
+   measurement `tokens.test.ts` already enforces. */
+.tip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.5rem;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contactLink:hover .tip,
+.contactLink:focus-visible .tip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tip {
+    transition: opacity 0.12s ease-out;
+  }
+}
+
 .games {
   list-style: none;
   padding: 0;

@@ -69,9 +69,37 @@ Each entry is settled; the reason is what stops it being re-opened.
 - **i18n in typed records, one module per language, `en.ts` as source of truth** —
   `pt-BR.ts` is typed `: Strings`, so a missing or misspelled key is a `tsc`
   error rather than a blank string in production.
-- **Theme and view mode are separate axes with separate storage keys**
-  (`portfolio.v1.mode` and `portfolio.v1.view`) — dark mode and terminal-first
-  browsing are independent: a visitor can want either without the other.
+- **The page is one conventional page; the terminal is a dock, not a mode**
+  (`portfolio.v1.dock`) — the console sits beside the page (or below on a phone)
+  rather than replacing it. An earlier two-presentation "view mode" hid the page
+  behind the console; it meant a visitor could not see the work and the console at
+  once, and the first version of that idea had `#section` and a translated string
+  doing work a DOM element should do. The dock keeps the terminal optional without
+  making the content conditional. (2026-10-16)
+- **A terminal navigation command focuses one section; `all` restores the page**
+  — the sections are rendered by the page, so a command asks the page to show one.
+  Focusing filters the hero out but keeps a visually-hidden h1 and a `#top` anchor,
+  so the heading outline, the skip link and back-to-top still resolve; the focus
+  is **not persisted**, so a reload is always the whole page, and while focused a
+  nav link to a hidden section moves the focus there rather than landing on
+  nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
+- **Terminal settings commands drive the same setters as the header controls**
+  (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
+  console is a second way in, never a second source of truth, so the terminal
+  and the controls cannot disagree. A bare command, or one whose value is not
+  recognised, prints the valid values and changes nothing, so a typo answers
+  with the choices instead of failing silently. (2026-10-16)
+- **The preference controls carry their meaning in an icon, not a visible label**
+  — the appearance is a single button that cycles light → dark → system and the
+  language a select of flag + short code, so the bar reads without spelling out
+  "Appearance" and "Language"; the theme select keeps its visible label and gains
+  a palette glyph. Each control keeps an accessible name — the mode button also a
+  `title` — so dropping the label costs sighted users nothing that the icon does
+  not say. (2026-10-16)
+- **Theme and dock are separate axes with separate storage keys**
+  (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
+  console is open are independent: a visitor can want either without the other,
+  and the dock key migrates the `portfolio.v1.view` value it replaced. (2026-10-16)
 - **Motion ships with zero runtime dependencies** (hand-rolled
   `IntersectionObserver` and canvas) and every motion feature is **fail-open**
   under `prefers-reduced-motion` — an animation library would outweigh the whole
@@ -148,23 +176,36 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 ## Status
 
 - **Done**: v1.0 — the Hugo site rewritten as React + TS + Vite, live at
-  felipeinoue.com.
-- **In progress**: milestone `v1.1 — Polish & Sandbox`. Merged to `dev` so far:
-  branding (#14), the dev sandbox (#15) and its uid fix (#25), the image lightbox
-  (#16), scroll-reveal (#17), the particle background (#18) and its visibility
-  fix (#33), the terminal-first view (#19), and repository cards (#20).
+  felipeinoue.com. v1.1 — Polish & Sandbox — released to `main` (#37): branding
+  (#14), the dev sandbox (#15) and its uid fix (#25), the image lightbox (#16),
+  scroll-reveal (#17), the particle background (#18) and its visibility fix
+  (#33), the terminal-first view (#19), repository cards (#20) and the stability
+  pass (#21).
+- **In progress**: milestone `v1.2 — Terminal & details`. Merged to `dev` so far:
+  the two-column layout (#40), the centred header and SVG-first favicons (#41),
+  the particle reading-zone fade (#42), icon-only contact links (#45), and the
+  always-docked terminal panel (#47). Milestone `v1.3 — Terminal controls &
+  polish`: the animated dock, readable console and in-panel hide control (#52),
+  one-section focus with `all` (#53), theme/appearance/language from the
+  terminal (#54), preference controls as icons (#55), and a header centred on the
+  page frame (#56).
 
 ## Backlog
 
-Build order for the rest of `v1.1`; each item is a GitHub issue already filed.
+With `v1.3` complete, what remains is the rest of `v1.2`; each item is a GitHub
+issue already filed.
 
-1. `#21` — v1.1 stability pass (accessibility, performance, docs), folding in the
-   skip link (#30)
+1. `#43` — game gallery tooltips, a lightbox detail view and in-portfolio trailer
+   playback
+2. `#44` — skill badges with group tints, tooltips and official links
+3. `#38` — `make shell` fails with `exec: docker compose: not found` (carried over
+   from v1.1)
 
-Milestone tracking lives on GitHub (milestone `v1.1 — Polish & Sandbox`, issue #2).
-After `v1.1` is released, the plan is to add new projects and possibly a new
-language track (e.g. Rust) — deliberately _after_ the polish, so the additions
-land on a base that already looks finished.
+Milestone tracking lives on GitHub (milestones `v1.2 — Terminal & details` and
+`v1.3 — Terminal controls & polish`, issue #2). After these are released, the plan
+is to add new projects and possibly a new language track (e.g. Rust) —
+deliberately _after_ the polish, so the additions land on a base that already
+looks finished.
 
 ## Notes
 

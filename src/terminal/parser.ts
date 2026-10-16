@@ -1,4 +1,16 @@
-export const COMMAND_NAMES = ['help', 'about', 'projects', 'skills', 'contact', 'clear'] as const
+export const COMMAND_NAMES = [
+  'help',
+  'about',
+  'experience',
+  'projects',
+  'skills',
+  'contact',
+  'all',
+  'theme',
+  'mode',
+  'lang',
+  'clear',
+] as const
 
 export type CommandName = (typeof COMMAND_NAMES)[number]
 
@@ -8,6 +20,8 @@ const ALIASES: Record<string, CommandName> = {
   ajuda: 'help',
   about: 'about',
   sobre: 'about',
+  experience: 'experience',
+  experiencia: 'experience',
   work: 'projects',
   projects: 'projects',
   projetos: 'projects',
@@ -15,6 +29,19 @@ const ALIASES: Record<string, CommandName> = {
   habilidades: 'skills',
   contact: 'contact',
   contato: 'contact',
+  all: 'all',
+  home: 'all',
+  tudo: 'all',
+  theme: 'theme',
+  tema: 'theme',
+  mode: 'mode',
+  modo: 'mode',
+  appearance: 'mode',
+  aparencia: 'mode',
+  lang: 'lang',
+  language: 'lang',
+  idioma: 'lang',
+  lingua: 'lang',
   clear: 'clear',
   limpar: 'clear',
 }

@@ -1,14 +1,21 @@
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface);
 }
 
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0.75rem var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas: 'brand nav actions';
+  align-items: center;
+  gap: 1rem;
+}
+
 .brand {
+  grid-area: brand;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -17,14 +24,19 @@
   color: var(--color-fg);
 }
 
+.navWrap {
+  grid-area: nav;
+  justify-self: center;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-left: auto;
   list-style: none;
   padding: 0;
   margin: 0;
+  justify-content: center;
 }
 
 .navLink {
@@ -41,6 +53,15 @@
   border-radius: 4px;
 }
 
+.actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .toggle {
   background: var(--color-surface);
   color: var(--color-fg);
@@ -48,4 +69,23 @@
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
   cursor: pointer;
+}
+
+@media (max-width: 48rem) {
+  .inner {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'brand'
+      'nav'
+      'actions';
+    text-align: center;
+  }
+
+  .brand {
+    justify-self: center;
+  }
+
+  .actions {
+    justify-self: center;
+  }
 }

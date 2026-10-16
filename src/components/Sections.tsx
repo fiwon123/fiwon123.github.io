@@ -4,7 +4,7 @@ import { about, contact, experience, projects, skills } from '../content'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
 import { useReveal } from '../lib/useReveal'
-import { BrandIcon } from './BrandIcon'
+import { BrandIcon, type BrandIconName } from './BrandIcon'
 import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
 
@@ -225,10 +225,21 @@ export function Contact() {
   return (
     <RevealSection id="contact" className={styles.section}>
       <h2>{t.nav.contact}</h2>
-      <ul className={styles.list}>
+      <ul className={styles.contact}>
         {contact.map((link) => (
           <li key={link.id}>
-            <BrandIcon name={link.icon as any} /> {link.label}: <a href={link.url}>{link.url}</a>
+            <a
+              className={styles.contactLink}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <BrandIcon name={link.icon as BrandIconName} />
+              <span className={styles.srOnly}>{link.label}</span>
+              <span className={styles.tip} aria-hidden="true">
+                {link.label}
+              </span>
+            </a>
           </li>
         ))}
       </ul>
