@@ -1,5 +1,19 @@
 import { PARTICLE_ALPHA } from './particles'
 
+export function dprFor(d: number | undefined): number {
+  const dpr = typeof d === 'number' && d > 0 ? d : 1
+  return Math.min(2, dpr)
+}
+
+export function readAccent(s: any): string {
+  try {
+    const raw = s.getPropertyValue('--color-accent').trim()
+    return raw.length > 0 ? raw : 'rgb(128 128 128)'
+  } catch {
+    return 'rgb(128 128 128)'
+  }
+}
+
 /** Keep the cap small so meteors feel sparse. */
 export const METEOR_MAX = 14
 export const METEOR_MIN = 6
