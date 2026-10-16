@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import type { GalleryItem } from '../content/types'
 import { useT } from '../i18n/hooks'
+import type { Rect } from '../lib/lightbox'
 import { Lightbox } from './Lightbox'
 
 import styles from './Gallery.module.css'
@@ -22,12 +23,26 @@ type GalleryProps = {
  * that appears on hover *and* focus, and names that title in its accessible name,
  * so the image is not the only clue to what it shows. The `<img>` keeps an empty
  * alt so the name is not announced twice.
+ *
+ * The clicked thumbnail's on-screen rect is captured here, where the click is,
+ * and handed to the viewer so it can grow the image out of the tile.
  */
 export function Gallery({ items, title }: GalleryProps) {
   const t = useT()
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [origin, setOrigin] = useState<Rect | null>(null)
 
   if (items.length === 0) return null
+
+  const open = (index: number, rect: Rect) => {
+    setOrigin(rect)
+    setOpenIndex(index)
+  }
+
+  const close = () => {
+    setOpenIndex(null)
+    setOrigin(null)
+  }
 
   return (
     <>
@@ -39,7 +54,7 @@ export function Gallery({ items, title }: GalleryProps) {
               <button
                 type="button"
                 className={styles.thumbButton}
-                onClick={() => setOpenIndex(index)}
+                onClick={(event) => open(index, event.currentTarget.getBoundingClientRect())}
                 aria-label={`${t.a11y.openImage}: ${name} — ${index + 1}`}
               >
                 <img
@@ -65,7 +80,8 @@ export function Gallery({ items, title }: GalleryProps) {
           items={items}
           index={openIndex}
           title={title}
-          onClose={() => setOpenIndex(null)}
+          origin={origin}
+          onClose={close}
           onNavigate={setOpenIndex}
         />
       )}
