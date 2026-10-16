@@ -28,7 +28,6 @@ const SECTION_COMPONENTS: Record<SectionId, ComponentType> = {
   projects: Projects,
 }
 
-
 function sectionFromHash(): SectionId | null {
   const id = window.location.hash.replace(/^#/, '')
   return isSectionId(id) ? id : null

@@ -25,7 +25,6 @@ const FLAGS: Record<Locale, string> = {
  * punched out with the surface colour behind it so they read as holes.
  */
 
-
 /**
  * The appearance glyph: a circle that reflects the current mode — empty for
  * light, filled for dark, half-filled for system.

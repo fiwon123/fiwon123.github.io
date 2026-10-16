@@ -47,7 +47,12 @@ function gutterForWidth(width: number) {
   return Math.max(80, Math.min(320, width * 0.22))
 }
 
-export function createField(count: number, width: number, height: number, r: Random = Math.random): MeteorField {
+export function createField(
+  count: number,
+  width: number,
+  height: number,
+  r: Random = Math.random,
+): MeteorField {
   const size = Math.max(0, Math.floor(count))
   const meteors: Meteor[] = []
   const gutter = gutterForWidth(width)
@@ -57,7 +62,14 @@ export function createField(count: number, width: number, height: number, r: Ran
   return { meteors, count: size }
 }
 
-function spawn(meteors: Meteor[], i: number, width: number, height: number, gutter: number, r: Random): Meteor {
+function spawn(
+  meteors: Meteor[],
+  i: number,
+  width: number,
+  height: number,
+  gutter: number,
+  r: Random,
+): Meteor {
   const fromLeft = r() < 0.5
   const x = fromLeft ? -40 - r() * gutter : width + 40 + r() * gutter
   const y = r() * (height * 0.3)
@@ -78,7 +90,13 @@ function spawn(meteors: Meteor[], i: number, width: number, height: number, gutt
   }
 }
 
-export function step(field: MeteorField, dt: number, width: number, height: number, r: Random = Math.random): void {
+export function step(
+  field: MeteorField,
+  dt: number,
+  width: number,
+  height: number,
+  r: Random = Math.random,
+): void {
   const seconds = Math.min(Math.max(dt, 0), 0.05)
   const gutter = gutterForWidth(width)
   for (let i = 0; i < field.meteors.length; i++) {

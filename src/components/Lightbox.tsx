@@ -143,7 +143,12 @@ export function Lightbox({ items, index, title, onClose, onNavigate }: LightboxP
         aria-modal="true"
         aria-label={`${t.a11y.lightbox}: ${title}`}
       >
-        <div className={`${styles.stage} ${game ? styles.withDetail : ''}`} style={imageAspect ? ({ ['--ar' as unknown]: imageAspect }) as React.CSSProperties : undefined}>
+        <div
+          className={`${styles.stage} ${game ? styles.withDetail : ''}`}
+          style={
+            imageAspect ? ({ ['--ar' as unknown]: imageAspect } as React.CSSProperties) : undefined
+          }
+        >
           {playing ? (
             <iframe
               className={styles.frame}

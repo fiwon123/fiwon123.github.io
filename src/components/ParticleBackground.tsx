@@ -105,12 +105,5 @@ export function ParticleBackground() {
 
   if (!enabled) return null
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className={styles.layer}
-      aria-hidden="true"
-      role="presentation"
-    />
-  )
+  return <canvas ref={canvasRef} className={styles.layer} aria-hidden="true" role="presentation" />
 }
