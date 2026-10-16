@@ -217,6 +217,23 @@ describe('commands print and open their section', () => {
   })
 })
 
+describe('contact links', () => {
+  it('renders icon-only links named by their label, with no URL text', () => {
+    localStorage.setItem(VIEW_KEY, 'browse')
+    renderApp()
+    const section = document.getElementById('contact')
+    expect(section).toBeTruthy()
+    const links = within(section!).getAllByRole('link')
+    expect(links).toHaveLength(contact.length)
+    for (const entry of contact) {
+      const link = within(section!).getByRole('link', { name: entry.label })
+      expect(link.getAttribute('href')).toBe(entry.url)
+      // The URL is the label's job; the row shows only the brand mark.
+      expect(link.textContent).not.toContain('http')
+    }
+  })
+})
+
 describe('command chips', () => {
   const chips = () => screen.getByRole('list', { name: en.view.commandsLabel })
 
