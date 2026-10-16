@@ -7,8 +7,8 @@ export interface TerminalFabProps {
 }
 
 export function TerminalFab({ open, onOpen }: TerminalFabProps) {
-  if (open) return null
   const t = useT()
+  if (open) return null
   return (
     <button
       id="terminal-fab"

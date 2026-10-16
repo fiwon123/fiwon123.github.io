@@ -105,9 +105,6 @@ function App() {
   }, [])
 
   // Collapsing from the control inside the panel makes that control `inert`,
-<<<<<<< HEAD
-  // which drops focus to <body>. (FAB replaces header show button; focus is returned to a reasonable spot.)
-=======
   // which drops focus to <body>. Move it to the header control that re-opens the
   // dock, so a keyboard visitor is not stranded. Runs after the commit, so the
   // header control is already in the DOM. Only a close (not the initial mount).
@@ -115,7 +112,6 @@ function App() {
   useEffect(() => {
     wasOpen.current = dockOpen
   }, [dockOpen])
->>>>>>> c7afc94 (feat: terminal UX - floating FAB, icon hide, click-to-focus, prompt + scale (#76))
 
   const Focused = focus ? SECTION_COMPONENTS[focus] : null
 
