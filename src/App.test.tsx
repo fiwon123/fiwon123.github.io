@@ -146,10 +146,10 @@ const log = () => screen.getByRole('log')
 
 describe('navigation commands focus their section', () => {
   it.each([
-    ['about', en.nav.about, 'about'],
-    ['experience', en.nav.experience, 'experience'],
-    ['projects', en.nav.projects, 'projects'],
-  ])('%s focuses #%s and confirms in the scrollback', async (command, label, id) => {
+    ['about', en.nav.about, 'about', 'top'],
+    ['experience', en.nav.experience, 'experience', 'experience'],
+    ['projects', en.nav.projects, 'projects', 'projects'],
+  ])('%s focuses #%s and scrolls to #%s', async (command, label, id, scrolledTo) => {
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     renderApp()
@@ -161,7 +161,21 @@ describe('navigation commands focus their section', () => {
       else expect(present, `#${other}`).toBeNull()
     }
     await waitFor(() => expect(scrolled).toHaveBeenCalled())
-    expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(id)
+    expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(scrolledTo)
+  })
+
+  it('keeps the hero above the About section when About is focused', async () => {
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
+    renderApp()
+    submitCommand('about')
+    await waitFor(() => expect(document.getElementById('about')).toBeTruthy())
+    // The hero is rendered, not filtered out — its h1 is the page's one heading.
+    expect(screen.getByText(en.hero.greeting)).toBeTruthy()
+    expect(document.querySelectorAll('h1')).toHaveLength(1)
+    expect(document.querySelectorAll('#top')).toHaveLength(1)
+    // Drain the focus frame here so it cannot leak into a later test.
+    await waitFor(() => expect(scrolled).toHaveBeenCalled())
   })
 
   it('skills and contact scroll to anchors without focusing a section', async () => {
@@ -344,7 +358,10 @@ describe('deep links', () => {
     try {
       renderApp()
       await waitFor(() => expect(scrolled).toHaveBeenCalled())
-      expect((scrolled.mock.contexts[0] as HTMLElement).id).toBe('about')
+      // A pending `handleFocus` frame from an earlier test can land here (the
+      // scroll runs in a rAF), so assert the About section was scrolled to
+      // rather than that it was the very first call.
+      expect(scrolled.mock.contexts).toContain(document.getElementById('about'))
       expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
       expect(terminalInput()).toBeTruthy()
     } finally {

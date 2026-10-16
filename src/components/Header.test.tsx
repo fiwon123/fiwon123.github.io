@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { en } from '../i18n/en'
@@ -23,6 +23,17 @@ describe('Header', () => {
   it('always shows the navigation: the page is never hidden behind the console', () => {
     renderHeader()
     expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
+  })
+
+  it('links only the filterable sections', () => {
+    // Skills (hero) and Contact (footer) are one scroll away and are not sections
+    // a command can focus, so they carry no nav entry.
+    renderHeader()
+    const nav = screen.getByRole('navigation', { name: en.a11y.mainNav })
+    const labels = within(nav)
+      .getAllByRole('link')
+      .map((link) => link.textContent)
+    expect(labels).toEqual([en.nav.about, en.nav.experience, en.nav.projects])
   })
 
   it('never renders a terminal control: the floating FAB owns that', () => {
