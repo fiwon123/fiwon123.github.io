@@ -3,10 +3,10 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
-import { about, contact, experience, projects, skills } from './content'
+import { contact } from './content'
 import { en } from './i18n/en'
 import { LanguageProvider } from './i18n/LanguageProvider'
-import { VIEW_KEY } from './lib/viewMode'
+import { DOCK_KEY } from './lib/terminalDock'
 import { ThemeProvider } from './theme/ThemeProvider'
 
 const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
@@ -50,163 +50,105 @@ afterEach(() => {
 })
 
 describe('starting state', () => {
-  it('opens terminal-first: welcome, terminal, no navigation, input focused', () => {
+  it('shows the whole page with the terminal docked beside it, open by default', () => {
     renderApp()
-    expect(screen.getByText(en.view.welcomeBody)).toBeTruthy()
-    expect(screen.queryByRole('navigation')).toBeNull()
-    expect(document.activeElement).toBe(terminalInput())
+    expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
+    expect(terminalInput()).toBeTruthy()
+    // Every section is present: the page is never hidden behind the console.
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id), `#${id}`).toBeTruthy()
+    }
   })
 
-  it('opens conventionally when the stored view is browse', () => {
-    localStorage.setItem(VIEW_KEY, 'browse')
+  it('collapses the console when the stored choice is closed, keeping the page', () => {
+    localStorage.setItem(DOCK_KEY, 'false')
     renderApp()
     expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
     expect(screen.queryByRole('textbox')).toBeNull()
-    expect(screen.queryByText(en.view.welcomeBody)).toBeNull()
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id), `#${id}`).toBeTruthy()
+    }
   })
 
-  it('renders exactly one particle layer, decorative, in either view', () => {
+  it('renders exactly one particle layer, decorative, dock open or closed', () => {
     renderApp()
     const canvases = document.querySelectorAll('canvas')
     expect(canvases).toHaveLength(1)
     expect(canvases[0].getAttribute('aria-hidden')).toBe('true')
     cleanup()
-    localStorage.setItem(VIEW_KEY, 'browse')
+    localStorage.setItem(DOCK_KEY, 'false')
     renderApp()
     expect(document.querySelectorAll('canvas')).toHaveLength(1)
   })
 })
 
-describe('the switch', () => {
-  it('changes the view both ways and persists the choice', () => {
+describe('the dock toggle', () => {
+  function toggle() {
+    return screen.getByRole('button', { name: /terminal/i })
+  }
+
+  it('collapses and re-opens the console, and persists the choice', () => {
     renderApp()
     expect(terminalInput()).toBeTruthy()
+    expect(toggle().getAttribute('aria-expanded')).toBe('true')
 
-    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
+    fireEvent.click(toggle())
     expect(screen.queryByRole('textbox')).toBeNull()
-    expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
-    expect(localStorage.getItem(VIEW_KEY)).toBe('browse')
+    expect(localStorage.getItem(DOCK_KEY)).toBe('false')
+    expect(toggle().getAttribute('aria-expanded')).toBe('false')
 
-    fireEvent.click(screen.getByRole('button', { name: en.view.toTerminal }))
+    fireEvent.click(toggle())
     expect(terminalInput()).toBeTruthy()
-    expect(localStorage.getItem(VIEW_KEY)).toBe('terminal')
+    expect(localStorage.getItem(DOCK_KEY)).toBe('true')
   })
 
-  it('keeps terminal mode when the URL still carries a section hash', async () => {
-    // Regression: the deep-link effect used to force browse whenever a section
-    // hash was present, so "Show terminal" bounced straight back to browse.
-    localStorage.setItem(VIEW_KEY, 'browse')
-    window.location.hash = '#about'
-    try {
-      renderApp()
-      expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
-
-      fireEvent.click(screen.getByRole('button', { name: en.view.toTerminal }))
-      expect(terminalInput()).toBeTruthy()
-      expect(localStorage.getItem(VIEW_KEY)).toBe('terminal')
-      // Let the pending deep-link frame run; it must not flip the view back.
-      await waitFor(() => expect(screen.getByRole('textbox')).toBeTruthy())
-      expect(screen.queryByRole('navigation', { name: en.a11y.mainNav })).toBeNull()
-    } finally {
-      window.location.hash = ''
+  it('keeps the page readable while the console is collapsed', () => {
+    renderApp()
+    fireEvent.click(toggle())
+    for (const id of SECTION_IDS) {
+      expect(document.getElementById(id), `#${id}`).toBeTruthy()
     }
+    expect(document.querySelectorAll('h1')).toHaveLength(1)
   })
 })
 
 const log = () => screen.getByRole('log')
 
-describe('commands print and open their section', () => {
+describe('navigation commands scroll to their section', () => {
   it.each([
-    ['about', () => about.en[0], 'about'],
-    ['experience', () => experience[0].company, 'experience'],
-    ['projects', () => projects[0].name, 'projects'],
-    ['skills', () => skills[0].label.en, 'skills'],
-    ['contact', () => contact[0].url, 'contact'],
-  ])('%s prints into the scrollback and opens its section', (command, expected, id) => {
+    ['about', en.nav.about, 'about'],
+    ['experience', en.nav.experience, 'experience'],
+    ['projects', en.nav.projects, 'projects'],
+    ['skills', en.nav.skills, 'skills'],
+    ['contact', en.nav.contact, 'contact'],
+  ])('%s confirms in the scrollback and scrolls to #%s', (command, label, id) => {
+    const scrolled = vi.fn()
+    Element.prototype.scrollIntoView = scrolled
     renderApp()
     submitCommand(command)
-    // The answer is in the console, and the section it names now renders below.
-    expect(within(log()).getByText(expected(), { exact: false })).toBeTruthy()
-    expect(document.getElementById(id)).toBeTruthy()
+    // The jump is recorded in the console...
+    expect(within(log()).getByText(`▸ ${label}`)).toBeTruthy()
+    // ...and the named section is scrolled into view.
+    expect(scrolled).toHaveBeenCalled()
+    expect((scrolled.mock.contexts.at(-1) as HTMLElement).id).toBe(id)
   })
 
-  it('shows only the section the last navigation command opened', () => {
+  it('lists the commands with help', () => {
     renderApp()
-    for (const id of SECTION_IDS) {
-      expect(document.getElementById(id)).toBeNull()
+    submitCommand('help')
+    expect(within(log()).getByText(en.terminal.helpTitle)).toBeTruthy()
+    for (const name of ['about', 'experience', 'projects', 'skills', 'contact', 'help', 'clear']) {
+      expect(within(log()).getByText(name, { selector: 'span' })).toBeTruthy()
     }
-    submitCommand('about')
-    expect(document.getElementById('about')).toBeTruthy()
-    for (const id of ['experience', 'projects', 'skills', 'contact']) {
-      expect(document.getElementById(id)).toBeNull()
-    }
-    submitCommand('projects')
-    expect(document.getElementById('projects')).toBeTruthy()
-    expect(document.getElementById('about')).toBeNull()
   })
 
-  it('clears the scrollback and returns to the welcome', () => {
+  it('empties the scrollback with clear, leaving the console usable', () => {
     renderApp()
     submitCommand('about')
-    expect(document.getElementById('about')).toBeTruthy()
+    expect(within(log()).getByText(`▸ ${en.nav.about}`)).toBeTruthy()
     submitCommand('clear')
-    expect(screen.queryByText(about.en[0])).toBeNull()
-    expect(document.getElementById('about')).toBeNull()
+    expect(screen.queryByText(`▸ ${en.nav.about}`)).toBeNull()
     expect(terminalInput()).toBeTruthy()
-  })
-
-  it('replaces the welcome with the section, and clear brings the welcome back', () => {
-    renderApp()
-    const chips = () => screen.queryByRole('list', { name: en.view.commandsLabel })
-    expect(screen.getByText(en.view.welcomeBody)).toBeTruthy()
-    expect(chips()).toBeTruthy()
-
-    submitCommand('about')
-    // The introduction and the chips give way to the section — the section is
-    // not stacked under a permanent welcome.
-    expect(screen.queryByText(en.view.welcomeBody)).toBeNull()
-    expect(chips()).toBeNull()
-    expect(document.getElementById('about')).toBeTruthy()
-
-    submitCommand('clear')
-    expect(screen.getByText(en.view.welcomeBody)).toBeTruthy()
-    expect(chips()).toBeTruthy()
-  })
-
-  it('keeps one h1 and the #top anchor in a section that shows without the photo', () => {
-    renderApp()
-    submitCommand('experience')
-    expect(document.getElementById('experience')).toBeTruthy()
-    // The identity travels with the welcome and about, not every section — but the
-    // page still carries its one h1 and one #top anchor.
-    expect(screen.queryByRole('img', { name: en.hero.avatarAlt })).toBeNull()
-    const headings = document.querySelectorAll('h1')
-    expect(headings).toHaveLength(1)
-    expect(headings[0]?.textContent).toBe(en.hero.greeting)
-    expect(document.querySelectorAll('#top')).toHaveLength(1)
-  })
-
-  it('shows the photo and name with the welcome and the about section only', () => {
-    renderApp()
-    const avatar = () => screen.queryByRole('img', { name: en.hero.avatarAlt })
-    expect(avatar()).toBeTruthy()
-    submitCommand('about')
-    expect(document.getElementById('about')).toBeTruthy()
-    expect(avatar()).toBeTruthy()
-    submitCommand('projects')
-    expect(document.getElementById('projects')).toBeTruthy()
-    expect(avatar()).toBeNull()
-  })
-
-  it('places the reading column before the console in the document', () => {
-    // The narrow-screen stack is content-first, so the content precedes the
-    // console in DOM order; the wide layout rearranges them only with grid areas.
-    renderApp()
-    const top = document.getElementById('top')
-    expect(top).toBeTruthy()
-    expect(
-      top!.compareDocumentPosition(terminalInput()) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
   })
 
   it('answers an unknown command without moving or breaking the page', () => {
@@ -219,7 +161,6 @@ describe('commands print and open their section', () => {
 
 describe('contact links', () => {
   it('renders icon-only links named by their label, with no URL text', () => {
-    localStorage.setItem(VIEW_KEY, 'browse')
     renderApp()
     const section = document.getElementById('contact')
     expect(section).toBeTruthy()
@@ -234,31 +175,9 @@ describe('contact links', () => {
   })
 })
 
-describe('command chips', () => {
-  const chips = () => screen.getByRole('list', { name: en.view.commandsLabel })
-
-  it('lists the runnable commands outside the console', () => {
-    renderApp()
-    expect(
-      within(chips())
-        .getAllByRole('button')
-        .map((button) => button.textContent),
-    ).toEqual(['about', 'experience', 'projects', 'skills', 'contact', 'help'])
-  })
-
-  it('runs a command when a chip is clicked', () => {
-    renderApp()
-    fireEvent.click(within(chips()).getByRole('button', { name: 'about' }))
-    expect(within(log()).getByText(about.en[0])).toBeTruthy()
-    expect(document.getElementById('about')).toBeTruthy()
-  })
-})
-
 describe('deep links', () => {
-  it('opens browse mode and scrolls to the section the URL names', async () => {
+  it('scrolls to the section the URL names without hiding the page', async () => {
     window.location.hash = '#about'
-    // The scroll runs in a rAF after the browse render commits, so waiting for
-    // the call also proves the section made it into the document.
     const scrolled = vi.fn()
     Element.prototype.scrollIntoView = scrolled
     try {
@@ -266,6 +185,7 @@ describe('deep links', () => {
       await waitFor(() => expect(scrolled).toHaveBeenCalled())
       expect((scrolled.mock.contexts[0] as HTMLElement).id).toBe('about')
       expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
+      expect(terminalInput()).toBeTruthy()
     } finally {
       window.location.hash = ''
     }
@@ -298,30 +218,19 @@ describe('document structure', () => {
     // `<main id="about">` and the About `<section id="about">` used to collide,
     // which sent every #about link to the top of the page.
     renderApp()
-    expect(document.querySelectorAll('#content').length).toBe(1)
-    expect(document.querySelectorAll('#top').length).toBe(1)
-    for (const id of SECTION_IDS) {
-      expect(document.querySelectorAll(`#${id}`).length).toBe(0)
-    }
-    // The command's section joins the page — exactly once.
-    submitCommand('about')
-    expect(document.querySelectorAll('#about').length).toBe(1)
-    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
     for (const id of ['content', 'top', ...SECTION_IDS]) {
       expect(document.querySelectorAll(`#${id}`).length, `#${id}`).toBe(1)
     }
   })
 
-  it('has exactly one h1 in either mode', () => {
-    const h1 = () => document.querySelectorAll('h1')
+  it('has exactly one h1', () => {
     renderApp()
-    expect(h1().length).toBe(1)
-    expect(h1()[0]?.textContent).toBe(en.hero.greeting)
-    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
-    expect(h1().length).toBe(1)
+    const headings = document.querySelectorAll('h1')
+    expect(headings).toHaveLength(1)
+    expect(headings[0]?.textContent).toBe(en.hero.greeting)
   })
 
-  it('does not show the introduction twice in terminal mode', () => {
+  it('does not show the introduction twice', () => {
     renderApp()
     expect(screen.getAllByText(en.hero.greeting).length).toBe(1)
   })
@@ -356,7 +265,6 @@ describe('the skip link', () => {
   })
 
   it('precedes the navigation in tab order', () => {
-    localStorage.setItem(VIEW_KEY, 'browse')
     renderApp()
     const link = skipLink()
     const nav = screen.getByRole('navigation', { name: en.a11y.mainNav })
@@ -365,10 +273,10 @@ describe('the skip link', () => {
     expect(relation & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('is rendered in both views', () => {
+  it('stays present when the console is collapsed', () => {
     renderApp()
     expect(skipLink()).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: en.view.toBrowse }))
+    fireEvent.click(screen.getByRole('button', { name: /terminal/i }))
     expect(skipLink()).toBeTruthy()
   })
 })

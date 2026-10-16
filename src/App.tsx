@@ -8,9 +8,10 @@ import { About, Contact, Experience, Hero, Projects, Skills } from './components
 import { SkipLink } from './components/SkipLink'
 import { isSectionId } from './lib/commandSections'
 import { prefersReducedMotion } from './lib/reveal'
-import { useViewMode } from './lib/useViewMode'
-import { nextViewMode } from './lib/viewMode'
-import { TerminalMode } from './terminal/TerminalMode'
+import { useTerminalDock } from './lib/useTerminalDock'
+import { TerminalPanel } from './terminal/TerminalPanel'
+
+import styles from './App.module.css'
 
 function sectionFromHash(): string | null {
   const id = window.location.hash.replace(/^#/, '')
@@ -18,9 +19,9 @@ function sectionFromHash(): string | null {
 }
 
 /**
- * Scroll a deep-linked `#section` into view; the scroll reveal then fades it in as
- * it arrives. Only used to land a link in browse mode, the one mode the sections
- * are rendered in — commands answer in the terminal instead of navigating.
+ * Scroll a deep-linked `#section` into view; the scroll reveal then fades it in
+ * as it arrives. The page always renders every section, so a deep link only has
+ * to land — it never changes what is shown.
  */
 function openSection(id: string) {
   const target = document.getElementById(id)
@@ -32,27 +33,23 @@ function openSection(id: string) {
 }
 
 function App() {
-  const [view, setView] = useViewMode()
+  const [dockOpen, setDockOpen] = useTerminalDock()
 
-  const terminal = view === 'terminal'
-
-  // A `#section` deep link lands on the conventional page and scrolls to the
-  // section. It acts on the hash present at mount and on a later, *real* change
-  // of the hash — never on a mere re-render, so an explicit "Show terminal" is
-  // not overridden by a hash that is still in the address bar.
+  // A `#section` deep link scrolls to the section. It acts on the hash present
+  // at mount and on a later, *real* change of the hash — never on a mere
+  // re-render, so an explicit "Hide terminal" is not fought by a hash that is
+  // still in the address bar.
   useEffect(() => {
     const openDeepLink = () => {
       const id = sectionFromHash()
       if (!id) return
-      setView('browse')
       requestAnimationFrame(() => {
         const landed = sectionFromHash()
         if (landed) openSection(landed)
       })
     }
     // A `hashchange` that repeats the current hash is not a navigation (some
-    // environments dispatch one for a programmatic set); ignore it so it cannot
-    // flip the view under the visitor.
+    // environments dispatch one for a programmatic set); ignore it.
     let last = window.location.hash
     const onHashChange = () => {
       if (window.location.hash === last) return
@@ -62,11 +59,7 @@ function App() {
     openDeepLink()
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
-  }, [setView])
-
-  function toggleView() {
-    setView(nextViewMode(view))
-  }
+  }, [])
 
   return (
     <>
@@ -74,20 +67,17 @@ function App() {
       <SkipLink />
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
-      <Header view={view} onToggleView={toggleView} />
-      <main id="content">
-        {terminal ? (
-          <TerminalMode />
-        ) : (
-          <>
-            <Hero />
-            <About />
-            <Experience />
-            <Projects />
-            <Skills />
-            <Contact />
-          </>
-        )}
+      <Header dockOpen={dockOpen} onToggleDock={() => setDockOpen(!dockOpen)} />
+      <main id="content" className={dockOpen ? styles.withTerminal : undefined}>
+        <div className={styles.page}>
+          <Hero />
+          <About />
+          <Experience />
+          <Projects />
+          <Skills />
+          <Contact />
+        </div>
+        <TerminalPanel hidden={!dockOpen} />
       </main>
       <Footer />
       <BackToTop />

@@ -59,6 +59,8 @@ export const en = {
   },
   terminal: {
     label: 'Terminal',
+    show: 'Show terminal',
+    hide: 'Hide terminal',
     hint: 'Type a command and press Enter. Try `help`, `about`, `experience`, `projects`, `skills` or `contact`.',
     placeholder: 'type a command…',
     prompt: 'visitor@felipeinoue ~ $',
@@ -74,13 +76,6 @@ export const en = {
       contact: 'How to get in touch',
       clear: 'Clear the output',
     },
-  },
-  view: {
-    toTerminal: 'Show terminal',
-    toBrowse: 'Browse normally',
-    welcomeBody:
-      'This page also runs as a terminal. Type a command to read my work — `about`, `experience`, `projects`, `skills`, `contact` — or switch back to the conventional page.',
-    commandsLabel: 'Commands',
   },
   footer: {
     rights: 'All rights reserved.',

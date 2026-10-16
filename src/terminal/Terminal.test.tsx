@@ -2,7 +2,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { about } from '../content'
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
@@ -36,12 +35,12 @@ function input() {
 afterEach(cleanup)
 
 describe('Terminal', () => {
-  it('focuses the input when it opens as the view', () => {
+  it('focuses the input when asked to', () => {
     renderTerminal({ autoFocus: true })
     expect(document.activeElement).toBe(input())
   })
 
-  it('does not steal focus when it is not the view', () => {
+  it('does not steal focus by default', () => {
     renderTerminal()
     expect(document.activeElement).not.toBe(input())
   })
@@ -60,10 +59,10 @@ describe('Terminal', () => {
     expect(screen.getByText(en.terminal.commands.help)).toBeTruthy()
   })
 
-  it('prints an alias as the command it resolves to', () => {
+  it('prints an alias as the section it resolves to', () => {
     renderTerminal()
     submit('sobre')
-    expect(screen.getByText(about.en[0])).toBeTruthy()
+    expect(screen.getByText(`▸ ${en.nav.about}`)).toBeTruthy()
   })
 
   it('prints an unknown command as such', () => {

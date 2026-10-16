@@ -1,6 +1,4 @@
-import { about, contact, experience, projects, skills } from '../content'
 import type { Strings } from '../i18n'
-import type { Locale } from '../types'
 import { COMMAND_NAMES, type CommandName } from './parser'
 
 export interface TerminalLine {
@@ -14,11 +12,15 @@ export interface TerminalLine {
 }
 
 /**
- * Turn a command into output lines. Pure: it reads the content data and the
- * active locale's strings, and returns what the terminal should print.
+ * Turn a command into output lines. Pure: it reads the active locale's strings
+ * and returns what the terminal should print.
+ *
+ * The page now always shows every section, so a navigation command does not
+ * reprint its content — it scrolls the page there (the provider owns that) and
+ * confirms which section it moved to, so the scrollback records the jump.
  * `clear` returns nothing — the component handles it.
  */
-export function runCommand(name: CommandName, t: Strings, locale: Locale): TerminalLine[] {
+export function runCommand(name: CommandName, t: Strings): TerminalLine[] {
   switch (name) {
     case 'help':
       return [
@@ -31,39 +33,11 @@ export function runCommand(name: CommandName, t: Strings, locale: Locale): Termi
       ]
 
     case 'about':
-      return about[locale].map((paragraph) => ({ text: paragraph }))
-
     case 'experience':
-      return experience.flatMap<TerminalLine>((entry) => {
-        const lines: TerminalLine[] = [
-          { text: `${entry.company} — ${entry.role[locale]}`, tone: 'accent' },
-          { text: `  ${entry.period[locale]}`, tone: 'muted' },
-        ]
-        if (entry.games && entry.games.length > 0) {
-          lines.push({
-            text: `  ${t.labels.games}: ${entry.games.map((g) => g.name).join(', ')}`,
-            tone: 'muted',
-          })
-        }
-        return lines
-      })
-
     case 'projects':
-      return projects.flatMap<TerminalLine>((project) => [
-        { text: `${project.name} — ${project.description[locale]}`, tone: 'accent' },
-        { text: `  ${t.labels.tech}: ${project.tech.join(', ')}`, tone: 'muted' },
-      ])
-
     case 'skills':
-      return skills.flatMap<TerminalLine>((group) => [
-        { text: `${group.label[locale]}:`, tone: 'accent' },
-        { text: `  ${group.items.join(', ')}`, tone: 'muted' },
-      ])
-
     case 'contact':
-      return contact.flatMap<TerminalLine>((link) => [
-        { text: `${link.label}: ${link.url}`, tone: 'accent' },
-      ])
+      return [{ text: `▸ ${t.nav[name]}`, tone: 'accent' }]
 
     case 'clear':
       return []
