@@ -15,12 +15,25 @@
 }
 
 .dialog {
-  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 0.6rem;
   max-width: min(100%, 72rem);
   max-height: 100%;
+}
+
+/* Holds the still (or the embed) and the controls that sit over it. */
+.stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* The still is the whole dialog unless a game adds the detail bar below it; when
+   it does, the still yields the room that bar needs. */
+.withDetail .image {
+  max-height: calc(100vh - 13rem);
 }
 
 .image {
@@ -32,23 +45,37 @@
   object-fit: contain;
 }
 
+/* The trailer embed, only ever mounted after the visitor presses play. Sized
+   from the viewport so it already leaves room for the detail bar beneath it. */
+.frame {
+  width: min(90vw, 72rem);
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: calc(100vh - 13rem);
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-overlay-scrim);
+}
+
 /* Overlay chrome, not page chrome: see `--color-overlay-*` in `tokens.css` for
    why these do not use the page palette. */
 .close,
 .nav,
-.caption {
+.play,
+.caption,
+.detailName,
+.gameLink {
   color: var(--color-overlay-chrome-fg);
   background: var(--color-overlay-chrome-bg);
   border: 0;
 }
 
 .close,
-.nav {
+.nav,
+.play {
   position: absolute;
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
   padding: 0;
   font-size: 1.5rem;
   line-height: 1;
@@ -60,8 +87,15 @@
 }
 
 .close:hover,
-.nav:hover {
+.nav:hover,
+.play:hover {
   color: var(--color-accent);
+}
+
+.close,
+.nav {
+  width: 2.75rem;
+  height: 2.75rem;
 }
 
 .close {
@@ -82,11 +116,48 @@
   right: -0.5rem;
 }
 
+/* The facade's play affordance: centred over the still it sits on. */
+.play {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4rem;
+  height: 4rem;
+  padding-left: 0.2rem;
+  font-size: 1.6rem;
+}
+
+/* The game's detail, below the stage: its name and a link to its page. */
+.detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.detailName {
+  margin: 0;
+  padding: 0.2rem 0.7rem;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.gameLink {
+  padding: 0.2rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.gameLink:hover {
+  color: var(--color-accent);
+}
+
 /* A chip, not bare text. Bare text here would be the page's muted foreground on
    the scrim — 1.85:1 in light presets, since the scrim is dark in every preset. */
 .caption {
-  position: absolute;
-  bottom: -2.5rem;
   margin: 0;
   padding: 0.2rem 0.7rem;
   font-family: var(--font-mono);
@@ -96,7 +167,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .close,
-  .nav {
+  .nav,
+  .play {
     transition: none;
   }
 }

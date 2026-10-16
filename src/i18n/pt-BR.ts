@@ -41,8 +41,7 @@ export const ptBR: Strings = {
     stars: 'Estrelas',
     updated: 'Atualizado',
     games: 'Jogos',
-    site: 'Site',
-    trailer: 'Trailer',
+    gamePage: 'Página do jogo',
   },
   theme: {
     label: 'Tema',
@@ -96,6 +95,7 @@ export const ptBR: Strings = {
     close: 'Fechar',
     nextImage: 'Próxima imagem',
     previousImage: 'Imagem anterior',
+    playTrailer: 'Reproduzir trailer',
     backToTop: 'Voltar ao topo',
   },
 }

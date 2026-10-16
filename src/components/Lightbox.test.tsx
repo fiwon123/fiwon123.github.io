@@ -3,36 +3,73 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import type { GalleryItem } from '../content/types'
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { Gallery } from './Gallery'
 import { Lightbox } from './Lightbox'
 
-const css = readFileSync(
-  path.join(path.dirname(fileURLToPath(import.meta.url)), 'Lightbox.module.css'),
-  'utf8',
-)
+const dir = path.dirname(fileURLToPath(import.meta.url))
+const css = readFileSync(path.join(dir, 'Lightbox.module.css'), 'utf8')
+const galleryCss = readFileSync(path.join(dir, 'Gallery.module.css'), 'utf8')
 
 const IMAGES = ['/gallery/1.png', '/gallery/2.png', '/gallery/3.png']
+
+/** The same three images as plain (game-less) gallery items. */
+const plainItems = (images: string[]): GalleryItem[] => images.map((src) => ({ src }))
+
+const GAME_ITEMS: GalleryItem[] = [
+  {
+    src: '/projects/nock.jpg',
+    game: {
+      name: 'Nock',
+      site: 'https://nock.game/',
+      trailer: 'https://www.youtube.com/watch?v=IRILqp3Og9k',
+    },
+  },
+  {
+    src: '/projects/virtuoso.jpg',
+    game: {
+      name: 'Virtuoso',
+      site: 'https://virtuoso-vr.com/',
+      trailer: 'https://www.youtube.com/watch?v=KspO4huy7ek',
+    },
+  },
+]
 
 function renderGallery(images = IMAGES, title = 'Astrea') {
   return render(
     <LanguageProvider>
-      <Gallery images={images} title={title} />
+      <Gallery items={plainItems(images)} title={title} />
     </LanguageProvider>,
   )
 }
 
-function openFirstThumbnail() {
-  const thumbs = screen.getAllByRole('button', { name: new RegExp(en.a11y.openImage) })
+function renderGameGallery(items = GAME_ITEMS, title = 'VR Monkey') {
+  return render(
+    <LanguageProvider>
+      <Gallery items={items} title={title} />
+    </LanguageProvider>,
+  )
+}
+
+function openThumbnail(name: string | RegExp) {
+  const thumb = screen.getByRole('button', { name })
   // jsdom does not focus on click the way a real browser does, so focus the
   // trigger explicitly — otherwise the focus-restore assertion would be vacuous.
+  thumb.focus()
+  fireEvent.click(thumb)
+  return thumb
+}
+
+function openFirstThumbnail() {
+  const thumbs = screen.getAllByRole('button', { name: new RegExp(en.a11y.openImage) })
   thumbs[0].focus()
   fireEvent.click(thumbs[0])
-  return thumbs
+  return thumbs[0]
 }
 
 afterEach(() => {
@@ -69,6 +106,102 @@ describe('Gallery thumbnails', () => {
   })
 })
 
+describe('Gallery game tiles', () => {
+  it('names the game in the thumbnail and shows it as a tooltip', () => {
+    renderGameGallery()
+    expect(screen.getByRole('button', { name: `${en.a11y.openImage}: Nock — 1` })).toBeTruthy()
+    const tip = screen.getByText('Nock')
+    expect(tip.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it('keeps the tooltip out of the accessible name duplicate', () => {
+    renderGameGallery()
+    const thumb = screen.getByRole('button', { name: `${en.a11y.openImage}: Virtuoso — 2` })
+    expect(thumb.querySelector('img')?.getAttribute('alt')).toBe('')
+  })
+})
+
+describe('Lightbox detail', () => {
+  it('shows the game name and a link to its page', () => {
+    renderGameGallery()
+    openThumbnail(`${en.a11y.openImage}: Nock — 1`)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).getByText('Nock')).toBeTruthy()
+    const link = within(dialog).getByRole('link', { name: en.labels.gamePage })
+    expect(link.getAttribute('href')).toBe('https://nock.game/')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+    expect(link.getAttribute('rel')).toContain('noreferrer')
+  })
+
+  it('shows no detail block, trailer or link for a plain image', () => {
+    renderGallery()
+    openFirstThumbnail()
+    const dialog = screen.getByRole('dialog')
+    expect(dialog.querySelector('iframe')).toBeNull()
+    expect(within(dialog).queryByRole('link')).toBeNull()
+    expect(
+      within(dialog).queryByRole('button', { name: new RegExp(en.a11y.playTrailer) }),
+    ).toBeNull()
+  })
+})
+
+describe('Lightbox trailer facade', () => {
+  it('mounts no embed until play is pressed', () => {
+    renderGameGallery()
+    openThumbnail(`${en.a11y.openImage}: Nock — 1`)
+    const dialog = screen.getByRole('dialog')
+    expect(dialog.querySelector('iframe')).toBeNull()
+  })
+
+  it('swaps the facade for a no-cookie embed when play is pressed', () => {
+    renderGameGallery()
+    openThumbnail(`${en.a11y.openImage}: Nock — 1`)
+    const dialog = screen.getByRole('dialog')
+    fireEvent.click(within(dialog).getByRole('button', { name: `${en.a11y.playTrailer}: Nock` }))
+    const frame = dialog.querySelector('iframe')
+    expect(frame).not.toBeNull()
+    expect(frame!.getAttribute('src')).toBe(
+      'https://www.youtube-nocookie.com/embed/IRILqp3Og9k?autoplay=1',
+    )
+    expect(frame!.getAttribute('title')).toBe('Nock')
+    expect(frame!.hasAttribute('allowfullscreen')).toBe(true)
+  })
+
+  it('drops the embed when navigating to another image', () => {
+    renderGameGallery()
+    openThumbnail(`${en.a11y.openImage}: Nock — 1`)
+    const dialog = screen.getByRole('dialog')
+    fireEvent.click(within(dialog).getByRole('button', { name: `${en.a11y.playTrailer}: Nock` }))
+    expect(dialog.querySelector('iframe')).not.toBeNull()
+    fireEvent.keyDown(document, { key: 'ArrowRight' })
+    expect(dialog.querySelector('iframe')).toBeNull()
+    expect(within(dialog).getByText('Virtuoso')).toBeTruthy()
+  })
+
+  it('offers no play control when a game has no embeddable trailer', () => {
+    render(
+      <LanguageProvider>
+        <Gallery
+          items={[
+            {
+              src: '/projects/astrea.jpg',
+              game: { name: 'Astrea', site: 'https://example.com' },
+            },
+          ]}
+          title="Little Leo Games"
+        />
+      </LanguageProvider>,
+    )
+    openThumbnail(`${en.a11y.openImage}: Astrea — 1`)
+    const dialog = screen.getByRole('dialog')
+    expect(
+      within(dialog).queryByRole('button', { name: new RegExp(en.a11y.playTrailer) }),
+    ).toBeNull()
+    expect(dialog.querySelector('iframe')).toBeNull()
+  })
+})
+
 describe('Lightbox modal contract', () => {
   it('closes on Escape', () => {
     renderGallery()
@@ -101,10 +234,10 @@ describe('Lightbox modal contract', () => {
 
   it('moves focus into the dialog and back to the thumbnail on close', () => {
     renderGallery()
-    const thumbs = openFirstThumbnail()
+    const thumb = openFirstThumbnail()
     expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true)
     fireEvent.keyDown(document, { key: 'Escape' })
-    expect(document.activeElement).toBe(thumbs[0])
+    expect(document.activeElement).toBe(thumb)
   })
 
   it('keeps Tab inside the dialog', () => {
@@ -120,6 +253,18 @@ describe('Lightbox modal contract', () => {
     buttons[0].focus()
     fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })
     expect(document.activeElement).toBe(last)
+  })
+
+  it('traps Tab across the game link and play control too', () => {
+    renderGameGallery()
+    openThumbnail(`${en.a11y.openImage}: Nock — 1`)
+    const dialog = screen.getByRole('dialog')
+    const focusables = Array.from(dialog.querySelectorAll<HTMLElement>('button, [href]'))
+    const first = focusables[0]
+    const last = focusables[focusables.length - 1]
+    last.focus()
+    fireEvent.keyDown(document, { key: 'Tab' })
+    expect(document.activeElement).toBe(first)
   })
 
   it('locks the page scroll while open and restores it on close', () => {
@@ -143,7 +288,7 @@ describe('Lightbox modal contract', () => {
     render(
       <LanguageProvider>
         <Lightbox
-          images={IMAGES}
+          items={plainItems(IMAGES)}
           index={0}
           title="Astrea"
           onClose={onClose}
@@ -167,7 +312,10 @@ describe('Lightbox styles', () => {
   // 1.4.11 on it. `tokens.test.ts` proves the overlay tokens do; this proves the
   // stylesheet actually reaches for them.
   it('paints the overlay chrome from the overlay tokens', () => {
-    const rule = /\.close,\s*\.nav,\s*\.caption\s*\{([^}]*)\}/.exec(css)
+    const rule =
+      /\.close,\s*\.nav,\s*\.play,\s*\.caption,\s*\.detailName,\s*\.gameLink\s*\{([^}]*)\}/.exec(
+        css,
+      )
     expect(rule, 'no shared chrome rule found').not.toBeNull()
     expect(rule![1]).toContain('var(--color-overlay-chrome-bg)')
     expect(rule![1]).toContain('var(--color-overlay-chrome-fg)')
@@ -180,6 +328,26 @@ describe('Lightbox styles', () => {
 
   it('declares no literal colour, so the palette suite stays authoritative', () => {
     const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, '')
+    const literals = withoutComments.match(/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)/gi) ?? []
+    expect(literals).toEqual([])
+  })
+})
+
+describe('Gallery tip styles', () => {
+  it('reveals the tile tooltip on hover and on keyboard focus', () => {
+    const rule =
+      /\.thumbButton:hover \+ \.tip,\s*\.thumbButton:focus-visible \+ \.tip\s*\{([^}]*)\}/.exec(
+        galleryCss,
+      )
+    expect(rule, 'no tooltip reveal rule found').not.toBeNull()
+    expect(rule![1]).toContain('opacity: 1')
+  })
+
+  it('paints the tooltip from the page fg/bg pair and declares no literal colour', () => {
+    const rule = /\.tip\s*\{([^}]*)\}/.exec(galleryCss)
+    expect(rule![1]).toContain('var(--color-fg)')
+    expect(rule![1]).toContain('var(--color-bg)')
+    const withoutComments = galleryCss.replace(/\/\*[\s\S]*?\*\//g, '')
     const literals = withoutComments.match(/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)/gi) ?? []
     expect(literals).toEqual([])
   })
