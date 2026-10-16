@@ -124,7 +124,17 @@ export function step(
   }
 }
 
-export function paint(ctx: CanvasRenderingContext2D, field: MeteorField, color: string): void {
+export function paint(
+  ctx: CanvasRenderingContext2D,
+  field: MeteorField,
+  color: string,
+  width: number,
+  height: number,
+): void {
+  // Clear the previous frame before drawing this one. Without it every meteor
+  // leaves a permanent streak — the deleted particle layer cleared each
+  // particle's own box, and nothing took that over when it went.
+  ctx.clearRect(0, 0, width, height)
   for (let i = 0; i < field.meteors.length; i++) {
     const m = field.meteors[i]
     const t = Math.max(0, 1 - m.life / m.maxLife)
