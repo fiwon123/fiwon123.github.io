@@ -18,24 +18,20 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  /* Show the left/right gutters where the meteors spawn and fade the reading
-     column out, so the trails never sit behind the text. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    black 0%,
-    black 16%,
-    transparent 26%,
-    transparent 74%,
-    black 84%,
+  /* Fade the field out over the centre so the reading column stays clear and the
+     middle reads as empty. A radial (elliptical) core, not a banded linear
+     gradient: particles are born on every edge and cross the whole frame, so the
+     cleared area has to be a soft disc around the text, not two fixed gutters. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 48% 54% at 50% 50%,
+    transparent 0%,
+    transparent 52%,
     black 100%
   );
-  mask-image: linear-gradient(
-    to right,
-    black 0%,
-    black 16%,
-    transparent 26%,
-    transparent 74%,
-    black 84%,
+  mask-image: radial-gradient(
+    ellipse 48% 54% at 50% 50%,
+    transparent 0%,
+    transparent 52%,
     black 100%
   );
 }
