@@ -116,7 +116,9 @@ Each entry is settled; the reason is what stops it being re-opened.
   (studio 2.90, paper 2.79, violet 2.73): `tokens.test.ts` gates text on both
   surfaces (4.5:1) and the chrome accent as a non-text boundary (3:1), and
   `surfaces.test.ts` pins which selector paints which surface so the split cannot
-  silently revert. The overlay pair is unchanged. (2026-10-16)
+  silently revert. The particle field lives on the frame, so it reads the **chrome**
+  accent too (the reading accent is dark in light mode). The overlay pair is
+  unchanged. (2026-10-16)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,
