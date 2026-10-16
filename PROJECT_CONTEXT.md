@@ -237,8 +237,9 @@ polish, so the additions land on a base that already looks finished.
 - **`ASSIGNEE`** is `fiwon123`: issues and PRs are assigned to that handle.
 - **Two-tier branches**: `main` is release/deploy, `dev` is integration, work
   happens on `<type>/<issue>-<slug>`. Never push directly to `main` or `dev`.
-- **CI triggers**: `ci.yml` runs on pull requests and pushes targeting `dev`;
-  `pages.yml` deploys on push to `main`. CI **never** runs on a feature branch, so
+- **CI triggers**: `ci.yml` runs on pull requests targeting `dev` and `main`, and
+  pushes to `dev`; `pages.yml` deploys on push to `main`. CI **never** runs on a
+  feature branch, so
   local `make check` is the gate. A run that was never triggered, or whose jobs
   were all skipped, is not a pass.
 - **Formatting of `docker-compose.yml` is owned by oxfmt** (it normalises to single
