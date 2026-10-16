@@ -20,8 +20,9 @@ or the system's choice, and a background of slow particles.
 ## Features
 
 - **Terminal-docked navigation** — a pure parser/history layer with EN/PT-BR
-  command aliases (`help`, `clear`, `about`, `projects`, `work`, …) whose
-  navigation commands scroll the page.
+  command aliases (`help`, `clear`, `about`, `projects`, `work`, …): a navigation
+  command focuses one section (`all` restores the page), and `theme`, `mode` and
+  `lang` change the preferences.
 - **One page, optional console** — every section always renders; the terminal
   dock is toggled per visitor and remembered.
 - **Three theme presets** (Studio, Paper, Terminal) × light/dark/system, applied
