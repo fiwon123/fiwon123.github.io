@@ -14,22 +14,22 @@ export const experience: ExperienceEntry[] = [
     },
     highlights: {
       en: [
-        'Ported the game to {xbox} Xbox',
-        'Built UI systems and the {steam} Steam integration',
+        'Ported the game to {xbox}',
+        'Built UI systems and the {steam} integration',
         'Fixed gameplay and production bugs across development and release',
         'Worked with players to identify issues and ship better fixes',
         'Planned and coordinated delivery with the team through launch',
         'Supported Steam modding with BepInEx and wrote Python scripts for mod workflows',
-        'Shipped to {gog} GOG and {epic} Epic Games',
+        'Shipped to {gog} and {epic}',
       ],
       'pt-BR': [
-        'Port do jogo para {xbox} Xbox',
-        'Construção de sistemas de UI e da integração com a {steam} Steam',
+        'Port do jogo para {xbox}',
+        'Construção de sistemas de UI e da integração com a {steam}',
         'Correção de bugs de gameplay durante desenvolvimento e pós-lançamento',
         'Contato com jogadores para identificar problemas e melhorar as correções',
         'Planejamento e coordenação das entregas com o time até o lançamento',
         'Suporte a mods na Steam com BepInEx e scripts em Python para o fluxo de mods',
-        'Lançamento em {gog} GOG e {epic} Epic Games',
+        'Lançamento em {gog} e {epic}',
       ],
     },
     platforms: [

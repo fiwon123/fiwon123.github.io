@@ -1,29 +1,20 @@
-export function dprFor(d: number | undefined): number {
-  const dpr = typeof d === 'number' && d > 0 ? d : 1
-  return Math.min(2, dpr)
-}
-
-export function readAccent(s: any): string {
-  try {
-    const raw = s.getPropertyValue('--color-accent').trim()
-    return raw.length > 0 ? raw : 'rgb(128 128 128)'
-  } catch {
-    return 'rgb(128 128 128)'
-  }
-}
-
+/** Fallback when the accent token cannot be read (e.g. no stylesheet applied). */
 export const FALLBACK_COLOR = 'rgb(128 128 128)'
 
+/** A canvas backing store at DPR 4 is fill cost, not crispness. */
 export const MAX_DPR = 2
 
+/** Strongest a meteor may draw: the accent at this alpha (tokens.test.ts caps it). */
 export const PARTICLE_ALPHA = 0.2
-/** Keep the cap small so meteors feel sparse. */
+
+/** Hard cap: a large screen must not cost more than a small one. */
 export const METEOR_MAX = 14
-export const PARTICLE_MAX = METEOR_MAX
+
+/** Floor, so a small window still shows a couple of trails rather than one. */
 export const METEOR_MIN = 6
-export const PARTICLE_MIN = METEOR_MIN
+
+/** One meteor per this many CSS pixels of area, before the cap. */
 export const METEOR_AREA = 20000
-export const PARTICLE_AREA = METEOR_AREA
 
 const TRAIL_LEN = 0.22
 const HEAD_SIZE_MIN = 2
@@ -32,6 +23,18 @@ const SPEED_MIN = 120 // px/s approx
 const SPEED_MAX = 280
 
 const TAU = Math.PI * 2
+
+/** The device pixel ratio, capped at `MAX_DPR` (never 0/NaN, at least 1). */
+export function dprFor(d: number | undefined): number {
+  const dpr = typeof d === 'number' && d > 0 ? d : 1
+  return Math.min(MAX_DPR, dpr)
+}
+
+/** Read the accent token, falling back when the token is absent or blank. */
+export function readAccent(style: CSSStyleDeclaration): string {
+  const raw = style.getPropertyValue('--color-accent').trim()
+  return raw.length > 0 ? raw : FALLBACK_COLOR
+}
 
 export interface Meteor {
   x: number
@@ -80,12 +83,7 @@ export function createField(
   return { meteors, count: size }
 }
 
-function spawn(
-  width: number,
-  height: number,
-  gutter: number,
-  r: Random,
-): Meteor {
+function spawn(width: number, height: number, gutter: number, r: Random): Meteor {
   const fromLeft = r() < 0.5
   const x = fromLeft ? -40 - r() * gutter : width + 40 + r() * gutter
   const y = r() * (height * 0.3)

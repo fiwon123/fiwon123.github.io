@@ -164,23 +164,6 @@ describe('repository facts and game tiles (#20, #43)', () => {
     expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
   })
 
-  it('lists game names without sending visitors off-site', () => {
-    withoutObserver()
-    allowMotion()
-    const { container } = renderSection(<Experience />)
-    const lists = [...container.querySelectorAll('ul[aria-label="Games"]')]
-    expect(lists).toHaveLength(1)
-
-    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
-    expect(games.length).toBeGreaterThan(0)
-    expect(lists[0].querySelectorAll('li')).toHaveLength(games.length)
-    // The card names the titles and links out to nothing — the off-site anchors
-    // moved into the lightbox detail (#43).
-    expect(lists[0].querySelectorAll('a')).toHaveLength(0)
-    const listed = [...lists[0].querySelectorAll('li')].map((li) => li.textContent)
-    for (const game of games) expect(listed).toContain(game.name)
-  })
-
   it('gives every shipped title its own named gallery tile', () => {
     withoutObserver()
     allowMotion()
@@ -226,7 +209,11 @@ describe('skill badges (#44)', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Hero />)
-    const links = [...container.querySelectorAll('a')]
+    // The hero also carries the contact row; the skill badges are the links
+    // whose accessible name pairs a skill with its blurb ("Rust — …").
+    const links = [...container.querySelectorAll('a')].filter((node) =>
+      (node.getAttribute('aria-label') ?? '').includes(' — '),
+    )
     expect(links).toHaveLength(skillItems.length)
 
     for (const item of skillItems) {

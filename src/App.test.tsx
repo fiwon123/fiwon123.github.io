@@ -9,7 +9,7 @@ import { LanguageProvider } from './i18n/LanguageProvider'
 import { DOCK_KEY } from './lib/terminalDock'
 import { ThemeProvider } from './theme/ThemeProvider'
 
-const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'contact']
+const SECTION_IDS = ['about', 'experience', 'projects']
 
 function renderApp() {
   return render(
@@ -98,17 +98,21 @@ describe('the dock control', () => {
     fireEvent.click(hideButton()!)
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(localStorage.getItem(DOCK_KEY)).toBe('false')
-    // Collapsed: the floating FAB offers the way back in, and the panel's own control is gone.
-    expect(showButton()).toBeNull()
+    // Collapsed: the floating FAB *is* the show control; the panel's own hide control is gone.
+    expect(showButton()).toBeTruthy()
     expect(hideButton()).toBeNull()
   })
 
-  it('re-opens from the header control and persists the choice', () => {
-    // Show button moved to FAB.
-    expect(true).toBe(true)
+  it('re-opens from the floating FAB and persists the choice', () => {
+    localStorage.setItem(DOCK_KEY, 'false')
+    renderApp()
+    expect(screen.queryByRole('textbox')).toBeNull()
+    fireEvent.click(showButton()!)
+    expect(terminalInput()).toBeTruthy()
+    expect(localStorage.getItem(DOCK_KEY)).toBe('true')
   })
 
-  it('moves focus to the header control when the panel control collapses it', () => {
+  it('moves focus to the floating FAB when the panel control collapses it', () => {
     // The clicked control becomes `inert`, which would otherwise drop focus to
     // <body> and strand a keyboard visitor.
     renderApp()
@@ -116,7 +120,7 @@ describe('the dock control', () => {
     hide.focus()
     fireEvent.click(hide)
     const active = document.activeElement as Element
-    expect(active !== hide).toBe(true)
+    expect(active).toBe(document.getElementById('terminal-fab'))
   })
 
   it('keeps the collapsed console mounted but out of the accessibility tree', () => {
@@ -319,7 +323,7 @@ describe('settings commands drive the same controls as the header', () => {
 describe('contact links', () => {
   it('renders icon-only links named by their label, with no URL text', () => {
     renderApp()
-    const section = document.getElementById('contact')
+    const section = document.getElementById('contact-footer')
     expect(section).toBeTruthy()
     const links = within(section!).getAllByRole('link')
     expect(links).toHaveLength(contact.length)

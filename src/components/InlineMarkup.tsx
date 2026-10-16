@@ -46,7 +46,7 @@ export function InlineMarkup({ text, platforms }: InlineMarkupProps) {
         nodes.push(
           <a key={index} href={platform.url}>
             <BrandIcon name={platform.name} />
-            <span aria-hidden="true"> {PLATFORM_LABELS[platform.name]}</span>
+            <span> {PLATFORM_LABELS[platform.name]}</span>
           </a>,
         )
         return
@@ -54,7 +54,7 @@ export function InlineMarkup({ text, platforms }: InlineMarkupProps) {
       nodes.push(
         <Fragment key={index}>
           <BrandIcon name={icon[1] as BrandIconName} />
-          <span aria-hidden="true"> {PLATFORM_LABELS[icon[1] as PlatformName] || icon[1]}</span>
+          <span> {PLATFORM_LABELS[icon[1] as PlatformName] || icon[1]}</span>
         </Fragment>,
       )
       return
