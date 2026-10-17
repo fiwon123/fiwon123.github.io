@@ -131,17 +131,16 @@ Each entry is settled; the reason is what stops it being re-opened.
   under `prefers-reduced-motion` — an animation library would outweigh the whole
   effect it provides, and a motion feature that can leave content unrevealed
   under reduced motion is a bug, not a decoration.
-- **The ambient field is many curved particles with a radial centre fade**
-  (#96) — dozens of particles (area-scaled, hard-capped) are born just outside a
-  random edge and aimed inward with spread, and each follows a shallow quadratic
-  curve: the heading drifts by a signed `turn` and the trail is bent by a control
-  point on the normal, so the path curves without storing a per-particle position
-  history (the field stays allocation-free). Lifecycle alpha (`alphaAt`) ramps in
-  at birth and to zero at death, peaking at **exactly 1**, so `PARTICLE_ALPHA` is
-  the true drawn maximum the contrast gate caps. The reading column is cleared by
-  an **elliptical radial mask** (transparent centre → opaque edges), not the old
-  banded linear gradient — that shape was tuned to two fixed side gutters, which
-  no longer matches a field that crosses the whole frame. (2026-10-16)
+- **The ambient field is sparse straight streaks with a radial centre fade**
+  (#113) — 6–14 trails (area-scaled, hard-capped) are born in the left/right
+  gutters, within the top third, and travel inward-and-downward at constant
+  velocity: the path is a `lineTo`, never a `quadraticCurveTo`. This replaced the
+  #96 rebuild (24–80 curved particles), which read as too busy. Lifecycle alpha
+  (`alphaAt`) ramps in at birth and to zero at death, peaking at **exactly 1**, so
+  `PARTICLE_ALPHA` is the true drawn maximum the contrast gate caps, and the trail
+  carries a transparent→accent gradient from tail to head. The centre is cleared
+  by an **elliptical radial mask** (transparent centre → opaque edges), and
+  `paint()` clears the whole frame each time. (2026-10-17)
 - **Overlay chrome is mode-independent** (`--color-overlay-*`, fixed white on an
   82% black scrim) — page tokens cannot meet WCAG 1.4.11 once composited over a
   scrim (measured: caption 1.85:1 in light presets, control boundary 1.21:1 in
