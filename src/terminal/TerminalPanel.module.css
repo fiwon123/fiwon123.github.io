@@ -1,10 +1,9 @@
-/* The dock is the layout's second item. On a wide screen it is a fixed-width
-   column and is sticky, so the console stays in reach while a long section
-   scrolls beside it.
+/* The console. It is never unmounted — the scrollback survives a toggle — so
+   `data-open` drives its presentation rather than the DOM.
 
-   It is never unmounted — the scrollback survives a toggle — so `data-open`
-   animates its column between full width and nothing (wide) or its height
-   between full and nothing (stacked) instead of removing it from the layout. */
+   On a wide screen it is a fixed overlay pinned to the right edge: it slides in
+   and never reflows the content underneath. On a phone it sits below the content
+   in the page column and its height collapses instead. */
 .dock {
   min-width: 0;
   overflow: hidden;
@@ -12,31 +11,38 @@
 
 @media (min-width: 68.01rem) {
   .dock {
-    position: sticky;
-    top: calc(var(--header-h) + var(--space-4));
-    /* `flex-basis: auto` lets `width` drive the column, so `width` is what
-       animates; `flex-shrink: 0` stops the content column stealing from it. */
-    flex: 0 0 auto;
-    width: 26rem;
-    opacity: 1;
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+    z-index: 35;
+    width: min(26rem, 90vw);
+    height: calc(100vh - var(--header-h));
+    height: calc(100dvh - var(--header-h));
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border-left: 1px solid var(--color-border);
+    overflow-y: auto;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
     transition:
-      width 320ms ease,
+      transform 320ms ease,
       opacity 240ms ease;
   }
 
-  .dock[data-open='false'] {
-    width: 0;
-    opacity: 0;
-    pointer-events: none;
+  .dock[data-open='true'] {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
-/* Stacked: the console stops being pinned — a sticky band over a phone viewport
-   is unusable — and its height collapses instead of its width. */
+/* Stacked: the console sits below the content in the page column, so the page
+   scrolls past it; its height collapses instead of its width. */
 @media (max-width: 68rem) {
   .dock {
-    position: static;
     width: 100%;
+    margin-top: var(--space-6);
     max-height: 100vh;
     opacity: 1;
     transition:
@@ -46,6 +52,7 @@
 
   .dock[data-open='false'] {
     max-height: 0;
+    margin-top: 0;
     opacity: 0;
     pointer-events: none;
   }

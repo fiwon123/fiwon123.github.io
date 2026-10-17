@@ -74,7 +74,7 @@ export function Terminal({ autoFocus = false, onClose }: TerminalProps) {
               <button
                 type="button"
                 className={styles.hide}
-                aria-label={t.terminal.hide}
+                aria-label={t.terminal.close}
                 onClick={onClose}
               >
                 <svg

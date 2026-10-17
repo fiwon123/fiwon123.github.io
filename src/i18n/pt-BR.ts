@@ -66,6 +66,7 @@ export const ptBR: Strings = {
     label: 'Terminal',
     show: 'Mostrar terminal',
     hide: 'Ocultar terminal',
+    close: 'Fechar terminal',
     hint: 'Digite um comando e pressione Enter. Tente `about`, `experience`, `projects`, `contact` ou `all`.',
     placeholder: 'digite um comando…',
     prompt: 'visitante@portfolio ~ $',

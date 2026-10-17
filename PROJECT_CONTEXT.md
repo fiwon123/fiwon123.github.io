@@ -76,6 +76,15 @@ Each entry is settled; the reason is what stops it being re-opened.
   once, and the first version of that idea had `#section` and a translated string
   doing work a DOM element should do. The dock keeps the terminal optional without
   making the content conditional. (2026-10-16)
+- **On a wide screen the dock is a fixed overlay, not an in-flow column** (#114) —
+  the console slides in from the right edge over the page and never reflows the
+  content (the earlier in-flow sibling stole ~27.5rem and shoved every section
+  left). On a phone it stacks below the content and its height collapses, and a
+  single floating toggle shows **and hides** it — so the show control no longer
+  disappears once the panel is open. The panel's own close control stays as the
+  accessible alternative, and CSS hides the floating toggle on a wide screen
+  while the panel is open (the panel's close is then the way out, and a floating
+  toggle would only sit on top of the panel it opened). (2026-10-17)
 - **A terminal navigation command focuses one section; `all` restores the page**
   — the sections are rendered by the page, so a command asks the page to show one.
   Focusing filters the hero out but keeps a visually-hidden h1 and a `#top` anchor,

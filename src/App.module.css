@@ -1,27 +1,21 @@
-/* Content and console are one row: the content column first, the dock second.
-   The row keeps the wider measure (the sections cap themselves at a ~60rem
-   reading measure and centre), so the only thing that changes when the dock
-   opens is the dock's own column — which animates rather than popping. On a
-   narrow screen the row stacks and the console sits below the content. */
+/* The content column, and (on a phone) the console stacked below it. On a wide
+   screen the console is torn out of flow as a fixed overlay by its own module,
+   so this row only ever lays out the content — opening the dock moves nothing.
+   The column keeps the page frame; the sections cap themselves at the reading
+   measure and centre inside it. */
 .layout {
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-4) var(--space-4) var(--space-12);
   display: flex;
-  align-items: flex-start;
-  gap: 0;
-  transition: gap 320ms ease;
-}
-
-.layout[data-dock='open'] {
-  gap: var(--space-6);
+  flex-direction: column;
+  align-items: stretch;
 }
 
 /* The content column. It sits directly on the page background — there is no
    separate card surface, so light/dark changes the whole page at once. The
    sections cap themselves at the reading measure inside this column. */
 .page {
-  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -37,17 +31,4 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (max-width: 68rem) {
-  .layout {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .layout {
-    transition: none;
-  }
 }

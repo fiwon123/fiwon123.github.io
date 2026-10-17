@@ -1,6 +1,6 @@
-/* The re-open control, shown only while the console is collapsed. It is a
-   labelled pill in the bottom-right corner the dock occupies, stacked clear of
-   the back-to-top button (44px tall) that shares the corner. */
+/* The terminal toggle: a labelled pill in the bottom-right corner, stacked
+   clear of the back-to-top button (44px tall) that shares the corner. It is in
+   the DOM in both states and toggles the dock. */
 .fab {
   position: fixed;
   right: var(--space-4);
@@ -34,4 +34,14 @@
 
 .label {
   white-space: nowrap;
+}
+
+/* On a wide screen the panel is a fixed overlay that carries its own close
+   control, so the floating toggle would only sit on top of the panel it just
+   opened; hide it while open. On a phone it stays put — there it is the single
+   tap-to-toggle that shows and hides the panel. */
+@media (min-width: 68.01rem) {
+  .fab[data-open='true'] {
+    display: none;
+  }
 }
