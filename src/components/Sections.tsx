@@ -4,12 +4,37 @@ import { about, contact, experience, projects, TECHNOLOGIES } from '../content'
 import type { ExperienceEntry, GalleryItem, TechName } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
+import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { useReveal } from '../lib/useReveal'
+import { useTypewriter } from '../lib/useTypewriter'
 import { BrandIcon, type BrandIconName } from './BrandIcon'
 import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
 
 import styles from './sections.module.css'
+
+/**
+ * Text revealed one character at a time — the hero greeting and the first About
+ * paragraph.
+ *
+ * The full string is always in the document for assistive tech: while it types,
+ * the visible span is decorative (`aria-hidden`) and a hidden copy carries the
+ * real name; once it is finished, a single plain text node replaces both. Under
+ * reduced motion the string is finished from the first render, so no timer is
+ * ever scheduled (see `useTypewriter`).
+ */
+function TypedText({ text, typed, done }: { text: string; typed: string; done: boolean }) {
+  if (done) return <>{text}</>
+  return (
+    <>
+      <span className={styles.srOnly}>{text}</span>
+      <span aria-hidden="true">
+        {typed}
+        <span className={styles.caret} />
+      </span>
+    </>
+  )
+}
 
 export function ContactRow() {
   return (
@@ -127,42 +152,48 @@ function experienceGallery(entry: ExperienceEntry): GalleryItem[] {
 
 export function Hero() {
   const t = useT()
+  const [ref, revealed] = useReveal<HTMLElement>()
+  // Only the greeting types. The rest reveal with the section.
+  const greeting = useTypewriter(t.hero.greeting, { start: revealed, speedMs: HERO_TYPE_SPEED_MS })
+
   return (
-    <RevealSection id="top" tabIndex={-1} className={styles.section}>
+    <section ref={ref} id="top" tabIndex={-1} className={revealClass(styles.section, revealed)}>
       <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>
+          <TypedText text={t.hero.greeting} typed={greeting.typed} done={greeting.done} />
+        </h1>
         <img
           className={styles.avatar}
           src="/avatar/felipeinoue-512.jpg"
           alt={t.hero.avatarAlt}
-          width={128}
-          height={128}
+          width={160}
+          height={160}
           decoding="async"
         />
-        <div className={styles.heroText}>
-          <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
-          {/* The contact row's own anchor, so a `#contact` deep link lands on the
-              row rather than the top of the hero (`#top`). */}
-          <div id="contact">
-            <ContactRow />
-          </div>
+        <div id="contact">
+          <ContactRow />
+        </div>
+        <div className={styles.heroRest}>
           <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
           <p className={styles.heroStack}>{t.hero.stack}</p>
         </div>
       </div>
-    </RevealSection>
+    </section>
   )
 }
 
 export function About() {
   const { locale } = useLanguage()
   const t = useT()
+  const [ref, revealed] = useReveal<HTMLElement>()
+  const paragraphs = about[locale]
   return (
-    <RevealSection id="about" className={styles.section}>
+    <section ref={ref} id="about" className={revealClass(styles.section, revealed)}>
       <h2>{t.nav.about}</h2>
-      {about[locale].map((paragraph, index) => (
+      {paragraphs.map((paragraph, index) => (
         <p key={index}>{paragraph}</p>
       ))}
-    </RevealSection>
+    </section>
   )
 }
 

@@ -161,18 +161,25 @@ Each entry is settled; the reason is what stops it being re-opened.
   in the Dockerfile** — so `check-sandbox.py` can execute the shipped file under
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
-- **The mark is an "FI" monogram in a rounded tile** (#120) — two geometric
-  stroke paths (an `F` and an `I`) inside the token-painted box, so the header
-  logo and the tab icon are the same figure. It replaces the terminal-prompt
-  carets, which tied the identity to the console; the letters keep the two-path
-  shape the favicon test derives from `Logo.tsx`. (2026-10-17)
+- **The mark is a node and its orbit in a rounded tile** (#131) — a small circle
+  (the node) inside a tilted elliptical ring (the orbit), two geometric stroke
+  paths inside the token-painted box, so the header logo and the tab icon are the
+  same figure. It replaces the "FI" monogram (#120), which read as a pair of
+  letters rather than a mark; the two paths keep the shape the favicon test
+  derives from `Logo.tsx`. (2026-10-17)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
-  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
-  the studio-dark palette (a test derives both from source and fails on drift),
-  and `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
-  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs. A hand-maintained second copy of
-  the icon is the way the tab and the page drift apart, and a capture harness that
-  writes a blank or opaque-cornered file is worse than no harness. (2026-10-16)
+  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry. A small effect in
+  the theme provider reads the live `--color-surface` / `--color-border` /
+  `--color-accent` and rewrites the `<link rel="icon">` to a data-URI SVG, so the
+  tab icon follows the site theme (all 5 presets × light/dark) on the client.
+  With JavaScript disabled, the static SVG serves as a fail-open fallback and
+  follows the OS `prefers-color-scheme`. The favicons test derives palette
+  expectations from source and fails on drift. `make favicons` rasterises the mark
+  in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
+  16/32/180/192/512 PNGs — the rasters keep the dark base, since one file per
+  size cannot adapt. A hand-maintained second copy of the icon is the way the tab
+  and the page drift apart, and a capture harness that writes a blank or
+  opaque-cornered file is worse than no harness. (2026-10-17)
 - **A game owns its image; the experience gallery is derived from the games** —
   `GameLink.image` is the single place the title→image link lives, and the card
   builds its tiles as `{ src: game.image, game }`, so an image path is never
@@ -201,6 +208,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   (WCAG 1.4.11) on `--color-surface` — which is why the tints are a separate
   token set gated by `tokens.test.ts` rather than a recolouring of the label.
   (2026-10-16)
+- **The hero is a centred column and its greeting types itself out** (#132) —
+  greeting, portrait, contact row, headline and stack, top to bottom and centred,
+  replacing the old thumbnail-beside-text flex row. Only the greeting reveals one
+  character at a time through `useTypewriter` (a hand-rolled interval — no typing
+  library). The rest of the hero (contacts, headline, stack) renders as plain
+  text and fades in with the section reveal, the same as the rest of the page.
+  The effect is decoration over content, never a gate: the whole greeting is in
+  the document from the first frame for assistive tech (a `srOnly` copy while the
+  visible span types), reduced motion shows it at once with no timer, and
+  switching language retypes the new string. The caret blinks only under
+  `prefers-reduced-motion: no-preference`. (2026-10-17)
 
 ## Topology
 

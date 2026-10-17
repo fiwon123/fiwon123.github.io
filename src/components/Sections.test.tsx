@@ -10,8 +10,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { about, experience, projects, TECHNOLOGIES } from '../content'
 import type { TechName } from '../content/types'
 import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
+import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
+import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { About, Experience, Hero, Projects } from './Sections'
+
+import styles from './sections.module.css'
 
 type FakeEntry = { isIntersecting: boolean }
 
@@ -59,6 +63,7 @@ function classesOf(container: HTMLElement, tag: string): string[][] {
 
 afterEach(() => {
   cleanup()
+  vi.useRealTimers()
   vi.unstubAllGlobals()
   localStorage.clear()
 })
@@ -138,6 +143,78 @@ describe('reveal wiring', () => {
   })
 })
 
+describe('typed text (#132)', () => {
+  // The acceptance criterion is on the rendered output: assistive tech must read
+  // the whole string from the first frame, even though the visible layer is
+  // mid-word. An implementation that hides the text behind the timer would pass
+  // a hook test and fail a visitor.
+  it('carries the whole greeting on the h1 from the first frame', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Hero />)
+    const h1 = container.querySelector('h1')
+    expect(h1?.textContent).toBe(en.hero.greeting)
+    expect(h1?.querySelector('[aria-hidden="true"]')).not.toBeNull()
+  })
+
+  it('does not type About paragraphs — they render as plain text with no decorative layer', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<About />)
+    const paragraphs = [...container.querySelectorAll('p')]
+    expect(paragraphs.length).toBe(about.en.length)
+    for (const paragraph of paragraphs) {
+      expect(paragraph.textContent).toBe(about.en[paragraphs.indexOf(paragraph)])
+      expect(paragraph.querySelector('[aria-hidden="true"]')).toBeNull()
+    }
+  })
+})
+
+describe('hero reveal order (#140)', () => {
+  /** The characters currently visible: the plain text once settled, else the prefix. */
+  const visiblePrefix = (root: Element | null): string => {
+    if (!root) throw new Error('missing element')
+    const layer = root.querySelector('[aria-hidden="true"]')
+    return layer ? (layer.textContent ?? '') : (root.textContent ?? '')
+  }
+  /** True when the string is whole (the decorative layer is gone). */
+  const settled = (root: Element | null): boolean =>
+    root !== null && root.querySelector('[aria-hidden="true"]') === null
+
+  it('types greeting only; headline and stack are plain text from the start', () => {
+    vi.useFakeTimers()
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Hero />)
+    const h1 = container.querySelector('h1')
+    const headline = container.querySelector('h2')
+    const stack = container.querySelector('p')
+
+    expect(visiblePrefix(h1)).toBe('')
+    expect(headline?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(stack?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(headline?.textContent).toBe(en.hero.headline)
+    expect(stack?.textContent).toBe(en.hero.stack)
+
+    act(() => void vi.advanceTimersByTime(en.hero.greeting.length * HERO_TYPE_SPEED_MS))
+    expect(settled(h1)).toBe(true)
+    expect(headline?.textContent).toBe(en.hero.headline)
+    expect(stack?.textContent).toBe(en.hero.stack)
+  })
+
+  it('shows the whole hero at once under reduced motion, with no timer', () => {
+    vi.useFakeTimers()
+    withoutObserver()
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: true, media: query }))
+    const { container } = renderSection(<Hero />)
+
+    expect(settled(container.querySelector('h1'))).toBe(true)
+    expect(container.querySelector('h2')?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(container.querySelector('p')?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+})
+
 describe('reveal class list', () => {
   it('never leaves a stray empty token in the class attribute', () => {
     withObserver()
@@ -159,26 +236,42 @@ describe('repository facts and game tiles (#20, #43)', () => {
     const cardFor = (name: string) =>
       cards.find((card) => card.querySelector('h3')?.textContent === name)
 
-    const withFacts = cardFor('Portfolio')
+    const withFacts = cardFor('AI Document Platform')
     expect(withFacts?.textContent).toContain('TypeScript')
     expect(withFacts?.textContent).toContain('★')
 
-    // A private project has no snapshot entry: the card keeps its static form.
-    expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
+    // Games is itch-io, not GitHub; it has no snapshot entry.
+    expect(cardFor('Games')?.textContent).not.toContain('★')
   })
 
   it('gives every shipped title its own named gallery tile', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Experience />)
-    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
     const labels = [...container.querySelectorAll('button')].map(
       (button) => button.getAttribute('aria-label') ?? '',
     )
     // One tile per title, each naming it — so a screen reader hears which game an
-    // image shows rather than "Open image" alone.
-    const gameTiles = labels.filter((label) => games.some((game) => label.includes(game.name)))
-    expect(gameTiles).toHaveLength(games.length)
+    // image shows rather than "Open image" alone. Checked for every company, so a
+    // new game (Astrea) is covered without touching the test.
+    for (const entry of experience) {
+      for (const game of entry.games ?? []) {
+        const named = labels.filter((label) => label.includes(game.name))
+        expect(named, `${entry.id} / ${game.name}`).toHaveLength(1)
+      }
+    }
+  })
+
+  it('never lists the same image twice for one company', () => {
+    // A game owns its image, so adding it while the path also sits in `gallery`
+    // would render two tiles with the same `src` — and a duplicate React key.
+    for (const entry of experience) {
+      const srcs = [
+        ...(entry.games ?? []).flatMap((game) => (game.image ? [game.image] : [])),
+        ...(entry.gallery ?? []),
+      ]
+      expect(new Set(srcs).size, entry.id).toBe(srcs.length)
+    }
   })
 
   it('links store tokens that have a URL and leaves the rest as icons', () => {
@@ -325,5 +418,29 @@ describe('section stylesheet', () => {
     const css = readFileSync(cssPath, 'utf8')
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
     expect(css).not.toMatch(/\brgba?\(/i)
+  })
+
+  it('shows company logos in colour, with no greyscale filter', () => {
+    // The logos used to be filtered to grey until hover; the filter is gone, so
+    // the colour must never be re-introduced through a `grayscale` value.
+    const css = readFileSync(
+      path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css'),
+      'utf8',
+    )
+    expect(css).not.toMatch(/grayscale/)
+  })
+
+  it('reveals the tech tag tooltip on hover and keyboard focus, not click focus', () => {
+    // A click leaves the link focused; `:focus-within` matched that and kept the
+    // tip open after the visitor returned, so the reveal is keyed on the anchor's
+    // `:focus-visible` instead.
+    const css = readFileSync(
+      path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css'),
+      'utf8',
+    )
+    expect(css).not.toMatch(/\.tag:focus-within/)
+    const reveal = /\.tag:hover \.tip,[\s\S]*?\{([^}]*)\}/.exec(css)
+    expect(reveal, 'no tag tooltip reveal rule found').not.toBeNull()
+    expect(reveal?.[0]).toMatch(/:has\(\.tagLink:focus-visible\)/)
   })
 })

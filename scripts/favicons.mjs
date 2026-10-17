@@ -31,6 +31,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve, sep } from 'node:path'
 
 import { buildIco, pngSize } from './favicon-ico.mjs'
+import { rasterSvgSource } from './favicon-svg.mjs'
 
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 // One entry per committed raster. The PNGs are the browser/OS fallbacks; the SVG
@@ -69,6 +70,10 @@ if (!existsSync(SVG)) {
   console.error(`[favicons] No source icon at ${SVG}.`)
   process.exit(2)
 }
+
+// The rasters cannot follow the OS reading, so they render the base palette: the
+// theme-aware SVG is reduced to its default (dark) style before drawing.
+const RASTER_SVG = rasterSvgSource(readFileSync(SVG, 'utf8'))
 
 const CHROME = findChrome()
 if (!CHROME) {
@@ -128,7 +133,7 @@ const server = createServer((req, res) => {
   }
   if (path === '/' || path === '/render.html')
     return send(200, 'text/html; charset=utf-8', RENDER_PAGE)
-  if (path === '/favicon.svg') return send(200, 'image/svg+xml', readFileSync(SVG))
+  if (path === '/favicon.svg') return send(200, 'image/svg+xml', RASTER_SVG)
   send(404, 'text/plain', 'not found')
 })
 
