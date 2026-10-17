@@ -20,12 +20,6 @@ const REQUIRED = [
   '--color-accent',
   '--color-accent-contrast',
   '--color-border',
-  '--color-chrome-bg',
-  '--color-chrome-fg',
-  '--color-chrome-muted',
-  '--color-chrome-border',
-  '--color-chrome-surface',
-  '--color-chrome-accent',
 ] as const
 
 /** Pairs that must reach WCAG AA. `[foreground, background]`. */
@@ -36,12 +30,6 @@ const PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['--color-fg-muted', '--color-surface'],
   ['--color-accent', '--color-bg'],
   ['--color-accent-contrast', '--color-accent'],
-  // The chrome surface is its own budget (#101): text on the dark frame, both
-  // directly on `chrome-bg` and on the lifted `chrome-surface` the controls use.
-  ['--color-chrome-fg', '--color-chrome-bg'],
-  ['--color-chrome-muted', '--color-chrome-bg'],
-  ['--color-chrome-fg', '--color-chrome-surface'],
-  ['--color-chrome-muted', '--color-chrome-surface'],
 ]
 
 interface Palette {
@@ -188,20 +176,15 @@ describe('overlay chrome', () => {
 })
 
 /**
- * The particle background draws the **chrome** accent (`--color-chrome-accent`)
- * at `PARTICLE_ALPHA` over the frame. Since #101 the centred reading column is
- * opaque, so a particle is only ever seen over the **chrome** — body text in the
- * column sits on the reading surface, above the layer. The budget is therefore
- * recomputed against `--color-chrome-bg`, with the chrome text as the foreground,
- * exactly like the scrim above. (The particle reads the chrome accent, not the
- * reading one, so it stays visible in light mode where the reading accent is dark.)
+ * The particle background draws the page accent (`--color-accent`) at
+ * `PARTICLE_ALPHA` over the page (`--color-bg`). With the #101 chrome frame gone
+ * there is one surface, so a particle can sit behind the text and this gate
+ * models the worst case: text directly over a blended particle.
  *
  * The lifecycle fade in `alphaAt` peaks at exactly 1, so `PARTICLE_ALPHA` **is**
  * the drawn maximum — the gate below caps that constant directly rather than a
- * multiple of it. The tightest palette is studio (dark and light agree: chrome is
- * mode-independent): its accent over the studio chrome drops `--color-chrome-muted`
- * under 4.5:1 at alpha 0.306, so the constant is capped at 0.23 and cannot be
- * raised in isolation.
+ * multiple of it. The tightest palette binds at alpha 0.23, so the constant is
+ * capped there and cannot be raised in isolation.
  *
  * `throughParticle` is source-over: what a particle does to the surface
  * underneath it.
@@ -211,51 +194,24 @@ function throughParticle(under: Rgb, particle: Rgb, alpha: number): Rgb {
   return { r: mix(particle.r, under.r), g: mix(particle.g, under.g), b: mix(particle.b, under.b) }
 }
 
-describe('particle background over the chrome', () => {
+describe('particle background over the page', () => {
   it('draws below the measured contrast budget', () => {
     expect(PARTICLE_ALPHA).toBeGreaterThan(0)
     expect(PARTICLE_ALPHA).toBeLessThan(0.23)
   })
 
   it.each(palettes)(
-    '$preset/$mode keeps WCAG AA when a particle sits over the chrome',
+    '$preset/$mode keeps WCAG AA when a particle sits over the page',
     ({ preset, mode, colors }) => {
-      const under = parseHex(colors['--color-chrome-bg'])
-      const behind = throughParticle(
-        under,
-        parseHex(colors['--color-chrome-accent']),
-        PARTICLE_ALPHA,
-      )
-      for (const foreground of ['--color-chrome-fg', '--color-chrome-muted']) {
+      const under = parseHex(colors['--color-bg'])
+      const behind = throughParticle(under, parseHex(colors['--color-accent']), PARTICLE_ALPHA)
+      for (const foreground of ['--color-fg', '--color-fg-muted']) {
         const ratio = contrastRatio(parseHex(colors[foreground]), behind)
         expect(
           ratio,
-          `${preset}/${mode}: ${foreground} over a particle-blended chrome = ${ratio.toFixed(2)}:1 (needs ${AA_NORMAL})`,
+          `${preset}/${mode}: ${foreground} over a particle-blended page = ${ratio.toFixed(2)}:1 (needs ${AA_NORMAL})`,
         ).toBeGreaterThanOrEqual(AA_NORMAL)
       }
-    },
-  )
-})
-
-/**
- * The chrome accent is what focus rings and hover borders on the dark frame are
- * drawn from. A reading accent is tuned for the reading surface and several of
- * the light ones fall under 3:1 on chrome (studio 2.90, paper 2.79, violet 2.73),
- * so the frame carries its own accent — the preset's dark-background accent,
- * which keeps the hue. WCAG 1.4.11 wants 3:1 for that non-text boundary.
- */
-describe('chrome accent', () => {
-  it.each(palettes)(
-    '$preset/$mode keeps the chrome accent visible on the chrome',
-    ({ preset, mode, colors }) => {
-      const ratio = contrastRatio(
-        parseHex(colors['--color-chrome-accent']),
-        parseHex(colors['--color-chrome-bg']),
-      )
-      expect(
-        ratio,
-        `${preset}/${mode}: chrome-accent on chrome-bg = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
     },
   )
 })
