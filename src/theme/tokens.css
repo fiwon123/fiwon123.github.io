@@ -163,6 +163,14 @@
   --color-border: #edd9c9;
 }
 
+:root[data-mode='dark'] {
+  --color-mode-icon: #ffffff;
+}
+
+:root[data-mode='light'] {
+  --color-mode-icon: #000000;
+}
+
 [data-theme='ember'][data-mode='dark'] {
   color-scheme: dark;
   --color-bg: #180f0b;

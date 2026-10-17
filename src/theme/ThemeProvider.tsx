@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 
+import { prefersReducedMotion } from '../lib/reveal'
 import { ThemeContext } from './context'
 import {
   DEFAULT_MODE,
   DEFAULT_PRESET,
   MODE_STORAGE_KEY,
   PRESET_STORAGE_KEY,
+  THEME_FADE_CLASS,
+  THEME_FADE_MS,
   isMode,
   isPreset,
   type Mode,
@@ -40,11 +43,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement
+    const prevTheme = root.dataset.theme
+    const prevMode = root.dataset.mode
+    const changed = prevTheme !== preset || prevMode !== mode
     root.dataset.theme = preset
     root.dataset.mode = mode
     try {
       import('./favicon').then(({ setFavicon }) => setFavicon(root)).catch(() => {})
     } catch {}
+    if (changed && !prefersReducedMotion()) {
+      root.classList.add(THEME_FADE_CLASS)
+      const t = setTimeout(() => {
+        root.classList.remove(THEME_FADE_CLASS)
+      }, THEME_FADE_MS)
+      return () => {
+        clearTimeout(t)
+        root.classList.remove(THEME_FADE_CLASS)
+      }
+    }
+    return () => {}
   }, [preset, mode])
 
   useEffect(() => {
