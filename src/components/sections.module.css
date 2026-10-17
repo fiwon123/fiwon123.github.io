@@ -75,19 +75,6 @@
   object-fit: cover;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  filter: grayscale(1);
-  transition: filter 0.2s ease;
-}
-
-.card:hover .companyLogo,
-.card:focus-within .companyLogo {
-  filter: grayscale(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .companyLogo {
-    transition: none;
-  }
 }
 
 .meta {
