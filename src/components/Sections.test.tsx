@@ -171,14 +171,30 @@ describe('repository facts and game tiles (#20, #43)', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Experience />)
-    const games = experience.find((entry) => entry.id === 'vr-monkey')?.games ?? []
     const labels = [...container.querySelectorAll('button')].map(
       (button) => button.getAttribute('aria-label') ?? '',
     )
     // One tile per title, each naming it — so a screen reader hears which game an
-    // image shows rather than "Open image" alone.
-    const gameTiles = labels.filter((label) => games.some((game) => label.includes(game.name)))
-    expect(gameTiles).toHaveLength(games.length)
+    // image shows rather than "Open image" alone. Checked for every company, so a
+    // new game (Astrea) is covered without touching the test.
+    for (const entry of experience) {
+      for (const game of entry.games ?? []) {
+        const named = labels.filter((label) => label.includes(game.name))
+        expect(named, `${entry.id} / ${game.name}`).toHaveLength(1)
+      }
+    }
+  })
+
+  it('never lists the same image twice for one company', () => {
+    // A game owns its image, so adding it while the path also sits in `gallery`
+    // would render two tiles with the same `src` — and a duplicate React key.
+    for (const entry of experience) {
+      const srcs = [
+        ...(entry.games ?? []).flatMap((game) => (game.image ? [game.image] : [])),
+        ...(entry.gallery ?? []),
+      ]
+      expect(new Set(srcs).size, entry.id).toBe(srcs.length)
+    }
   })
 
   it('links store tokens that have a URL and leaves the rest as icons', () => {
