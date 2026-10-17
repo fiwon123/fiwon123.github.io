@@ -12,7 +12,10 @@ import type { TechName } from '../content/types'
 import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
+import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { About, Experience, Hero, Projects } from './Sections'
+
+import styles from './sections.module.css'
 
 type FakeEntry = { isIntersecting: boolean }
 
@@ -60,6 +63,7 @@ function classesOf(container: HTMLElement, tag: string): string[][] {
 
 afterEach(() => {
   cleanup()
+  vi.useRealTimers()
   vi.unstubAllGlobals()
   localStorage.clear()
 })
@@ -169,6 +173,70 @@ describe('typed text (#132)', () => {
       expect(paragraph.textContent).toBe(about.en[paragraphs.indexOf(paragraph)])
       expect(paragraph.querySelector('[aria-hidden="true"]')).toBeNull()
     }
+  })
+})
+
+describe('hero reveal order (#140)', () => {
+  /** The characters currently visible: the plain text once settled, else the prefix. */
+  const visiblePrefix = (root: Element | null): string => {
+    if (!root) throw new Error('missing element')
+    const layer = root.querySelector('[aria-hidden="true"]')
+    return layer ? (layer.textContent ?? '') : (root.textContent ?? '')
+  }
+  /** True when the string is whole (the decorative layer is gone). */
+  const settled = (root: Element | null): boolean =>
+    root !== null && root.querySelector('[aria-hidden="true"]') === null
+
+  it('types greeting, then shows contacts, then types the headline, then the stack', () => {
+    vi.useFakeTimers()
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Hero />)
+    const h1 = container.querySelector('h1')
+    const contacts = container.querySelector('#contact')
+    const headline = container.querySelector('h2')
+    const stack = container.querySelector('p')
+
+    // Frame one: only the greeting has begun; contacts held back, later lines empty.
+    expect(visiblePrefix(h1)).toBe('')
+    expect(contacts?.classList.contains(styles.heroContactsShown)).toBe(false)
+    expect(visiblePrefix(headline)).toBe('')
+    expect(visiblePrefix(stack)).toBe('')
+
+    // The greeting finishes: contacts appear and the headline starts from nothing.
+    act(() => void vi.advanceTimersByTime(en.hero.greeting.length * HERO_TYPE_SPEED_MS))
+    expect(settled(h1)).toBe(true)
+    expect(contacts?.classList.contains(styles.heroContactsShown)).toBe(true)
+    expect(visiblePrefix(headline)).toBe('')
+    expect(settled(stack)).toBe(false)
+
+    // The headline is underway while the stack is still untouched.
+    act(() => void vi.advanceTimersByTime(HERO_TYPE_SPEED_MS * 2))
+    expect(visiblePrefix(headline)).toBe(en.hero.headline.slice(0, 2))
+    expect(visiblePrefix(stack)).toBe('')
+
+    // Once the headline is whole, the stack types; then all three are settled.
+    act(() => void vi.advanceTimersByTime(en.hero.headline.length * HERO_TYPE_SPEED_MS))
+    expect(settled(headline)).toBe(true)
+    expect(settled(stack)).toBe(false)
+
+    act(() => void vi.advanceTimersByTime(en.hero.stack.length * HERO_TYPE_SPEED_MS))
+    expect(settled(stack)).toBe(true)
+  })
+
+  it('shows the whole hero at once under reduced motion, with no timer', () => {
+    vi.useFakeTimers()
+    withoutObserver()
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: true, media: query }))
+    const { container } = renderSection(<Hero />)
+
+    expect(settled(container.querySelector('h1'))).toBe(true)
+    expect(settled(container.querySelector('h2'))).toBe(true)
+    expect(settled(container.querySelector('p'))).toBe(true)
+    expect(container.querySelector('#contact')?.classList.contains(styles.heroContactsShown)).toBe(
+      true,
+    )
+    expect(vi.getTimerCount()).toBe(0)
   })
 })
 

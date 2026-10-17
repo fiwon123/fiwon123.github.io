@@ -23,8 +23,7 @@ import styles from './sections.module.css'
  * reduced motion the string is finished from the first render, so no timer is
  * ever scheduled (see `useTypewriter`).
  */
-function TypedText({ text, start, speedMs }: { text: string; start: boolean; speedMs: number }) {
-  const { typed, done } = useTypewriter(text, { start, speedMs })
+function TypedText({ text, typed, done }: { text: string; typed: string; done: boolean }) {
   if (done) return <>{text}</>
   return (
     <>
@@ -154,11 +153,25 @@ function experienceGallery(entry: ExperienceEntry): GalleryItem[] {
 export function Hero() {
   const t = useT()
   const [ref, revealed] = useReveal<HTMLElement>()
+  // Assembled as one gesture: the greeting, then the contact row, then the
+  // headline, then the stack. Each line starts only once the previous one is
+  // whole, so the reveal has an order instead of three racing timers.
+  const greeting = useTypewriter(t.hero.greeting, { start: revealed, speedMs: HERO_TYPE_SPEED_MS })
+  const headline = useTypewriter(t.hero.headline, {
+    start: revealed && greeting.done,
+    speedMs: HERO_TYPE_SPEED_MS,
+  })
+  const stack = useTypewriter(t.hero.stack, {
+    start: revealed && headline.done,
+    speedMs: HERO_TYPE_SPEED_MS,
+  })
+  const contactsShown = revealed && greeting.done
+
   return (
     <section ref={ref} id="top" tabIndex={-1} className={revealClass(styles.section, revealed)}>
       <div className={styles.hero}>
         <h1 className={styles.heroTitle}>
-          <TypedText text={t.hero.greeting} start={revealed} speedMs={HERO_TYPE_SPEED_MS} />
+          <TypedText text={t.hero.greeting} typed={greeting.typed} done={greeting.done} />
         </h1>
         <img
           className={styles.avatar}
@@ -169,13 +182,21 @@ export function Hero() {
           decoding="async"
         />
         {/* The contact row's own anchor, so a `#contact` deep link lands on the
-            row rather than the top of the hero (`#top`). */}
-        <div id="contact">
+            row rather than the top of the hero (`#top`). Kept in the layout and
+            faded in once the greeting is whole, so the hero does not jump. */}
+        <div
+          id="contact"
+          className={contactsShown ? styles.heroContactsShown : styles.heroContacts}
+        >
           <ContactRow />
         </div>
         <div className={styles.heroRest}>
-          <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
-          <p className={styles.heroStack}>{t.hero.stack}</p>
+          <h2 className={styles.heroSubtitle}>
+            <TypedText text={t.hero.headline} typed={headline.typed} done={headline.done} />
+          </h2>
+          <p className={styles.heroStack}>
+            <TypedText text={t.hero.stack} typed={stack.typed} done={stack.done} />
+          </p>
         </div>
       </div>
     </section>
@@ -186,13 +207,15 @@ export function About() {
   const { locale } = useLanguage()
   const t = useT()
   const [ref, revealed] = useReveal<HTMLElement>()
+  const paragraphs = about[locale]
+  const first = useTypewriter(paragraphs[0], { start: revealed, speedMs: ABOUT_TYPE_SPEED_MS })
   return (
     <section ref={ref} id="about" className={revealClass(styles.section, revealed)}>
       <h2>{t.nav.about}</h2>
-      {about[locale].map((paragraph, index) => (
+      {paragraphs.map((paragraph, index) => (
         <p key={index}>
           {index === 0 ? (
-            <TypedText text={paragraph} start={revealed} speedMs={ABOUT_TYPE_SPEED_MS} />
+            <TypedText text={paragraph} typed={first.typed} done={first.done} />
           ) : (
             paragraph
           )}
