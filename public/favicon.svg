@@ -1,12 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Felipe Inoue">
   <rect x="1" y="1" width="30" height="30" rx="7" fill="#161b22" stroke="#2a323d" stroke-width="1.5" />
   <path
-    d="M10 10.5 L16.5 16 L10 21.5"
+    d="M13.5 8 H9 V24 M9 15.5 H12.5"
     fill="none"
     stroke="#6ea8fe"
-    stroke-width="2.8"
+    stroke-width="2.5"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
-  <path d="M18.5 21.5 H23" fill="none" stroke="#6ea8fe" stroke-width="2.8" stroke-linecap="round" />
+  <path
+    d="M18.5 8 H24 M21.25 8 V24 M18.5 24 H24"
+    fill="none"
+    stroke="#6ea8fe"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>

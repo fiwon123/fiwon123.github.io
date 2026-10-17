@@ -1,9 +1,11 @@
 import styles from './Logo.module.css'
 
 /**
- * The portfolio mark: a terminal prompt in a rounded box. Painted with theme
- * tokens so it matches whichever preset is active. Decorative — the accessible
- * name comes from the adjacent brand link.
+ * The portfolio mark: an "FI" monogram in a rounded box. Each letter is one
+ * geometric stroke `<path>`, so `public/favicon.svg` can mirror the same two
+ * paths (a test derives both and fails on drift). Painted with theme tokens so
+ * it matches whichever preset is active. Decorative — the accessible name comes
+ * from the adjacent brand link.
  */
 export function Logo({ size = 28 }: { size?: number }) {
   return (
@@ -16,8 +18,10 @@ export function Logo({ size = 28 }: { size?: number }) {
       focusable="false"
     >
       <rect className={styles.box} x="1" y="1" width="30" height="30" rx="7" />
-      <path className={styles.caret} d="M10 10.5 L16.5 16 L10 21.5" />
-      <path className={styles.caret} d="M18.5 21.5 H23" />
+      {/* F: top arm and stem as one polyline, plus the mid arm. */}
+      <path className={styles.glyph} d="M13.5 8 H9 V24 M9 15.5 H12.5" />
+      {/* I: top serif, stem and bottom serif. */}
+      <path className={styles.glyph} d="M18.5 8 H24 M21.25 8 V24 M18.5 24 H24" />
     </svg>
   )
 }
