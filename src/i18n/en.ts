@@ -65,6 +65,7 @@ export const en = {
     label: 'Terminal',
     show: 'Show terminal',
     hide: 'Hide terminal',
+    close: 'Close terminal',
     hint: 'Type a command and press Enter. Try `about`, `experience`, `projects`, `contact` or `all`.',
     placeholder: 'type a command…',
     prompt: 'visitor@portfolio ~ $',

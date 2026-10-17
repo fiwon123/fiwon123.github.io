@@ -126,9 +126,11 @@ function App() {
       {/* Behind everything: the layer is fixed at z-index -1 and aria-hidden. */}
       <ParticleBackground />
       <Header onNavigate={handleFocus} />
-      {/* One row: the content, then the dock. The dock's column animates open and
-          shut, so `data-dock` drives the layout without ever unmounting it. */}
-      <main id="content" className={styles.layout} data-dock={dockOpen ? 'open' : 'closed'}>
+      {/* The content, and the console. On a wide screen the console is a fixed
+          overlay on the right (CSS) so opening it never moves the page; on a
+          phone it stacks below the content. It is never unmounted, so its
+          scrollback survives a toggle. */}
+      <main id="content" className={styles.layout}>
         <div className={styles.page}>
           {focus === null ? (
             <>
@@ -158,7 +160,7 @@ function App() {
       </main>
       <Footer />
       <BackToTop />
-      <TerminalFab open={dockOpen} onOpen={() => setDockOpen(true)} />
+      <TerminalFab open={dockOpen} onToggle={() => setDockOpen(!dockOpen)} />
     </>
   )
 }

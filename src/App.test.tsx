@@ -85,21 +85,27 @@ describe('starting state', () => {
 describe('the dock control', () => {
   const showButton = () => screen.queryByRole('button', { name: en.terminal.show })
   const hideButton = () => screen.queryByRole('button', { name: en.terminal.hide })
+  const closeButton = () => screen.queryByRole('button', { name: en.terminal.close })
 
-  it('starts open, with the hide control inside the panel and none in the header', () => {
+  it('starts open, with the panel close control and the FAB reading as hide', () => {
     renderApp()
     expect(terminalInput()).toBeTruthy()
-    expect(showButton()).toBeNull()
+    // The panel carries its own close control; the floating toggle stays in the
+    // DOM (it is the phone's tap-to-toggle, #114) and now reads "Hide terminal".
+    expect(closeButton()).toBeTruthy()
     expect(hideButton()).toBeTruthy()
+    expect(showButton()).toBeNull()
   })
 
-  it('collapses from the control inside the panel and persists the choice', () => {
+  it('collapses from the panel close control and persists the choice', () => {
     renderApp()
-    fireEvent.click(hideButton()!)
+    fireEvent.click(closeButton()!)
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(localStorage.getItem(DOCK_KEY)).toBe('false')
-    // Collapsed: the floating FAB *is* the show control; the panel's own hide control is gone.
+    // Collapsed: the floating FAB is the show control; the panel's own control
+    // is inert, so it is gone from the accessibility tree.
     expect(showButton()).toBeTruthy()
+    expect(closeButton()).toBeNull()
     expect(hideButton()).toBeNull()
   })
 
@@ -112,13 +118,23 @@ describe('the dock control', () => {
     expect(localStorage.getItem(DOCK_KEY)).toBe('true')
   })
 
+  it('toggles the panel off from the floating FAB, not only on', () => {
+    // The FAB is a toggle, not only an opener: open, it reads "Hide terminal"
+    // and closes the panel — the phone's single tap-to-toggle (#114).
+    renderApp()
+    expect(hideButton()).toBeTruthy()
+    fireEvent.click(hideButton()!)
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(localStorage.getItem(DOCK_KEY)).toBe('false')
+  })
+
   it('moves focus to the floating FAB when the panel control collapses it', () => {
     // The clicked control becomes `inert`, which would otherwise drop focus to
     // <body> and strand a keyboard visitor.
     renderApp()
-    const hide = hideButton()!
-    hide.focus()
-    fireEvent.click(hide)
+    const close = closeButton()!
+    close.focus()
+    fireEvent.click(close)
     const active = document.activeElement as Element
     expect(active).toBe(document.getElementById('terminal-fab'))
   })
@@ -134,7 +150,7 @@ describe('the dock control', () => {
 
   it('keeps the page readable while the console is collapsed', () => {
     renderApp()
-    fireEvent.click(hideButton()!)
+    fireEvent.click(closeButton()!)
     for (const id of SECTION_IDS) {
       expect(document.getElementById(id), `#${id}`).toBeTruthy()
     }

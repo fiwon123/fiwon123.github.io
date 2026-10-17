@@ -122,11 +122,11 @@ describe('Terminal', () => {
     expect(screen.queryByRole('button')).toBeNull()
   })
 
-  it('renders a hide control when given one, and reports it', () => {
+  it('renders a close control when given one, and reports it', () => {
     const onClose = vi.fn()
     renderTerminal({ onClose })
-    const hide = screen.getByRole('button', { name: en.terminal.hide })
-    fireEvent.click(hide)
+    const close = screen.getByRole('button', { name: en.terminal.close })
+    fireEvent.click(close)
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
