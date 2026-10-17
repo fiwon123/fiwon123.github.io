@@ -283,12 +283,20 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   (#101), the rebuilt ambient particle field (#96), the lightbox FLIP zoom from
   the clicked thumbnail (#97), linked `Tech:` tags (#98), and the hero-owned
   contact row with the `contact` command aimed at it (#99).
-- **Next**: no filed work — `v1.0`–`v1.7` are released. The plan is to add new
+- **Done**: v1.8 — UX refinements — released to `main` (#126): the page flipped to
+  a single token set with no dark chrome frame (#112), the ambient field rebuilt
+  as sparse straight streaks (#113), and the terminal turned into a right-edge
+  overlay with a phone show/hide toggle (#114).
+- **Done**: v1.9 — Identity & focus — released to `main` (#126): a larger, more
+  widely spaced header nav (#118), the streaks redrawn as clean uniform lines
+  (#121), the mark replaced by an "FI" monogram shared with the tab icon (#120),
+  and the terminal retired entirely (#119).
+- **Next**: no filed work — `v1.0`–`v1.9` are released. The plan is to add new
   projects and possibly a new language track (e.g. Rust), on the released base.
 
 ## Backlog
 
-No filed work: `v1.0`–`v1.7` are all released and their milestones hold no open
+No filed work: `v1.0`–`v1.9` are all released and their milestones hold no open
 issues. Milestone tracking lives on GitHub (issue #2). The plan is to add new
 projects and possibly a new language track (e.g. Rust) — deliberately _after_ the
 polish, so the additions land on a base that already looks finished.
