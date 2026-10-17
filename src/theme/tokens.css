@@ -32,7 +32,7 @@
 
   --radius: 10px;
   --max-width: 64rem;
-  /* The page frame: the header and the content/dock row share it, so the header
+  /* The page frame: the header and the content row share it, so the header
      lines up with the page instead of the viewport edges. */
   --page-max: 88rem;
   --header-h: 3.5rem;

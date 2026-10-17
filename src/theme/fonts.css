@@ -2,7 +2,7 @@
  * Self-hosted variable fonts (SIL Open Font License 1.1).
  *
  * Space Grotesk  — display / body sans
- * JetBrains Mono — monospace (terminal, code, tech labels)
+ * JetBrains Mono — monospace (code, tech labels)
  *
  * Subset to `latin` + `latin-ext` so an English/Portuguese page pulls four
  * files (~85 KB total) and never makes a third-party request.
