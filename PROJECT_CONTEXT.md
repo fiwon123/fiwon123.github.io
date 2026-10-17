@@ -24,10 +24,9 @@ tests here instead of by intention.
 
 ## Goal
 
-A visitor can explore the content either through an interactive terminal or
-through conventional navigation, switch language (EN/PT-BR) and theme (5 presets
-× light/dark), and read everything at WCAG AA contrast — with the whole
-site served as static files.
+A visitor can explore the content through conventional navigation, switch
+language (EN/PT-BR) and theme (5 presets × light/dark), and read everything at
+WCAG AA contrast — with the whole site served as static files.
 
 ## Stack
 
@@ -44,7 +43,7 @@ site served as static files.
 ## Architecture
 
 ```text
-src/ (React + TS: content records, i18n, theme, terminal, components)
+src/ (React + TS: content records, i18n, theme, components)
   ↓
 vite build → dist/   (static HTML + CSS + JS + copied public/ assets)
   ↓
@@ -69,40 +68,19 @@ Each entry is settled; the reason is what stops it being re-opened.
 - **i18n in typed records, one module per language, `en.ts` as source of truth** —
   `pt-BR.ts` is typed `: Strings`, so a missing or misspelled key is a `tsc`
   error rather than a blank string in production.
-- **The page is one conventional page; the terminal is a dock, not a mode**
-  (`portfolio.v1.dock`) — the console sits beside the page (or below on a phone)
-  rather than replacing it. An earlier two-presentation "view mode" hid the page
-  behind the console; it meant a visitor could not see the work and the console at
-  once, and the first version of that idea had `#section` and a translated string
-  doing work a DOM element should do. The dock keeps the terminal optional without
-  making the content conditional. (2026-10-16)
-- **On a wide screen the dock is a fixed overlay, not an in-flow column** (#114) —
-  the console slides in from the right edge over the page and never reflows the
-  content (the earlier in-flow sibling stole ~27.5rem and shoved every section
-  left). On a phone it stacks below the content and its height collapses, and a
-  single floating toggle shows **and hides** it — so the show control no longer
-  disappears once the panel is open. The panel's own close control stays as the
-  accessible alternative, and CSS hides the floating toggle on a wide screen
-  while the panel is open (the panel's close is then the way out, and a floating
-  toggle would only sit on top of the panel it opened). (2026-10-17)
-- **A terminal navigation command focuses one section; `all` restores the page**
-  — the sections are rendered by the page, so a command asks the page to show one.
-  Focusing filters the hero out but keeps a visually-hidden h1 and a `#top` anchor,
-  so the heading outline, the skip link and back-to-top still resolve; the focus
-  is **not persisted**, so a reload is always the whole page, and while focused a
-  nav link to a hidden section moves the focus there rather than landing on
-  nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
-- **The contact links live in the hero, and the `contact` command targets them**
-  (#99) — the footer used to render a second `ContactRow` under `#contact-footer`;
-  it now carries only the copyright / built-with / source lines, and the command
-  scrolls to the hero row's own `#contact` anchor (not `#top`, so it lands on the
-  row). One row, one source, no dead anchor. (2026-10-16)
-- **Terminal settings commands drive the same setters as the header controls**
-  (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
-  console is a second way in, never a second source of truth, so the terminal
-  and the controls cannot disagree. A bare command, or one whose value is not
-  recognised, prints the valid values and changes nothing, so a typo answers
-  with the choices instead of failing silently. (2026-10-16)
+- **There is no terminal; the page stands on its own** (#119) — an earlier
+  version docked an interactive console beside the page (a `portfolio.v1.dock`
+  overlay, plus a command that focused one section and `theme`/`mode`/`lang`
+  commands that mirrored the header controls). It duplicated the header
+  navigation and the preference controls in a second surface, and the content is
+  the real product, so the whole feature — the console, the dock, the
+  focus-one-section command and its i18n — was removed. The header nav and
+  `#section` deep links still scroll to a section, and the preference controls are
+  the one way to change theme, mode and language. (2026-10-17)
+- **The contact links live in the hero** (#99) — the footer used to render a
+  second `ContactRow` under `#contact-footer`; it now carries only the
+  copyright / built-with / source lines, and the hero row keeps its own `#contact`
+  anchor. One row, one source, no dead anchor. (2026-10-16)
 - **The preference controls carry their meaning in an icon, not a visible label**
   — the appearance is a single button that cycles light ↔ dark and the language a
   select of flag + short code, so the bar reads without spelling out "Appearance"
@@ -131,10 +109,6 @@ Each entry is settled; the reason is what stops it being re-opened.
   `surfaces.test.ts` pins that no chrome family survives, so the split cannot come
   back silently. The overlay pair (`--color-overlay-*`) is unchanged — it is a
   separate budget. (2026-10-17)
-- **Theme and dock are separate axes with separate storage keys**
-  (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
-  console is open are independent: a visitor can want either without the other,
-  and the dock key migrates the `portfolio.v1.view` value it replaced. (2026-10-16)
 - **Motion ships with zero runtime dependencies** (hand-rolled
   `IntersectionObserver` and canvas) and every motion feature is **fail-open**
   under `prefers-reduced-motion` — an animation library would outweigh the whole
@@ -243,7 +217,6 @@ src/
   i18n/            # Language context/provider/hooks + dictionaries (en.ts, pt-BR.ts)
   lib/             # Shared utilities/hooks
   assets/icons/    # Brand marks (masked with currentColor)
-  terminal/        # Interactive terminal (parser, history, commands, UI)
   theme/           # Presets, contrast, tokens, fonts, context/provider/hooks
   test/            # Entry/build/asset tests
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)

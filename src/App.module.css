@@ -1,8 +1,5 @@
-/* The content column, and (on a phone) the console stacked below it. On a wide
-   screen the console is torn out of flow as a fixed overlay by its own module,
-   so this row only ever lays out the content — opening the dock moves nothing.
-   The column keeps the page frame; the sections cap themselves at the reading
-   measure and centre inside it. */
+/* The content column. The sections cap themselves at the reading measure and
+   centre inside it. */
 .layout {
   max-width: var(--page-max);
   margin: 0 auto;
@@ -17,18 +14,4 @@
    sections cap themselves at the reading measure inside this column. */
 .page {
   min-width: 0;
-}
-
-/* Keeps the page's one h1 in the outline when a focused section filters the hero
-   out, without drawing it again on screen. */
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }

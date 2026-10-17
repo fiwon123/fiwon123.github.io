@@ -4,14 +4,13 @@ import { Preferences } from './Preferences'
 
 import styles from './Header.module.css'
 
-// Only the filterable sections. Contact lives in the footer, so it is already
-// one scroll away and needs no nav entry.
+// The page's anchor sections. Contact lives in the hero, one scroll away, so it
+// needs no nav entry.
 const NAV_ITEMS = ['about', 'experience', 'projects'] as const
 
-import type { FocusTarget } from '../lib/commandSections'
-
 export interface HeaderProps {
-  onNavigate?: (target: FocusTarget) => void
+  /** Scroll to a section by id (or `top` for the brand). */
+  onNavigate?: (id: string) => void
 }
 
 export function Header({ onNavigate }: HeaderProps) {
@@ -26,7 +25,7 @@ export function Header({ onNavigate }: HeaderProps) {
           onClick={(e) => {
             if (onNavigate) {
               e.preventDefault()
-              onNavigate('all')
+              onNavigate('top')
             }
           }}
         >

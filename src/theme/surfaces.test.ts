@@ -41,7 +41,6 @@ describe('one token set for the page (#112)', () => {
       ['Footer.module.css', footer],
       ['Logo.module.css', logo],
       ['Preferences.module.css', read('src/components/Preferences.module.css')],
-      ['TerminalFab.module.css', read('src/components/TerminalFab.module.css')],
       ['BackToTop.module.css', read('src/components/BackToTop.module.css')],
       ['meteors.ts', read('src/lib/meteors.ts')],
     ] as const) {
@@ -79,7 +78,6 @@ describe('one token set for the page (#112)', () => {
       'src/components/Footer.module.css',
       'src/components/Logo.module.css',
       'src/components/Preferences.module.css',
-      'src/components/TerminalFab.module.css',
       'src/components/BackToTop.module.css',
     ]) {
       const css = read(relative)
