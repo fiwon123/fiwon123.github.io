@@ -217,9 +217,10 @@ describe('ParticleBackground', () => {
     expect(css).toMatch(/@media print[\s\S]*display:\s*none/)
   })
 
-  it('fades a radial hole over the reading column and keeps the edges visible (#96)', () => {
-    // Particles are born on every edge and cross the whole frame, so the cleared
-    // area is a soft disc around the text — a radial core, not two fixed gutters.
+  it('fades a radial hole over the centre and keeps the edges visible (#96)', () => {
+    // Trails are born in the side gutters and cross the whole frame, so the
+    // cleared area is a soft disc around the text — a radial core, not two fixed
+    // gutters.
     const mask = /mask-image:\s*([\s\S]*?);/.exec(css)?.[1] ?? ''
     expect(mask, 'no mask-image declaration').not.toBe('')
     expect(mask).toMatch(/radial-gradient/)

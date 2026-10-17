@@ -18,10 +18,11 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  /* Fade the field out over the centre so the reading column stays clear and the
+  /* Fade the field out over the centre so the content stays clear and the
      middle reads as empty. A radial (elliptical) core, not a banded linear
-     gradient: particles are born on every edge and cross the whole frame, so the
-     cleared area has to be a soft disc around the text, not two fixed gutters. */
+     gradient: trails are born in the side gutters and cross the whole frame, so
+     the cleared area has to be a soft disc around the text, not two fixed
+     gutters. */
   -webkit-mask-image: radial-gradient(
     ellipse 48% 54% at 50% 50%,
     transparent 0%,
