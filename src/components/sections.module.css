@@ -271,6 +271,16 @@
   font-weight: 600;
 }
 
+.collection {
+  margin: 0.75rem 0 0;
+}
+
+.collectionLink:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* Accessible-only text for a glyph with no spoken form (the star in facts). */
 .srOnly {
   position: absolute;
