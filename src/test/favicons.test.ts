@@ -71,14 +71,14 @@ describe('favicon.svg matches the page logo', () => {
 
   it('uses the same stroke widths as Logo.module.css', () => {
     const boxWidth = /\.box\s*\{[^}]*stroke-width:\s*([\d.]+)/.exec(logoCss)?.[1]
-    const caretWidth = /\.caret\s*\{[^}]*stroke-width:\s*([\d.]+)/.exec(logoCss)?.[1]
+    const glyphWidth = /\.glyph\s*\{[^}]*stroke-width:\s*([\d.]+)/.exec(logoCss)?.[1]
     expect(attrs(tags(svg, 'rect')[0])['stroke-width']).toBe(boxWidth)
     for (const tag of tags(svg, 'path')) {
-      expect(attrs(tag)['stroke-width']).toBe(caretWidth)
+      expect(attrs(tag)['stroke-width']).toBe(glyphWidth)
     }
   })
 
-  it('paints the box and the caret with the studio-dark palette', () => {
+  it('paints the box and the glyph with the studio-dark palette', () => {
     const palette = studioDark()
     const box = attrs(tags(svg, 'rect')[0])
     expect(box.fill).toBe(palette['--color-surface'])
