@@ -386,4 +386,18 @@ describe('section stylesheet', () => {
     )
     expect(css).not.toMatch(/grayscale/)
   })
+
+  it('reveals the tech tag tooltip on hover and keyboard focus, not click focus', () => {
+    // A click leaves the link focused; `:focus-within` matched that and kept the
+    // tip open after the visitor returned, so the reveal is keyed on the anchor's
+    // `:focus-visible` instead.
+    const css = readFileSync(
+      path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css'),
+      'utf8',
+    )
+    expect(css).not.toMatch(/\.tag:focus-within/)
+    const reveal = /\.tag:hover \.tip,[\s\S]*?\{([^}]*)\}/.exec(css)
+    expect(reveal, 'no tag tooltip reveal rule found').not.toBeNull()
+    expect(reveal?.[0]).toMatch(/:has\(\.tagLink:focus-visible\)/)
+  })
 })
