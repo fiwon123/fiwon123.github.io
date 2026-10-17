@@ -58,6 +58,36 @@ build-time snapshot, and fonts and images are served from this origin.
 
 Each entry is settled; the reason is what stops it being re-opened.
 
+- **A theme switch cross-fades the page; the tokens still change instantly**
+  (#157) — `index.css` gates a wildcard colour transition on an `html.theme-fade`
+  class that `ThemeProvider` adds for exactly `THEME_FADE_MS` (300 ms, pinned to
+  the CSS by a test) when a preset or reading value actually changes, and never
+  under `prefers-reduced-motion`. Tokens themselves are **not** animated via
+  `@property`: `setFavicon()` and the particle canvas read `--color-accent`
+  through `getComputedStyle`, and an interpolated custom property would leave
+  both one theme behind — the tab icon and the canvas colour snap while the page
+  fades, which is accepted as the cost of never desyncing the token readers.
+  (2026-10-17)
+- **The mode glyph is a literal, not `--color-fg`** (#158) — the Appearance
+  button's circle is `#ffffff` in the dark reading and `#000000` in the light
+  reading, in every preset, because a glyph is a UI mark and should read as the
+  same icon on every palette rather than tinting with the page foreground. The
+  two literals live only in `tokens.css` (`--color-mode-icon`, declared per
+  `[data-mode]`, not per `[data-theme]`, so the 10-palette count in
+  `tokens.test.ts` is untouched) and the component sheet consumes the token —
+  `surfaces.test.ts` forbids literal hex in component CSS. A per-palette
+  contrast test gates the glyph against every `--color-surface` at ≥ 3:1.
+  (2026-10-17)
+- **The game-jams collection is one linked pill under the gallery, not per tile**
+  (#160) — `Project.collection` carries a bilingual label and an external URL,
+  rendered as a single anchor after the gallery images. A per-tile link would
+  have stolen the click target from the lightbox (tiles open the viewer by
+  design), and the collection is a property of the whole gallery, not of any one
+  image. It reuses the tech-tag pill styling (border, no tint, so no new
+  non-text contrast budget) with a new `:focus-visible` ring, because a lone
+  anchor carrying `.tag` has no descendant for the existing
+  `.tag:has(...)` rule.
+  (2026-10-17)
 - **CSS Modules + design tokens, not a utility framework** — the tokens are the
   single source of truth for colour, and the contrast tests parse
   `src/theme/tokens.css` directly to prove every preset meets AA. A utility
@@ -309,31 +339,31 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   widely spaced header nav (#118), the streaks redrawn as clean uniform lines
   (#121), the mark replaced by an "FI" monogram shared with the tab icon (#120),
   and the terminal retired entirely (#119).
-- **Done**: v1.10 — Hero, mark & polish — released to `main` (#147): the header
-  brand anchor kept off the nav gap (#129), company logos always in colour
-  (#130), the mark redrawn as a node and its orbit (#131), the centred hero
-  column whose greeting types itself out (#132), and the Astrea entry in the
-  Little Leo gallery (#133).
-- **Done**: v1.11 — Icon, sequence & repositories — released to `main` (#147):
-  the tab icon following the site theme (#139), the hero reveal sequenced
-  greeting → contacts → headline → stack (#140), the tech-tag tooltip that no
-  longer sticks on click focus (#141), and Projects rebuilt from the six pinned
-  repos with snapshot descriptions, the Rust track included (#142).
-- **In progress**: v1.12 — Feedback fixes — on `dev`: the Games gallery,
-  greeting-scoped typing and theme-following favicon restore (#148), and the
-  green `make check` restored after it (#150).
-- **Next**: release `dev` to `main` (the v1.11 deploy failed on the gate that
-  #150 fixed, so production still serves v1.8/v1.9), then the human-only
-  captures — `make screenshots` and `make favicons` — and, after that, the new
-  projects and language track below.
+- **Done**: v1.10 — Hero, mark & polish — released to `main` (#147, deployed
+  with #154): the header brand anchor kept off the nav gap (#129), company logos
+  always in colour (#130), the mark redrawn as a node and its orbit (#131), the
+  centred hero column whose greeting types itself out (#132), and the Astrea
+  entry in the Little Leo gallery (#133).
+- **Done**: v1.11 — Icon, sequence & repositories — released to `main` (#147,
+  deployed with #154): the tab icon following the site theme (#139), the hero
+  reveal sequenced greeting → contacts → headline → stack (#140), the tech-tag
+  tooltip that no longer sticks on click focus (#141), and Projects rebuilt from
+  the six pinned repos with snapshot descriptions, the Rust track included
+  (#142). The #147 deploy failed on the gate #150 later fixed, so #154 was the
+  first successful publish.
+- **Done**: v1.12 — Feedback fixes — released to `main` (#154): the Games
+  gallery, greeting-scoped typing and theme-following favicon restore (#148),
+  and the green `make check` restored after it (#150).
+- **Next**: the human-only captures — `make screenshots` and `make favicons` —
+  and a both-theme visual pass over the v1.10–v1.12 surface (neither runs in the
+  agent environment), then the new projects and language track below.
 
 ## Backlog
 
-`v1.10` and `v1.11` are released (milestones #11 and #12 closed); `v1.12` is the
-active milestone and holds the open work. Milestone tracking lives on GitHub
-(issue #2). The plan is to add new projects and continue the Rust track —
-deliberately _after_ the polish, so the additions land on a base that already
-looks finished.
+`v1.10`–`v1.12` are released (milestones #11–#13 closed) and production serves
+v1.12. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+add new projects and continue the Rust track — deliberately _after_ the polish,
+so the additions land on a base that already looks finished.
 
 ## Notes
 

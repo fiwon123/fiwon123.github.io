@@ -442,3 +442,57 @@ describe('section stylesheet', () => {
     expect(reveal?.[0]).toMatch(/:has\(\.tagLink:focus-visible\)/)
   })
 })
+
+describe('project collection pill', () => {
+  it('shows the gallery collection pill under the Games gallery', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const gamesCard = [...container.querySelectorAll('article')].find((card) =>
+      card.textContent?.includes('Games'),
+    )
+    expect(gamesCard, 'Games card not found').toBeTruthy()
+    const pill = gamesCard?.querySelector(
+      'a[href="https://itch.io/c/1112919/my-game-jams"]',
+    ) as HTMLAnchorElement | null
+    expect(pill, 'collection pill not found').toBeTruthy()
+    expect(pill?.getAttribute('target')).toBe('_blank')
+    expect(pill?.getAttribute('rel') || '').toContain('noopener')
+    expect(pill?.getAttribute('rel') || '').toContain('noreferrer')
+    expect(pill?.textContent || '').toMatch(/My game jams/)
+    // The pill sits after the gallery (which is a div in the same card).
+    const gallery = gamesCard?.querySelector('[class*="gallery"]')
+    const pillInCard = pill?.closest('p')
+    if (gallery && pillInCard) {
+      expect(
+        gallery.compareDocumentPosition(pillInCard) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    }
+  })
+
+  it('localises the pill label', () => {
+    withoutObserver()
+    allowMotion()
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt-BR')
+    const { container } = renderSection(<Projects />)
+    const gamesCard = [...container.querySelectorAll('article')].find((card) =>
+      card.textContent?.includes('Games'),
+    )
+    const pill = gamesCard?.querySelector(
+      'a[href="https://itch.io/c/1112919/my-game-jams"]',
+    ) as HTMLAnchorElement | null
+    expect(pill?.textContent || '').toMatch(/Meus game jams/)
+  })
+
+  it('does not show the collection pill on non-games projects', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const nonGames = [...container.querySelectorAll('article')].filter(
+      (card) => !card.textContent?.includes('Games'),
+    )
+    for (const card of nonGames) {
+      expect(card.querySelector('a[href="https://itch.io/c/1112919/my-game-jams"]')).toBeNull()
+    }
+  })
+})

@@ -1,4 +1,8 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
@@ -7,6 +11,10 @@ import { LanguageProvider } from '../i18n/LanguageProvider'
 import { MODE_STORAGE_KEY, PRESETS } from '../theme/presets'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Preferences } from './Preferences'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const cssPath = path.resolve(__dirname, './Preferences.module.css')
 
 function renderPreferences() {
   return render(
@@ -80,5 +88,10 @@ describe('Preferences', () => {
     for (const control of controls) {
       expect(control.getAttribute('aria-label') ?? control.textContent).toBeTruthy()
     }
+  })
+
+  it('uses the mode icon token in the mode icon styles', () => {
+    const css = readFileSync(cssPath, 'utf8')
+    expect(css).toMatch(/\.icon\s*\{[\s\S]*?color:\s*var\(--color-mode-icon\)/)
   })
 })

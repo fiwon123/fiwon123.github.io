@@ -194,6 +194,42 @@ function throughParticle(under: Rgb, particle: Rgb, alpha: number): Rgb {
   return { r: mix(particle.r, under.r), g: mix(particle.g, under.g), b: mix(particle.b, under.b) }
 }
 
+function parseModeBlocks(source: string): Record<string, string> {
+  const withoutComments = source.replace(/\/\*[\s\S]*?\*\//g, '')
+  const values: Record<string, string> = {}
+  const modePattern = /:root\[data-mode='([a-z]+)'\]\s*\{([\s\S]*?)\}/g
+  let m: RegExpExecArray | null
+  while ((m = modePattern.exec(withoutComments)) !== null) {
+    const [, mode, body] = m
+    for (const declaration of body.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+)/g)) {
+      values[`${mode}:${declaration[1]}`] = declaration[2].trim()
+    }
+  }
+  return values
+}
+
+describe('mode glyph', () => {
+  it('defines pure white in dark and pure black in light', () => {
+    const modes = parseModeBlocks(css)
+    expect(modes['dark:--color-mode-icon']).toBe('#ffffff')
+    expect(modes['light:--color-mode-icon']).toBe('#000000')
+  })
+
+  it.each(palettes)(
+    '$preset/$mode keeps the mode glyph readable against the control surface',
+    ({ preset, mode, colors }) => {
+      const modes = parseModeBlocks(css)
+      const glyph = parseHex(modes[`${mode}:--color-mode-icon`])
+      const surface = parseHex(colors['--color-surface'])
+      const ratio = contrastRatio(glyph, surface)
+      expect(
+        ratio,
+        `${preset}/${mode}: mode glyph vs surface = ${ratio.toFixed(2)}:1`,
+      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
+    },
+  )
+})
+
 describe('particle background over the page', () => {
   it('draws below the measured contrast budget', () => {
     expect(PARTICLE_ALPHA).toBeGreaterThan(0)
