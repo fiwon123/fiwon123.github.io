@@ -168,15 +168,18 @@ Each entry is settled; the reason is what stops it being re-opened.
   letters rather than a mark; the two paths keep the shape the favicon test
   derives from `Logo.tsx`. (2026-10-17)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
-  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and carries the two
-  studio palettes as a dark base plus a `prefers-color-scheme: light` override, so
-  the tab icon follows the OS reading (a favicon cannot read `data-theme`/
-  `data-mode`; a test derives both palettes from source and fails on drift), and
-  `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
-  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs — the rasters keep the dark base,
-  since one file per size cannot adapt. A hand-maintained second copy of the icon
-  is the way the tab and the page drift apart, and a capture harness that writes a
-  blank or opaque-cornered file is worse than no harness. (2026-10-17)
+  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry. A small effect in
+  the theme provider reads the live `--color-surface` / `--color-border` /
+  `--color-accent` and rewrites the `<link rel="icon">` to a data-URI SVG, so the
+  tab icon follows the site theme (all 5 presets × light/dark) on the client.
+  With JavaScript disabled, the static SVG serves as a fail-open fallback and
+  follows the OS `prefers-color-scheme`. The favicons test derives palette
+  expectations from source and fails on drift. `make favicons` rasterises the mark
+  in a real headless Chrome into `favicon.ico` (PNG-in-ICO) plus the
+  16/32/180/192/512 PNGs — the rasters keep the dark base, since one file per
+  size cannot adapt. A hand-maintained second copy of the icon is the way the tab
+  and the page drift apart, and a capture harness that writes a blank or
+  opaque-cornered file is worse than no harness. (2026-10-17)
 - **A game owns its image; the experience gallery is derived from the games** —
   `GameLink.image` is the single place the title→image link lives, and the card
   builds its tiles as `{ src: game.image, game }`, so an image path is never
@@ -207,17 +210,15 @@ Each entry is settled; the reason is what stops it being re-opened.
   (2026-10-16)
 - **The hero is a centred column and its greeting types itself out** (#132) —
   greeting, portrait, contact row, headline and stack, top to bottom and centred,
-  replacing the old thumbnail-beside-text flex row. The greeting (and the first
-  About paragraph) reveals one character at a time through `useTypewriter`, a
-  hand-rolled interval — no typing library. The reveal is **ordered** (#140): the
-  greeting, then the contact row (kept in the layout and faded in, so the hero
-  does not jump), then the headline, then the stack — each line starts only once
-  the one before it is whole, driven by the previous line's `done` rather than by
-  a chain of timers. The effect is decoration over content, never a gate in front
-  of it: the whole string is in the document from the first frame for assistive
-  tech (a `srOnly` copy while the visible span types), reduced motion shows it at
-  once with no timer, and switching language retypes the new strings. The caret
-  blinks only under `prefers-reduced-motion: no-preference`. (2026-10-17)
+  replacing the old thumbnail-beside-text flex row. Only the greeting reveals one
+  character at a time through `useTypewriter` (a hand-rolled interval — no typing
+  library). The rest of the hero (contacts, headline, stack) renders as plain
+  text and fades in with the section reveal, the same as the rest of the page.
+  The effect is decoration over content, never a gate: the whole greeting is in
+  the document from the first frame for assistive tech (a `srOnly` copy while the
+  visible span types), reduced motion shows it at once with no timer, and
+  switching language retypes the new string. The caret blinks only under
+  `prefers-reduced-motion: no-preference`. (2026-10-17)
 
 ## Topology
 

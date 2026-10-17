@@ -42,6 +42,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement
     root.dataset.theme = preset
     root.dataset.mode = mode
+    try {
+      import('./favicon').then(({ setFavicon }) => setFavicon(root)).catch(() => {})
+    } catch {}
   }, [preset, mode])
 
   useEffect(() => {

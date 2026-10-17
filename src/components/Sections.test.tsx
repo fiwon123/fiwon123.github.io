@@ -157,19 +157,13 @@ describe('typed text (#132)', () => {
     expect(h1?.querySelector('[aria-hidden="true"]')).not.toBeNull()
   })
 
-  it('types only the first About paragraph, and shows it whole while typing', () => {
+  it('does not type About paragraphs — they render as plain text with no decorative layer', () => {
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<About />)
     const paragraphs = [...container.querySelectorAll('p')]
-
-    // The first paragraph is typed — its visible layer is decorative and mid-run
-    // — but its real (hidden) copy already reads the full paragraph.
-    expect(paragraphs[0].textContent).toBe(about.en[0])
-    expect(paragraphs[0].querySelector('[aria-hidden="true"]')).not.toBeNull()
-
-    // Every other paragraph is plain text, with no decorative layer at all.
-    for (const paragraph of paragraphs.slice(1)) {
+    expect(paragraphs.length).toBe(about.en.length)
+    for (const paragraph of paragraphs) {
       expect(paragraph.textContent).toBe(about.en[paragraphs.indexOf(paragraph)])
       expect(paragraph.querySelector('[aria-hidden="true"]')).toBeNull()
     }
@@ -187,41 +181,25 @@ describe('hero reveal order (#140)', () => {
   const settled = (root: Element | null): boolean =>
     root !== null && root.querySelector('[aria-hidden="true"]') === null
 
-  it('types greeting, then shows contacts, then types the headline, then the stack', () => {
+  it('types greeting only; headline and stack are plain text from the start', () => {
     vi.useFakeTimers()
     withoutObserver()
     allowMotion()
     const { container } = renderSection(<Hero />)
     const h1 = container.querySelector('h1')
-    const contacts = container.querySelector('#contact')
     const headline = container.querySelector('h2')
     const stack = container.querySelector('p')
 
-    // Frame one: only the greeting has begun; contacts held back, later lines empty.
     expect(visiblePrefix(h1)).toBe('')
-    expect(contacts?.classList.contains(styles.heroContactsShown)).toBe(false)
-    expect(visiblePrefix(headline)).toBe('')
-    expect(visiblePrefix(stack)).toBe('')
+    expect(headline?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(stack?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(headline?.textContent).toBe(en.hero.headline)
+    expect(stack?.textContent).toBe(en.hero.stack)
 
-    // The greeting finishes: contacts appear and the headline starts from nothing.
     act(() => void vi.advanceTimersByTime(en.hero.greeting.length * HERO_TYPE_SPEED_MS))
     expect(settled(h1)).toBe(true)
-    expect(contacts?.classList.contains(styles.heroContactsShown)).toBe(true)
-    expect(visiblePrefix(headline)).toBe('')
-    expect(settled(stack)).toBe(false)
-
-    // The headline is underway while the stack is still untouched.
-    act(() => void vi.advanceTimersByTime(HERO_TYPE_SPEED_MS * 2))
-    expect(visiblePrefix(headline)).toBe(en.hero.headline.slice(0, 2))
-    expect(visiblePrefix(stack)).toBe('')
-
-    // Once the headline is whole, the stack types; then all three are settled.
-    act(() => void vi.advanceTimersByTime(en.hero.headline.length * HERO_TYPE_SPEED_MS))
-    expect(settled(headline)).toBe(true)
-    expect(settled(stack)).toBe(false)
-
-    act(() => void vi.advanceTimersByTime(en.hero.stack.length * HERO_TYPE_SPEED_MS))
-    expect(settled(stack)).toBe(true)
+    expect(headline?.textContent).toBe(en.hero.headline)
+    expect(stack?.textContent).toBe(en.hero.stack)
   })
 
   it('shows the whole hero at once under reduced motion, with no timer', () => {
@@ -231,11 +209,8 @@ describe('hero reveal order (#140)', () => {
     const { container } = renderSection(<Hero />)
 
     expect(settled(container.querySelector('h1'))).toBe(true)
-    expect(settled(container.querySelector('h2'))).toBe(true)
-    expect(settled(container.querySelector('p'))).toBe(true)
-    expect(container.querySelector('#contact')?.classList.contains(styles.heroContactsShown)).toBe(
-      true,
-    )
+    expect(container.querySelector('h2')?.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(container.querySelector('p')?.querySelector('[aria-hidden="true"]')).toBeNull()
     expect(vi.getTimerCount()).toBe(0)
   })
 })
