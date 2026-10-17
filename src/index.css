@@ -28,6 +28,24 @@ html.js .reveal-visible {
   }
 }
 
+/* A preset/reading change cross-fades instead of snapping. The class lives on
+   <html> only for the duration (ThemeProvider adds and removes it), so every
+   hover transition is untouched the rest of the time. Reduced motion: never. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-fade,
+  html.theme-fade *,
+  html.theme-fade *::before,
+  html.theme-fade *::after {
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease,
+      color 300ms ease,
+      fill 300ms ease,
+      stroke 300ms ease,
+      outline-color 300ms ease;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

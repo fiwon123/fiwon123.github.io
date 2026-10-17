@@ -58,6 +58,26 @@ build-time snapshot, and fonts and images are served from this origin.
 
 Each entry is settled; the reason is what stops it being re-opened.
 
+- **A theme switch cross-fades the page; the tokens still change instantly**
+  (#157) — `index.css` gates a wildcard colour transition on an `html.theme-fade`
+  class that `ThemeProvider` adds for exactly `THEME_FADE_MS` (300 ms, pinned to
+  the CSS by a test) when a preset or reading value actually changes, and never
+  under `prefers-reduced-motion`. Tokens themselves are **not** animated via
+  `@property`: `setFavicon()` and the particle canvas read `--color-accent`
+  through `getComputedStyle`, and an interpolated custom property would leave
+  both one theme behind — the tab icon and the canvas colour snap while the page
+  fades, which is accepted as the cost of never desyncing the token readers.
+  (2026-10-17)
+- **The mode glyph is a literal, not `--color-fg`** (#158) — the Appearance
+  button's circle is `#ffffff` in the dark reading and `#000000` in the light
+  reading, in every preset, because a glyph is a UI mark and should read as the
+  same icon on every palette rather than tinting with the page foreground. The
+  two literals live only in `tokens.css` (`--color-mode-icon`, declared per
+  `[data-mode]`, not per `[data-theme]`, so the 10-palette count in
+  `tokens.test.ts` is untouched) and the component sheet consumes the token —
+  `surfaces.test.ts` forbids literal hex in component CSS. A per-palette
+  contrast test gates the glyph against every `--color-surface` at ≥ 3:1.
+  (2026-10-17)
 - **CSS Modules + design tokens, not a utility framework** — the tokens are the
   single source of truth for colour, and the contrast tests parse
   `src/theme/tokens.css` directly to prove every preset meets AA. A utility

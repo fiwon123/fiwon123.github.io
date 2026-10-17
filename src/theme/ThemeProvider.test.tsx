@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useTheme } from './hooks'
-import { MODE_STORAGE_KEY, PRESET_STORAGE_KEY } from './presets'
+import { MODE_STORAGE_KEY, PRESET_STORAGE_KEY, THEME_FADE_CLASS, THEME_FADE_MS } from './presets'
 import { ThemeProvider } from './ThemeProvider'
 
 function Probe() {
@@ -82,5 +82,31 @@ describe('ThemeProvider', () => {
 
     expect(screen.getByTestId('mode').textContent).toBe('dark')
     expect(document.documentElement.dataset.mode).toBe('dark')
+  })
+
+  it('does not add the fade class on mount when the stamp already matches', () => {
+    document.documentElement.dataset.theme = 'studio'
+    document.documentElement.dataset.mode = 'dark'
+    renderProbe()
+    expect(document.documentElement.classList.contains(THEME_FADE_CLASS)).toBe(false)
+  })
+
+  it('adds the fade class when preset or mode changes and removes it after the fade', () => {
+    vi.useFakeTimers()
+    renderProbe()
+    fireEvent.click(screen.getByRole('button', { name: 'violet-light' }))
+    expect(document.documentElement.classList.contains(THEME_FADE_CLASS)).toBe(true)
+    vi.advanceTimersByTime(THEME_FADE_MS)
+    expect(document.documentElement.classList.contains(THEME_FADE_CLASS)).toBe(false)
+  })
+
+  it('does not add the fade class under prefers-reduced-motion', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query.includes('reduce'),
+      media: query,
+    }))
+    renderProbe()
+    fireEvent.click(screen.getByRole('button', { name: 'violet-light' }))
+    expect(document.documentElement.classList.contains(THEME_FADE_CLASS)).toBe(false)
   })
 })
