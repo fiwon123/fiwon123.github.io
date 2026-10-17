@@ -15,6 +15,9 @@ export const DEFAULT_MODE: Mode = 'dark'
 export const PRESET_STORAGE_KEY = 'portfolio.v1.theme'
 export const MODE_STORAGE_KEY = 'portfolio.v1.mode'
 
+export const THEME_FADE_CLASS = 'theme-fade'
+export const THEME_FADE_MS = 300
+
 export function isPreset(value: string | null): value is Preset {
   return value !== null && (PRESETS as readonly string[]).includes(value)
 }

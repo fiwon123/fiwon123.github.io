@@ -262,7 +262,21 @@ export function Projects() {
             <RepoFacts repo={project.repo} />
             <p>{project.description[locale]}</p>
             {project.gallery && project.gallery.length > 0 && (
-              <Gallery items={project.gallery.map((src) => ({ src }))} title={project.name} />
+              <>
+                <Gallery items={project.gallery.map((src) => ({ src }))} title={project.name} />
+                {project.collection && (
+                  <p className={styles.collection}>
+                    <a
+                      className={`${styles.tag} ${styles.tagLink} ${styles.collectionLink}`}
+                      href={project.collection.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {project.collection.label[locale]} <span aria-hidden="true">↗</span>
+                    </a>
+                  </p>
+                )}
+              </>
             )}
             {project.tech.length > 0 && <TechTags label={t.labels.tech} tech={project.tech} />}
           </RevealArticle>

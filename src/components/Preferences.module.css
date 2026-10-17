@@ -45,7 +45,7 @@
   width: 1.15rem;
   height: 1.15rem;
   flex: 0 0 auto;
-  color: var(--color-fg);
+  color: var(--color-mode-icon);
 }
 
 .punch {

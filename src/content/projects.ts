@@ -90,5 +90,12 @@ export const projects: Project[] = [
     source: 'itch-io',
     url: 'https://fiwon123.itch.io/',
     gallery: Array.from({ length: 12 }, (_, i) => `/gallery/${i + 1}.png`),
+    collection: {
+      url: 'https://itch.io/c/1112919/my-game-jams',
+      label: {
+        en: 'My game jams',
+        'pt-BR': 'Meus game jams',
+      },
+    },
   },
 ]

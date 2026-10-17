@@ -62,6 +62,12 @@ export interface GalleryItem {
   game?: GameLink
 }
 
+/** A collection a gallery card belongs to — shown as a single linked pill under its gallery. */
+export interface GalleryCollection {
+  url: string
+  label: Localized<string>
+}
+
 export interface Project {
   id: string
   name: string
@@ -78,6 +84,8 @@ export interface Project {
   repo?: string
   /** Image paths under `public/`, shown as a gallery. */
   gallery?: string[]
+  /** One collection pill to show under the gallery when this project has gallery images. */
+  collection?: GalleryCollection
 }
 
 /**
