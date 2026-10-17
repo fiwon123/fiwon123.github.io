@@ -15,8 +15,7 @@ import { prefersReducedMotion, type RevealEnvironment } from './reveal'
 /** Milliseconds between characters for the hero greeting. */
 export const HERO_TYPE_SPEED_MS = 40
 
-/** Milliseconds between characters for the longer About paragraph. */
-export const ABOUT_TYPE_SPEED_MS = 10
+
 
 function defaultEnvironment(): RevealEnvironment | undefined {
   return typeof window === 'undefined' ? undefined : (window as RevealEnvironment)

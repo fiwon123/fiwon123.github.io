@@ -4,7 +4,7 @@ import { about, contact, experience, projects, TECHNOLOGIES } from '../content'
 import type { ExperienceEntry, GalleryItem, TechName } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
-import { ABOUT_TYPE_SPEED_MS, HERO_TYPE_SPEED_MS } from '../lib/typewriter'
+import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { useReveal } from '../lib/useReveal'
 import { useTypewriter } from '../lib/useTypewriter'
 import { BrandIcon, type BrandIconName } from './BrandIcon'
@@ -153,19 +153,8 @@ function experienceGallery(entry: ExperienceEntry): GalleryItem[] {
 export function Hero() {
   const t = useT()
   const [ref, revealed] = useReveal<HTMLElement>()
-  // Assembled as one gesture: the greeting, then the contact row, then the
-  // headline, then the stack. Each line starts only once the previous one is
-  // whole, so the reveal has an order instead of three racing timers.
+  // Only the greeting types. The rest reveal with the section.
   const greeting = useTypewriter(t.hero.greeting, { start: revealed, speedMs: HERO_TYPE_SPEED_MS })
-  const headline = useTypewriter(t.hero.headline, {
-    start: revealed && greeting.done,
-    speedMs: HERO_TYPE_SPEED_MS,
-  })
-  const stack = useTypewriter(t.hero.stack, {
-    start: revealed && headline.done,
-    speedMs: HERO_TYPE_SPEED_MS,
-  })
-  const contactsShown = revealed && greeting.done
 
   return (
     <section ref={ref} id="top" tabIndex={-1} className={revealClass(styles.section, revealed)}>
@@ -181,22 +170,12 @@ export function Hero() {
           height={160}
           decoding="async"
         />
-        {/* The contact row's own anchor, so a `#contact` deep link lands on the
-            row rather than the top of the hero (`#top`). Kept in the layout and
-            faded in once the greeting is whole, so the hero does not jump. */}
-        <div
-          id="contact"
-          className={contactsShown ? styles.heroContactsShown : styles.heroContacts}
-        >
+        <div id="contact">
           <ContactRow />
         </div>
         <div className={styles.heroRest}>
-          <h2 className={styles.heroSubtitle}>
-            <TypedText text={t.hero.headline} typed={headline.typed} done={headline.done} />
-          </h2>
-          <p className={styles.heroStack}>
-            <TypedText text={t.hero.stack} typed={stack.typed} done={stack.done} />
-          </p>
+          <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
+          <p className={styles.heroStack}>{t.hero.stack}</p>
         </div>
       </div>
     </section>
@@ -208,18 +187,11 @@ export function About() {
   const t = useT()
   const [ref, revealed] = useReveal<HTMLElement>()
   const paragraphs = about[locale]
-  const first = useTypewriter(paragraphs[0], { start: revealed, speedMs: ABOUT_TYPE_SPEED_MS })
   return (
     <section ref={ref} id="about" className={revealClass(styles.section, revealed)}>
       <h2>{t.nav.about}</h2>
       {paragraphs.map((paragraph, index) => (
-        <p key={index}>
-          {index === 0 ? (
-            <TypedText text={paragraph} typed={first.typed} done={first.done} />
-          ) : (
-            paragraph
-          )}
-        </p>
+        <p key={index}>{paragraph}</p>
       ))}
     </section>
   )

@@ -14,10 +14,12 @@ import { fileURLToPath } from 'node:url'
 
 /** Public repositories worth showing facts for, as `owner/name`. */
 const REPOS = [
-  'fiwon123/eznit',
-  'fiwon123/cthrone',
-  'fiwon123/crower',
-  'fiwon123/fiwon123.github.io',
+  'fiwon123/ai-document-platform',
+  'fiwon123/ai-code-evaluation-platform',
+  'fiwon123/distributed-key-value-store',
+  'fiwon123/distributed-task-queue',
+  'fiwon123/live-chat-server',
+  'fiwon123/realtime-leaderboard',
 ]
 
 const OUTPUT = fileURLToPath(new URL('../src/content/repoStats.json', import.meta.url))
@@ -49,6 +51,7 @@ function fetchRepo(fullName) {
     language: data.language ?? null,
     stars: data.stargazers_count ?? 0,
     pushedAt: data.pushed_at ?? null,
+    description: typeof data.description === 'string' ? data.description.trim() || null : null,
   }
 }
 

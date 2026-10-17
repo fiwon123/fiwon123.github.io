@@ -34,26 +34,7 @@
   gap: 0.35rem;
 }
 
-/* The contact row keeps its space from the first frame and fades in once the
-   greeting is whole, so revealing it does not shift the hero. Hidden means
-   `visibility: hidden` too, so its links are not focusable before they appear. */
-.heroContacts {
-  opacity: 0;
-  visibility: hidden;
-}
 
-.heroContactsShown {
-  opacity: 1;
-  visibility: visible;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .heroContacts {
-    transition:
-      opacity 0.35s ease-out,
-      visibility 0.35s;
-  }
-}
 
 .heroSubtitle {
   margin: 0;

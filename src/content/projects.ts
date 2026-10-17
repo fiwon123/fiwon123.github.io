@@ -89,5 +89,6 @@ export const projects: Project[] = [
     tech: ['Unity', 'Game Maker', 'Pico-8'],
     source: 'itch-io',
     url: 'https://fiwon123.itch.io/',
+    gallery: Array.from({ length: 12 }, (_, i) => `/gallery/${i + 1}.png`),
   },
 ]
