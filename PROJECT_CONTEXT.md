@@ -141,15 +141,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   effect it provides, and a motion feature that can leave content unrevealed
   under reduced motion is a bug, not a decoration.
 - **The ambient field is sparse straight streaks with a radial centre fade**
-  (#113) — 6–14 trails (area-scaled, hard-capped) are born in the left/right
+  (#113, #121) — 6–14 trails (area-scaled, hard-capped) are born in the left/right
   gutters, within the top third, and travel inward-and-downward at constant
   velocity: the path is a `lineTo`, never a `quadraticCurveTo`. This replaced the
   #96 rebuild (24–80 curved particles), which read as too busy. Lifecycle alpha
   (`alphaAt`) ramps in at birth and to zero at death, peaking at **exactly 1**, so
-  `PARTICLE_ALPHA` is the true drawn maximum the contrast gate caps, and the trail
-  carries a transparent→accent gradient from tail to head. The centre is cleared
-  by an **elliptical radial mask** (transparent centre → opaque edges), and
-  `paint()` clears the whole frame each time. (2026-10-17)
+  `PARTICLE_ALPHA` is the true drawn maximum the contrast gate caps. Each streak
+  is a **uniform straight stroke** — a single accent-coloured line of constant
+  width, with no round head and no gradient bulge, so it reads as a line rather
+  than a tadpole (#121 dropped #113's gradient tail-to-head and its head dot). The
+  centre is cleared by an **elliptical radial mask** (transparent centre → opaque
+  edges), and `paint()` clears the whole frame each time. (2026-10-17)
 - **Overlay chrome is mode-independent** (`--color-overlay-*`, fixed white on an
   82% black scrim) — page tokens cannot meet WCAG 1.4.11 once composited over a
   scrim (measured: caption 1.85:1 in light presets, control boundary 1.21:1 in
