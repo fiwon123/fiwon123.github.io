@@ -4,56 +4,54 @@ export const FALLBACK_COLOR = 'rgb(128 128 128)'
 /** A canvas backing store at DPR 4 is fill cost, not crispness. */
 export const MAX_DPR = 2
 
-/** Strongest a particle may draw: the accent at this alpha (tokens.test.ts caps it). */
+/** Strongest a trail may draw: the accent at this alpha (tokens.test.ts caps it). */
 export const PARTICLE_ALPHA = 0.2
 
 /** Hard cap: a large screen must not cost more than a small one. */
-export const METEOR_MAX = 80
+export const METEOR_MAX = 14
 
-/** Floor, so a small window still shows a field rather than a handful. */
-export const METEOR_MIN = 24
+/** Floor, so a small window still shows a few trails rather than none. */
+export const METEOR_MIN = 6
 
-/** One particle per this many CSS pixels of area, before the cap. */
-export const METEOR_AREA = 12000
+/** One trail per this many CSS pixels of area, before the cap. */
+export const METEOR_AREA = 20000
 
 /** Fraction of a life spent fading in at birth, and fading out to zero at death. */
 export const FADE_IN = 0.15
 export const FADE_OUT = 0.4
 
-/** How far outside the viewport a particle is born (px). */
-export const SPAWN_MARGIN = 48
+/** How far outside the viewport a trail is born (px), before the gutter offset. */
+export const SPAWN_MARGIN = 40
 
-/** How far past the viewport a traveller may drift before it is recycled (px). */
-export const DESPAWN_MARGIN = 160
+/** How far past the viewport a trail may drift before it is recycled (px). */
+export const DESPAWN_MARGIN = 200
+
+/** The gutter band a trail's outside offset is drawn from, clamped (px). */
+export const GUTTER_MIN = 80
+export const GUTTER_MAX = 320
+export const GUTTER_RATIO = 0.22
+
+/** Fraction of the height a trail is born within, so trails lean in from the top. */
+export const SPAWN_BAND = 0.3
+
+/** Angle range (rad) off the horizontal, so a sideways trail still drifts inward. */
+export const TILT_MIN = 0.3
+export const TILT_MAX = 0.5
 
 /** Speed range (px/s). */
-export const SPEED_MIN = 30
-export const SPEED_MAX = 130
+export const SPEED_MIN = 120
+export const SPEED_MAX = 280
 
-/** Head radius range (px). */
-export const HEAD_SIZE_MIN = 1.5
-export const HEAD_SIZE_MAX = 4.5
+/** Stroke width range (px). */
+export const LINE_WIDTH_MIN = 2
+export const LINE_WIDTH_MAX = 4
 
 /** Trail length as a fraction of the distance covered in a second. */
-export const TRAIL_MIN = 0.3
-export const TRAIL_MAX = 0.9
+export const TRAIL_LEN = 0.22
 
-/** Heading drift (rad/s): the gentle curve, signed per particle. */
-export const TURN_MIN = 0.1
-export const TURN_MAX = 0.5
-
-/** Lifetime range (s): long enough to cross the viewport and fade out naturally. */
-export const LIFE_MIN = 4
-export const LIFE_MAX = 9
-
-/** Spread around the inward heading a particle takes off the edge (rad). */
-export const SPREAD = 0.7
-
-/** Edges a particle can be born from: left, top, right, bottom. */
-export const EDGES = ['left', 'top', 'right', 'bottom'] as const
-export type Edge = (typeof EDGES)[number]
-
-const TAU = Math.PI * 2
+/** Lifetime range (s): long enough to cross the gutter and fade out on its own. */
+export const LIFE_MIN = 1.2
+export const LIFE_MAX = 2.6
 
 /** The device pixel ratio, capped at `MAX_DPR` (never 0/NaN, at least 1). */
 export function dprFor(d: number | undefined): number {
@@ -62,21 +60,20 @@ export function dprFor(d: number | undefined): number {
 }
 
 /**
- * Read the **chrome** accent, falling back when the token is absent or blank.
- * The particles live on the dark chrome frame (#101), so the reading accent —
- * which is dark in light mode — would make them nearly invisible; the chrome
- * accent is the preset's bright-on-dark hue in both readings.
+ * Read the page accent, falling back when the token is absent or blank. The
+ * trails sit on the page itself, so they take the same accent as the rest of the
+ * page and change with the reading.
  */
 export function readAccent(style: CSSStyleDeclaration): string {
-  const raw = style.getPropertyValue('--color-chrome-accent').trim()
+  const raw = style.getPropertyValue('--color-accent').trim()
   return raw.length > 0 ? raw : FALLBACK_COLOR
 }
 
 /**
  * The lifecycle alpha, as a fraction of `PARTICLE_ALPHA`: ramps up over the first
  * `FADE_IN` of the life (so a birth is a fade, not a pop), holds at 1, then falls
- * to 0 over the last `FADE_OUT` (so a death follows the path to its end). The peak
- * is exactly 1, which is why `PARTICLE_ALPHA` is the true drawn maximum the
+ * to 0 over the last `FADE_OUT` (so a death follows the streak to its end). The
+ * peak is exactly 1, which is why `PARTICLE_ALPHA` is the true drawn maximum the
  * contrast gate caps.
  */
 export function alphaAt(life: number, maxLife: number): number {
@@ -90,13 +87,12 @@ export function alphaAt(life: number, maxLife: number): number {
 export interface Meteor {
   x: number
   y: number
-  /** Heading in radians; advanced by `turn` every step, so the path curves. */
+  /** Constant velocity (px/s); the tail trails the point straight back along it. */
+  vx: number
+  vy: number
+  /** Constant heading (rad). Present so a test can reason about the direction. */
   angle: number
-  speed: number
-  /** Signed heading drift (rad/s). */
-  turn: number
-  /** Trail length as a fraction of a second's travel. */
-  trail: number
+  /** Stroke width (px). */
   size: number
   life: number
   maxLife: number
@@ -119,6 +115,11 @@ export function countFor(width: number, height: number): number {
   return Math.min(METEOR_MAX, Math.max(METEOR_MIN, c))
 }
 
+/** The gutter band width for a viewport: where a trail's outside offset is drawn. */
+export function gutterForWidth(width: number): number {
+  return Math.max(GUTTER_MIN, Math.min(GUTTER_MAX, width * GUTTER_RATIO))
+}
+
 export function createField(
   count: number,
   width: number,
@@ -134,50 +135,31 @@ export function createField(
 }
 
 /**
- * Birth a particle just outside a random edge, aimed into the viewport. Picking
- * the edge first (rather than the old left/right gutter) is what fills the field
- * from every direction.
+ * Birth a trail in the left or right gutter, aimed inward and downward so it
+ * drifts across the frame. Straight and sparse — the path is a constant-velocity
+ * line, so there is no `turn` and no `SPREAD`.
  */
 export function spawn(width: number, height: number, r: Random): Meteor {
-  const edge = EDGES[Math.min(EDGES.length - 1, Math.floor(r() * EDGES.length))]
+  const fromLeft = r() < 0.5
+  const gutter = gutterForWidth(width)
+  const offset = SPAWN_MARGIN + r() * gutter
+  const x = fromLeft ? -offset : width + offset
+  const y = r() * (height * SPAWN_BAND)
   const speed = between(r, SPEED_MIN, SPEED_MAX)
+  const tilt = between(r, TILT_MIN, TILT_MAX)
+  const angle = fromLeft ? tilt : Math.PI - tilt
+  const vx = Math.cos(angle) * speed
+  const vy = Math.sin(angle) * speed
   const maxLife = between(r, LIFE_MIN, LIFE_MAX)
-  const size = between(r, HEAD_SIZE_MIN, HEAD_SIZE_MAX)
-  const trail = between(r, TRAIL_MIN, TRAIL_MAX)
-  const turn = between(r, TURN_MIN, TURN_MAX) * (r() < 0.5 ? -1 : 1)
-
-  let x: number
-  let y: number
-  let inward: number
-  if (edge === 'left') {
-    x = -SPAWN_MARGIN
-    y = r() * height
-    inward = 0 // heading right
-  } else if (edge === 'top') {
-    x = r() * width
-    y = -SPAWN_MARGIN
-    inward = Math.PI / 2 // heading down
-  } else if (edge === 'right') {
-    x = width + SPAWN_MARGIN
-    y = r() * height
-    inward = Math.PI // heading left
-  } else {
-    x = r() * width
-    y = height + SPAWN_MARGIN
-    inward = -Math.PI / 2 // heading up
-  }
-
-  const angle = inward + between(r, -SPREAD, SPREAD)
   return {
     x,
     y,
+    vx,
+    vy,
     angle,
-    speed,
-    turn,
-    trail,
-    size,
+    size: between(r, LINE_WIDTH_MIN, LINE_WIDTH_MAX),
     // Start part-way through the life so the first frame is already a field,
-    // not a synchronised fade-in of every particle at once.
+    // not a synchronised fade-in of every trail at once.
     life: between(r, 0, maxLife * 0.9),
     maxLife,
   }
@@ -194,9 +176,8 @@ export function step(
   for (let i = 0; i < field.meteors.length; i++) {
     const m = field.meteors[i]
     m.life += seconds
-    m.angle += m.turn * seconds
-    m.x += Math.cos(m.angle) * m.speed * seconds
-    m.y += Math.sin(m.angle) * m.speed * seconds
+    m.x += m.vx * seconds
+    m.y += m.vy * seconds
     const gone =
       m.x < -DESPAWN_MARGIN ||
       m.x > width + DESPAWN_MARGIN ||
@@ -215,41 +196,23 @@ export function paint(
   width: number,
   height: number,
 ): void {
-  // Clear the previous frame before drawing this one. Without it every particle
+  // Clear the previous frame before drawing this one. Without it every trail
   // leaves a permanent streak.
   ctx.clearRect(0, 0, width, height)
+  ctx.strokeStyle = color
   for (let i = 0; i < field.meteors.length; i++) {
     const m = field.meteors[i]
-    const ux = Math.cos(m.angle)
-    const uy = Math.sin(m.angle)
-    const len = m.speed * m.trail
-    const headX = m.x
-    const headY = m.y
-    const tailX = headX - ux * len
-    const tailY = headY - uy * len
-    // Bend the trail with the heading: a shallow quadratic whose control point
-    // sits on the normal, offset by the arc the turn would sweep. Keeps the path
-    // curved without storing a position history per particle.
-    const theta = m.turn * m.trail
-    const off = (len / 2) * Math.tan(theta / 4)
-    const midX = (headX + tailX) / 2 - uy * off
-    const midY = (headY + tailY) / 2 + ux * off
+    const tailX = m.x - m.vx * TRAIL_LEN
+    const tailY = m.y - m.vy * TRAIL_LEN
 
-    const grad = ctx.createLinearGradient(tailX, tailY, headX, headY)
-    grad.addColorStop(0, 'rgba(0,0,0,0)')
-    grad.addColorStop(1, color)
+    // One clean straight streak: a uniform stroke from tail to head, with no
+    // round head and no gradient bulge — a line, not a tadpole.
     ctx.globalAlpha = PARTICLE_ALPHA * alphaAt(m.life, m.maxLife)
-    ctx.strokeStyle = grad
     ctx.lineWidth = m.size
     ctx.beginPath()
     ctx.moveTo(tailX, tailY)
-    ctx.quadraticCurveTo(midX, midY, headX, headY)
+    ctx.lineTo(m.x, m.y)
     ctx.stroke()
-
-    ctx.fillStyle = color
-    ctx.beginPath()
-    ctx.arc(headX, headY, m.size * 0.6, 0, TAU)
-    ctx.fill()
   }
   ctx.globalAlpha = 1
 }

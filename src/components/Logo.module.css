@@ -3,18 +3,18 @@
   flex: none;
 }
 
-/* The mark sits in the header, which is chrome — so it uses the chrome pair,
-   not the reading one, and stays stable across both readings. */
+/* The mark follows the page palette. It shares its geometry and its studio-dark
+   paint with `public/favicon.svg` (a test derives both and fails on drift). */
 .box {
-  fill: var(--color-chrome-surface);
-  stroke: var(--color-chrome-border);
+  fill: var(--color-surface);
+  stroke: var(--color-border);
   stroke-width: 1.5;
 }
 
-.caret {
+.glyph {
   fill: none;
-  stroke: var(--color-chrome-accent);
-  stroke-width: 2.8;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }

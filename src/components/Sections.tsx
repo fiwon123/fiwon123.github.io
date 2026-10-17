@@ -140,7 +140,7 @@ export function Hero() {
         />
         <div className={styles.heroText}>
           <h1 className={styles.heroTitle}>{t.hero.greeting}</h1>
-          {/* The contact row's own anchor, so the `contact` command lands on the
+          {/* The contact row's own anchor, so a `#contact` deep link lands on the
               row rather than the top of the hero (`#top`). */}
           <div id="contact">
             <ContactRow />

@@ -23,15 +23,14 @@ const css = readFileSync(
 ).replaceAll(/\/\*[\s\S]*?\*\//g, '')
 
 /**
- * What `paint` did this frame, in order. One `fillStyle` write opens a frame
+ * What `paint` did this frame, in order. One `strokeStyle` write opens a frame
  * (paint sets it once, before the loop), so the test can reset the log, flush a
  * frame, and read exactly that frame back.
  */
 type DrawEvent =
-  | { kind: 'fillStyle'; value: string }
+  | { kind: 'strokeStyle'; value: string }
   | { kind: 'clear'; w: number; h: number }
-  | { kind: 'arc' }
-  | { kind: 'fill'; alpha: number; fillStyle: string }
+  | { kind: 'stroke'; alpha: number; strokeStyle: string }
   | { kind: 'transform'; dpr: number }
 
 const log: DrawEvent[] = []
@@ -66,30 +65,23 @@ function takeLog(): DrawEvent[] {
 
 function installContext() {
   const ctx = {
-    _fs: '' as string | CanvasGradient | CanvasPattern,
-    get fillStyle() {
-      return this._fs
+    _ss: '' as string | CanvasGradient | CanvasPattern,
+    get strokeStyle() {
+      return this._ss
     },
-    set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-      this._fs = value
-      log.push({ kind: 'fillStyle', value: String(value) })
+    set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
+      this._ss = value
+      log.push({ kind: 'strokeStyle', value: String(value) })
     },
     globalAlpha: 1,
     setTransform: (...args: number[]) => log.push({ kind: 'transform', dpr: args[0] }),
     clearRect: (_x: number, _y: number, w: number, h: number) => log.push({ kind: 'clear', w, h }),
     beginPath: () => {},
-    arc: () => {
-      log.push({ kind: 'arc' })
-    },
-    createLinearGradient: () => ({ addColorStop: () => {} }) as any,
-    strokeStyle: '' as any,
     lineWidth: 0,
     moveTo: () => {},
     lineTo: () => {},
-    quadraticCurveTo: () => {},
-    stroke: () => {},
-    fill: () => {
-      log.push({ kind: 'fill', alpha: ctx.globalAlpha, fillStyle: String(ctx.fillStyle) })
+    stroke: () => {
+      log.push({ kind: 'stroke', alpha: ctx.globalAlpha, strokeStyle: String(ctx.strokeStyle) })
     },
   }
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
@@ -140,13 +132,14 @@ function stubMatchMedia(reduce: { matches: boolean }) {
 }
 
 /**
- * Chrome accents keyed by the `data-theme` the ThemeProvider stamps on <html>.
- * The chrome accent is mode-independent (#101: the frame is dark in both
- * readings), so the re-read notices the preset, not the mode.
+ * Page accents keyed by the `data-theme`-`data-mode` the ThemeProvider stamps on
+ * <html>. The accent is the reading one, so it changes with the preset *and* the
+ * mode.
  */
 const ACCENTS: Record<string, string> = {
-  studio: 'rgb(110 168 254)',
-  paper: 'rgb(227 163 85)',
+  'studio-dark': 'rgb(110 168 254)',
+  'paper-dark': 'rgb(227 163 85)',
+  'paper-light': 'rgb(138 75 18)',
 }
 
 const realGetComputedStyle = window.getComputedStyle.bind(window)
@@ -154,9 +147,9 @@ const realGetComputedStyle = window.getComputedStyle.bind(window)
 function stubAccents() {
   window.getComputedStyle = ((element: Element) => ({
     getPropertyValue: (name: string) => {
-      if (element !== document.documentElement || name !== '--color-chrome-accent') return ''
-      const { theme } = document.documentElement.dataset
-      return ACCENTS[theme ?? ''] ?? ''
+      if (element !== document.documentElement || name !== '--color-accent') return ''
+      const { theme, mode } = document.documentElement.dataset
+      return ACCENTS[`${theme}-${mode}`] ?? ''
     },
   })) as unknown as typeof window.getComputedStyle
 }
@@ -216,9 +209,10 @@ describe('ParticleBackground', () => {
     expect(css).toMatch(/@media print[\s\S]*display:\s*none/)
   })
 
-  it('fades a radial hole over the reading column and keeps the edges visible (#96)', () => {
-    // Particles are born on every edge and cross the whole frame, so the cleared
-    // area is a soft disc around the text — a radial core, not two fixed gutters.
+  it('fades a radial hole over the centre and keeps the edges visible (#96)', () => {
+    // Trails are born in the side gutters and cross the whole frame, so the
+    // cleared area is a soft disc around the text — a radial core, not two fixed
+    // gutters.
     const mask = /mask-image:\s*([\s\S]*?);/.exec(css)?.[1] ?? ''
     expect(mask, 'no mask-image declaration').not.toBe('')
     expect(mask).toMatch(/radial-gradient/)
@@ -247,7 +241,7 @@ describe('ParticleBackground', () => {
     expect(clears[0]).toEqual({ kind: 'clear', w: 1280, h: 800 })
     // Cleared before anything is drawn, not after.
     expect(first.findIndex((event) => event.kind === 'clear')).toBeLessThan(
-      first.findIndex((event) => event.kind === 'fill'),
+      first.findIndex((event) => event.kind === 'stroke'),
     )
 
     // And once per frame, not once ever.
@@ -260,20 +254,20 @@ describe('ParticleBackground', () => {
     render(<ParticleBackground />)
     flushFrames(1)
     const events = takeLog()
-    const fills = events.filter((event) => event.kind === 'fill')
-    expect(fills.length).toBe(countFor(3840, 2160))
-    expect(fills.length).toBeLessThanOrEqual(METEOR_MAX)
-    // meteors paint uses strokes/gradients and arcs; just ensure something was drawn
-    expect(fills.length).toBeGreaterThan(0)
+    const strokes = events.filter((event) => event.kind === 'stroke')
+    expect(strokes.length).toBe(countFor(3840, 2160))
+    expect(strokes.length).toBeLessThanOrEqual(METEOR_MAX)
+    // One straight stroke per trail; the cap bounds the draw count.
+    expect(strokes.length).toBeGreaterThan(0)
   })
 
   it('keeps drawing meteors across several frames', () => {
     setViewport(1280, 800, 2)
     render(<ParticleBackground />)
     flushFrames(3)
-    // Every frame paints each meteor's head; draws keep happening after the first.
-    const fills = takeLog().filter((event) => event.kind === 'fill')
-    expect(fills.length).toBeGreaterThan(0)
+    // Every frame paints each trail; draws keep happening after the first.
+    const strokes = takeLog().filter((event) => event.kind === 'stroke')
+    expect(strokes.length).toBeGreaterThan(0)
   })
 
   it('caps the backing store at DPR 2 even on a 3x display', () => {
@@ -290,14 +284,14 @@ describe('ParticleBackground', () => {
     setViewport(400, 400, 1)
     render(<ParticleBackground />)
     flushFrames(1)
-    const fills = takeLog().filter((event) => event.kind === 'fill')
+    const strokes = takeLog().filter((event) => event.kind === 'stroke')
     // A 400x400 phone-size window: countFor clamps into [METEOR_MIN, METEOR_MAX].
     const expected = countFor(400, 400)
     expect(expected).toBeGreaterThanOrEqual(METEOR_MIN)
     expect(expected).toBeLessThanOrEqual(METEOR_MAX)
     const small = document.querySelectorAll('canvas').length
     expect(small).toBe(1)
-    expect(fills.length).toBe(expected)
+    expect(strokes.length).toBe(expected)
   })
 
   it('pauses the loop while the tab is hidden and resumes where it left off', () => {
@@ -320,25 +314,25 @@ describe('ParticleBackground', () => {
     Object.defineProperty(document, 'hidden', { value: true, configurable: true })
     flushFrames(1) // …which now runs while hidden
     expect(rafQueue.size).toBe(0)
-    expect(takeLog().filter((event) => event.kind === 'fill').length).toBeGreaterThan(0)
+    expect(takeLog().filter((event) => event.kind === 'stroke').length).toBeGreaterThan(0)
 
     setHidden(false)
     expect(rafQueue.size).toBe(1)
     flushFrames(1)
-    expect(takeLog().filter((event) => event.kind === 'fill').length).toBeGreaterThan(0)
+    expect(takeLog().filter((event) => event.kind === 'stroke').length).toBeGreaterThan(0)
   })
 
   it('keeps running across a resize without a stale field', () => {
     setViewport(400, 400, 1)
     render(<ParticleBackground />)
     flushFrames(1)
-    const before = takeLog().filter((event) => event.kind === 'fill').length
+    const before = takeLog().filter((event) => event.kind === 'stroke').length
     expect(before).toBe(countFor(400, 400))
 
     setViewport(1600, 900, 1)
     window.dispatchEvent(new Event('resize'))
     flushFrames(1)
-    const after = takeLog().filter((event) => event.kind === 'fill').length
+    const after = takeLog().filter((event) => event.kind === 'stroke').length
     expect(after).toBe(countFor(1600, 900))
     expect(after).toBeLessThanOrEqual(METEOR_MAX)
     // A large window typically has more particles; floor cases are impossible
@@ -347,7 +341,7 @@ describe('ParticleBackground', () => {
     expect(after).toBeLessThanOrEqual(METEOR_MAX)
   })
 
-  it('re-reads the chrome accent when the theme changes', () => {
+  it('re-reads the page accent when the theme or mode changes', () => {
     stubAccents()
     render(
       <ThemeProvider>
@@ -359,36 +353,36 @@ describe('ParticleBackground', () => {
     flushFrames(1)
     const first = takeLog()
     // Frame 1 runs resize() first (it logs the transform), so find the write.
-    expect(first.find((event) => event.kind === 'fillStyle')).toEqual({
-      kind: 'fillStyle',
-      value: ACCENTS.studio,
+    expect(first.find((event) => event.kind === 'strokeStyle')).toEqual({
+      kind: 'strokeStyle',
+      value: ACCENTS['studio-dark'],
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'studio' }))
     flushFrames(1)
     const second = takeLog()
-    expect(second.find((event) => event.kind === 'fillStyle')).toEqual({
-      kind: 'fillStyle',
-      value: ACCENTS.paper,
+    expect(second.find((event) => event.kind === 'strokeStyle')).toEqual({
+      kind: 'strokeStyle',
+      value: ACCENTS['paper-dark'],
     })
-    expect(second.filter((event) => event.kind === 'fill')[0]).toMatchObject({
-      fillStyle: ACCENTS.paper,
+    expect(second.filter((event) => event.kind === 'stroke')[0]).toMatchObject({
+      strokeStyle: ACCENTS['paper-dark'],
     })
 
-    // The chrome accent is mode-independent (#101), so toggling the reading keeps
-    // the same particle colour — it must not fall back to the dark reading accent.
+    // The accent is the page accent, so toggling the reading changes the particle
+    // colour too (the dark reading accent is a different value).
     fireEvent.click(screen.getByRole('button', { name: 'dark' }))
     flushFrames(1)
-    expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
-      kind: 'fillStyle',
-      value: ACCENTS.paper,
+    expect(takeLog().find((event) => event.kind === 'strokeStyle')).toEqual({
+      kind: 'strokeStyle',
+      value: ACCENTS['paper-light'],
     })
 
     fireEvent.click(screen.getByRole('button', { name: 'light' }))
     flushFrames(1)
-    expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
-      kind: 'fillStyle',
-      value: ACCENTS.paper,
+    expect(takeLog().find((event) => event.kind === 'strokeStyle')).toEqual({
+      kind: 'strokeStyle',
+      value: ACCENTS['paper-dark'],
     })
   })
 
@@ -423,7 +417,7 @@ describe('ParticleBackground', () => {
     expect(container.querySelector('canvas')).not.toBeNull()
     expect(rafQueue.size).toBe(1)
     flushFrames(1)
-    expect(takeLog().filter((event) => event.kind === 'fill').length).toBeGreaterThan(0)
+    expect(takeLog().filter((event) => event.kind === 'stroke').length).toBeGreaterThan(0)
   })
 
   it('adds and removes its reduced-motion listener exactly once', () => {
@@ -445,8 +439,8 @@ describe('ParticleBackground', () => {
   it('paints the fallback colour when no token can be read', () => {
     render(<ParticleBackground />)
     flushFrames(1)
-    expect(takeLog().find((event) => event.kind === 'fillStyle')).toEqual({
-      kind: 'fillStyle',
+    expect(takeLog().find((event) => event.kind === 'strokeStyle')).toEqual({
+      kind: 'strokeStyle',
       value: 'rgb(128 128 128)',
     })
   })

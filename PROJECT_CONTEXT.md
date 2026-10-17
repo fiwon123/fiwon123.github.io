@@ -24,10 +24,9 @@ tests here instead of by intention.
 
 ## Goal
 
-A visitor can explore the content either through an interactive terminal or
-through conventional navigation, switch language (EN/PT-BR) and theme (5 presets
-× light/dark), and read everything at WCAG AA contrast — with the whole
-site served as static files.
+A visitor can explore the content through conventional navigation, switch
+language (EN/PT-BR) and theme (5 presets × light/dark), and read everything at
+WCAG AA contrast — with the whole site served as static files.
 
 ## Stack
 
@@ -44,7 +43,7 @@ site served as static files.
 ## Architecture
 
 ```text
-src/ (React + TS: content records, i18n, theme, terminal, components)
+src/ (React + TS: content records, i18n, theme, components)
   ↓
 vite build → dist/   (static HTML + CSS + JS + copied public/ assets)
   ↓
@@ -69,31 +68,19 @@ Each entry is settled; the reason is what stops it being re-opened.
 - **i18n in typed records, one module per language, `en.ts` as source of truth** —
   `pt-BR.ts` is typed `: Strings`, so a missing or misspelled key is a `tsc`
   error rather than a blank string in production.
-- **The page is one conventional page; the terminal is a dock, not a mode**
-  (`portfolio.v1.dock`) — the console sits beside the page (or below on a phone)
-  rather than replacing it. An earlier two-presentation "view mode" hid the page
-  behind the console; it meant a visitor could not see the work and the console at
-  once, and the first version of that idea had `#section` and a translated string
-  doing work a DOM element should do. The dock keeps the terminal optional without
-  making the content conditional. (2026-10-16)
-- **A terminal navigation command focuses one section; `all` restores the page**
-  — the sections are rendered by the page, so a command asks the page to show one.
-  Focusing filters the hero out but keeps a visually-hidden h1 and a `#top` anchor,
-  so the heading outline, the skip link and back-to-top still resolve; the focus
-  is **not persisted**, so a reload is always the whole page, and while focused a
-  nav link to a hidden section moves the focus there rather than landing on
-  nothing. This replaced the scroll-on-navigate of the first dock (2026-10-16).
-- **The contact links live in the hero, and the `contact` command targets them**
-  (#99) — the footer used to render a second `ContactRow` under `#contact-footer`;
-  it now carries only the copyright / built-with / source lines, and the command
-  scrolls to the hero row's own `#contact` anchor (not `#top`, so it lands on the
-  row). One row, one source, no dead anchor. (2026-10-16)
-- **Terminal settings commands drive the same setters as the header controls**
-  (`theme`, `mode`, `lang`) rather than a parallel copy of the state — the
-  console is a second way in, never a second source of truth, so the terminal
-  and the controls cannot disagree. A bare command, or one whose value is not
-  recognised, prints the valid values and changes nothing, so a typo answers
-  with the choices instead of failing silently. (2026-10-16)
+- **There is no terminal; the page stands on its own** (#119) — an earlier
+  version docked an interactive console beside the page (a `portfolio.v1.dock`
+  overlay, plus a command that focused one section and `theme`/`mode`/`lang`
+  commands that mirrored the header controls). It duplicated the header
+  navigation and the preference controls in a second surface, and the content is
+  the real product, so the whole feature — the console, the dock, the
+  focus-one-section command and its i18n — was removed. The header nav and
+  `#section` deep links still scroll to a section, and the preference controls are
+  the one way to change theme, mode and language. (2026-10-17)
+- **The contact links live in the hero** (#99) — the footer used to render a
+  second `ContactRow` under `#contact-footer`; it now carries only the
+  copyright / built-with / source lines, and the hero row keeps its own `#contact`
+  anchor. One row, one source, no dead anchor. (2026-10-16)
 - **The preference controls carry their meaning in an icon, not a visible label**
   — the appearance is a single button that cycles light ↔ dark and the language a
   select of flag + short code, so the bar reads without spelling out "Appearance"
@@ -110,40 +97,35 @@ Each entry is settled; the reason is what stops it being re-opened.
   (`data-mode`), not a theme: a preset is an identity, a reading is how you read
   it, and folding them into one axis (the #100 proposal) would have made every
   preset a separate theme. (2026-10-16)
-- **The page is a light/dark reading column on a dark chrome frame** (#101) — the
-  palette splits into a **reading** set (`--color-bg`/`-surface`/`-fg`/`-fg-muted`/
-  `-border`, the centred column) and a **chrome** set (`--color-chrome-bg`/
-  `-surface`/`-fg`/`-muted`/`-border`/`-accent`, the page sides, header and
-  footer). Chrome is dark in **both** readings — the light/dark choice is a reading
-  feature, not a page-wide one — but keeps each preset's hue, so the frame still
-  has an identity. The frame carries its **own** accent because a reading accent is
-  tuned for the reading surface and the light ones fall under 3:1 on chrome
-  (studio 2.90, paper 2.79, violet 2.73): `tokens.test.ts` gates text on both
-  surfaces (4.5:1) and the chrome accent as a non-text boundary (3:1), and
-  `surfaces.test.ts` pins which selector paints which surface so the split cannot
-  silently revert. The particle field lives on the frame, so it reads the **chrome**
-  accent too (the reading accent is dark in light mode). The overlay pair is
-  unchanged. (2026-10-16)
-- **Theme and dock are separate axes with separate storage keys**
-  (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
-  console is open are independent: a visitor can want either without the other,
-  and the dock key migrates the `portfolio.v1.view` value it replaced. (2026-10-16)
+- **The whole page flips with the reading — one token set** (#112) — light/dark
+  changes header, footer, page sides, the content and the floating controls
+  together, so the palette is a single `--color-*` family and no
+  `--color-chrome-*` set exists. §101 had split the page into a dark
+  `--color-chrome-*` frame around a `--color-*` reading column; the frame read as
+  a card around the page (the "rectangle" the owner asked to remove), so the split
+  and the whole chrome token family are gone. The accent is the page accent, so
+  the particle field reads `--color-accent` (it changes with the reading again).
+  `tokens.test.ts` gates the particle contrast against the page surface, and
+  `surfaces.test.ts` pins that no chrome family survives, so the split cannot come
+  back silently. The overlay pair (`--color-overlay-*`) is unchanged — it is a
+  separate budget. (2026-10-17)
 - **Motion ships with zero runtime dependencies** (hand-rolled
   `IntersectionObserver` and canvas) and every motion feature is **fail-open**
   under `prefers-reduced-motion` — an animation library would outweigh the whole
   effect it provides, and a motion feature that can leave content unrevealed
   under reduced motion is a bug, not a decoration.
-- **The ambient field is many curved particles with a radial centre fade**
-  (#96) — dozens of particles (area-scaled, hard-capped) are born just outside a
-  random edge and aimed inward with spread, and each follows a shallow quadratic
-  curve: the heading drifts by a signed `turn` and the trail is bent by a control
-  point on the normal, so the path curves without storing a per-particle position
-  history (the field stays allocation-free). Lifecycle alpha (`alphaAt`) ramps in
-  at birth and to zero at death, peaking at **exactly 1**, so `PARTICLE_ALPHA` is
-  the true drawn maximum the contrast gate caps. The reading column is cleared by
-  an **elliptical radial mask** (transparent centre → opaque edges), not the old
-  banded linear gradient — that shape was tuned to two fixed side gutters, which
-  no longer matches a field that crosses the whole frame. (2026-10-16)
+- **The ambient field is sparse straight streaks with a radial centre fade**
+  (#113, #121) — 6–14 trails (area-scaled, hard-capped) are born in the left/right
+  gutters, within the top third, and travel inward-and-downward at constant
+  velocity: the path is a `lineTo`, never a `quadraticCurveTo`. This replaced the
+  #96 rebuild (24–80 curved particles), which read as too busy. Lifecycle alpha
+  (`alphaAt`) ramps in at birth and to zero at death, peaking at **exactly 1**, so
+  `PARTICLE_ALPHA` is the true drawn maximum the contrast gate caps. Each streak
+  is a **uniform straight stroke** — a single accent-coloured line of constant
+  width, with no round head and no gradient bulge, so it reads as a line rather
+  than a tadpole (#121 dropped #113's gradient tail-to-head and its head dot). The
+  centre is cleared by an **elliptical radial mask** (transparent centre → opaque
+  edges), and `paint()` clears the whole frame each time. (2026-10-17)
 - **Overlay chrome is mode-independent** (`--color-overlay-*`, fixed white on an
   82% black scrim) — page tokens cannot meet WCAG 1.4.11 once composited over a
   scrim (measured: caption 1.85:1 in light presets, control boundary 1.21:1 in
@@ -179,6 +161,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   in the Dockerfile** — so `check-sandbox.py` can execute the shipped file under
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
+- **The mark is an "FI" monogram in a rounded tile** (#120) — two geometric
+  stroke paths (an `F` and an `I`) inside the token-painted box, so the header
+  logo and the tab icon are the same figure. It replaces the terminal-prompt
+  carets, which tied the identity to the console; the letters keep the two-path
+  shape the favicon test derives from `Logo.tsx`. (2026-10-17)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
   twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
   the studio-dark palette (a test derives both from source and fails on drift),
@@ -230,7 +217,6 @@ src/
   i18n/            # Language context/provider/hooks + dictionaries (en.ts, pt-BR.ts)
   lib/             # Shared utilities/hooks
   assets/icons/    # Brand marks (masked with currentColor)
-  terminal/        # Interactive terminal (parser, history, commands, UI)
   theme/           # Presets, contrast, tokens, fonts, context/provider/hooks
   test/            # Entry/build/asset tests
 public/            # Static assets (avatar, self-hosted fonts, favicon, images)
@@ -280,12 +266,37 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   focus with `all` (#53), theme/appearance/language from the terminal (#54),
   preference controls as icons (#55), and a header centred on the page frame
   (#56).
-- **Next**: no filed work — `v1.0`–`v1.3` are released. The plan is to add new
+- **Done**: v1.4 — Maintenance — released to `main` (#73): CI gating for release
+  PRs (#67), a reworked README (#71), and the Context/docs sync (#69).
+- **Done**: v1.5 — Polish — released to `main` (#109): a sticky header with a
+  larger brand and a bare theme select (#74), terminal UX (floating FAB, icon
+  hide, click-to-focus, prompt + type scale) (#76), the contact/skills restructure
+  with hero contact and skill badges (#78), gallery/lightbox equal sizing and
+  platform icon+name (#80), the sparse gutter meteor trails (#82), and the green-
+  check restore (#84).
+- **Done**: v1.6 — Content & visibility — released to `main` (#109): header/About
+  navigation with the hero shown alongside About (#86), the hero skills block
+  removed (#87), the meteor background made visible again (#88), a discoverable
+  terminal show button (#89), and the studio-dark favicon palette (#90).
+- **Done**: v1.7 — Ambient & themes — released to `main` (#109): `system` retired
+  and the presets grown to five (#102), the light reading column over dark chrome
+  (#101), the rebuilt ambient particle field (#96), the lightbox FLIP zoom from
+  the clicked thumbnail (#97), linked `Tech:` tags (#98), and the hero-owned
+  contact row with the `contact` command aimed at it (#99).
+- **Done**: v1.8 — UX refinements — released to `main` (#126): the page flipped to
+  a single token set with no dark chrome frame (#112), the ambient field rebuilt
+  as sparse straight streaks (#113), and the terminal turned into a right-edge
+  overlay with a phone show/hide toggle (#114).
+- **Done**: v1.9 — Identity & focus — released to `main` (#126): a larger, more
+  widely spaced header nav (#118), the streaks redrawn as clean uniform lines
+  (#121), the mark replaced by an "FI" monogram shared with the tab icon (#120),
+  and the terminal retired entirely (#119).
+- **Next**: no filed work — `v1.0`–`v1.9` are released. The plan is to add new
   projects and possibly a new language track (e.g. Rust), on the released base.
 
 ## Backlog
 
-No filed work: `v1.0`–`v1.3` are all released and their milestones hold no open
+No filed work: `v1.0`–`v1.9` are all released and their milestones hold no open
 issues. Milestone tracking lives on GitHub (issue #2). The plan is to add new
 projects and possibly a new language track (e.g. Rust) — deliberately _after_ the
 polish, so the additions land on a base that already looks finished.

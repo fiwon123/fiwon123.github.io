@@ -19,10 +19,9 @@ Need a fast, accessible, themeable single-page portfolio to present work and con
 
 ### Goal
 
-A terminal is docked beside the page (or below on a phone): visitors explore the
-content conventionally, or type a command that focuses one section (`all`
-restores the whole page), switch language (EN/PT-BR) and theme (5 presets ×
-light/dark), with WCAG AA contrast.
+A visitor explores the content through conventional navigation, switches language
+(EN/PT-BR) and theme (5 presets × light/dark), and reads everything at WCAG AA
+contrast.
 
 ### Main Technology
 
@@ -52,7 +51,6 @@ src/
   i18n/            # Language context/provider/hooks + dictionaries
   lib/             # Shared utilities/hooks
   assets/icons/    # Brand marks (masked with currentColor)
-  terminal/        # Interactive terminal (parser, history, commands, UI)
   theme/           # Theme presets, contrast, tokens, fonts, context/provider/hooks
   test/            # Entry/build/asset tests
   types.ts         # Shared types
@@ -131,16 +129,16 @@ make opencode-upgrade # upgrade opencode on the HOST + restart the sandbox
 - **Issue-first**: Every change tracked via GitHub issue → branch → PR → merge
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `ci:`
 - **Bilingual content**: EN and PT-BR live in the same typed records (never separate files); `en.ts` is source of truth, `pt-BR.ts` typed `: Strings`
-- **Themes**: 5 presets (Studio/Paper/Terminal/Violet/Ember) × 2 readings (light/dark, no `system`; default dark); the page is a light/dark reading column on a dark, preset-tinted chrome frame, so the tokens split into reading (`--color-*`) and chrome (`--color-chrome-*`) sets; persisted with `portfolio.v1.*` keys; WCAG AA contrast enforced in tests
-- **Terminal**: Docked beside the page, not a mode that hides it — pure parser/history modules, EN/PT-BR aliases, accessible (`role="log" aria-live="polite"`), a navigation command focuses one section (`all` restores the whole page, and the focus is not persisted), and the dock toggle is persisted (`portfolio.v1.dock`)
+- **Themes**: 5 presets (Studio/Paper/Terminal/Violet/Ember) × 2 readings (light/dark, no `system`; default dark); the whole page flips together with the reading — one `--color-*` token set, no `--color-chrome-*` frame — so the particle field reads `--color-accent`; persisted with `portfolio.v1.*` keys; WCAG AA contrast enforced in tests
+- **One conventional page**: there is no terminal — the header nav and `#section` deep links scroll to a section, and the preference controls are the one way to change theme, mode and language
 - **Repository cards**: language/stars/last-push come from the committed build-time snapshot (`src/content/repoStats.json`, `npm run stats`); the browser never calls the GitHub API, and a repo with no snapshot entry keeps the static card
 - **Game gallery**: a game owns its image (`GameLink.image`) and the experience gallery is derived from the games, so a path is never written twice; a tile names its game in the accessible name and shows it as a hover/focus tooltip, the lightbox carries the game's detail (name, page link, trailer), and the trailer is a facade — the `youtube-nocookie.com` embed mounts only when play is pressed, so opening a gallery makes no third-party request (`youtubeId` decides embeddability)
 - **Skill badges**: a skill is a link (`SkillItem { name, url, blurb }`) to its reference, with the blurb as the accessible name and a hover/focus tooltip; the group is shown by a single `--color-tag-*` dot on `--color-surface` while the label keeps `--color-fg`, so the tint only has to clear 3:1 as a non-text accent — which `tokens.test.ts` gates per palette
 - **Accessibility**: a skip link is the first focusable element and targets `<main id="content">`; focus-visible styles on every control; `document.documentElement.lang` tracks the chosen language
 - **README screenshots**: committed images under `docs/screenshots/`, reproduced by `make screenshots` (`scripts/screenshots.mjs`), which refuses to write a capture it cannot trust
-- **Favicons**: the tab icon is the page's own mark — `public/favicon.svg` is generated from the same geometry as `Logo.tsx` and painted with the studio-dark palette (a test derives both and fails on drift), and the rasters (`favicon.ico` as PNG-in-ICO, 16/32/180/192/512 PNGs) are reproduced by `make favicons` (`scripts/favicons.mjs`), which refuses a wrong-sized, blank or opaque-cornered capture; the SVG is listed first in `index.html`
+- **Favicons**: the tab icon is the page's own mark — an "FI" monogram in a rounded tile, `public/favicon.svg` generated from the same two glyph paths as `Logo.tsx` and painted with the studio-dark palette (a test derives both and fails on drift), and the rasters (`favicon.ico` as PNG-in-ICO, 16/32/180/192/512 PNGs) are reproduced by `make favicons` (`scripts/favicons.mjs`), which refuses a wrong-sized, blank or opaque-cornered capture; the SVG is listed first in `index.html`
 - **Formatting/Linting**: oxlint + oxfmt (0.x tools pinned via lockfile)
-- **Tests**: Unit tests for pure logic (parser/history), i18n parity, theme contrast/tokens, entry smoke test
+- **Tests**: Unit tests for pure logic (reveal, meteors, lightbox), i18n parity, theme contrast/tokens, entry smoke test
 
 ## Environment Constraints
 

@@ -20,25 +20,19 @@ function renderHeader() {
 afterEach(cleanup)
 
 describe('Header', () => {
-  it('always shows the navigation: the page is never hidden behind the console', () => {
+  it('always shows the navigation', () => {
     renderHeader()
     expect(screen.getByRole('navigation', { name: en.a11y.mainNav })).toBeTruthy()
   })
 
-  it('links only the filterable sections', () => {
-    // Contact (footer) is one scroll away and is not a section a command can
-    // focus, so it carries no nav entry.
+  it('links the page sections', () => {
+    // Contact is one scroll away in the hero, so it carries no nav entry.
     renderHeader()
     const nav = screen.getByRole('navigation', { name: en.a11y.mainNav })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
     expect(labels).toEqual([en.nav.about, en.nav.experience, en.nav.projects])
-  })
-
-  it('never renders a terminal control: the floating FAB owns that', () => {
-    renderHeader()
-    expect(screen.queryByRole('button', { name: /terminal/i })).toBeNull()
   })
 
   it('keeps theme and language reachable', () => {

@@ -32,31 +32,16 @@ import { extname, join, resolve, sep } from 'node:path'
 
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 // One entry per README image. Keys are the localStorage values the app reads
-// (mirroring src/theme/presets.ts, src/lib/terminalDock.ts, src/i18n/context.ts).
+// (mirroring src/theme/presets.ts, src/i18n/context.ts).
 // `expect` strings must appear in the rendered DOM — they are the fail-loud
 // guard, chosen so a page that did not mount (no React) cannot satisfy them.
 const PRESET = 'studio'
 const COMMON = ['data-testid="particles"', 'class="skip-link"', '<nav']
-// The page is always the conventional page; `dock` only decides whether the
-// console is beside it. The console is never unmounted — its scrollback survives
-// a toggle — so the two states are told apart by the dock's own open flag, not by
-// whether the log is in the DOM: closed captures carry `data-open="false"`, and
-// the open ones `data-open="true"`, which the closed ones must not carry.
 //
-// The README set is dark only (the site's default); light/dark *verification* is
-// a throwaway visual-QA concern, not a committed artifact.
-const OPEN = 'data-open="true"'
-const CLOSED = 'data-open="false"'
-const CAPTURES = [
-  { name: 'home-terminal-dark', dock: 'true', mode: 'dark', expect: [...COMMON, OPEN] },
-  {
-    name: 'home-browse-dark',
-    dock: 'false',
-    mode: 'dark',
-    expect: [...COMMON, CLOSED],
-    forbid: OPEN,
-  },
-]
+// There is one conventional page (no terminal), so one dark capture is the README
+// set: the site's default reading. Light/dark *verification* is a throwaway
+// visual-QA concern, not a committed artifact.
+const CAPTURES = [{ name: 'home-dark', mode: 'dark', expect: [...COMMON] }]
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DIST = resolve('dist')
@@ -109,11 +94,10 @@ const SETTLE_CSS =
   '<style>*,*::before,*::after{transition:none !important;animation:none !important}' +
   '.reveal{opacity:1 !important;transform:none !important}</style>'
 
-function prelude({ preset, mode, dock, lang }) {
+function prelude({ preset, mode, lang }) {
   const seed = {
     'portfolio.v1.theme': preset,
     'portfolio.v1.mode': mode,
-    'portfolio.v1.dock': dock,
     'portfolio.v1.lang': lang,
   }
   const body = Object.entries(seed)
