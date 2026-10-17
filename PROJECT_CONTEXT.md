@@ -168,12 +168,15 @@ Each entry is settled; the reason is what stops it being re-opened.
   letters rather than a mark; the two paths keep the shape the favicon test
   derives from `Logo.tsx`. (2026-10-17)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
-  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
-  the studio-dark palette (a test derives both from source and fails on drift),
-  and `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
-  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs. A hand-maintained second copy of
-  the icon is the way the tab and the page drift apart, and a capture harness that
-  writes a blank or opaque-cornered file is worse than no harness. (2026-10-16)
+  twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and carries the two
+  studio palettes as a dark base plus a `prefers-color-scheme: light` override, so
+  the tab icon follows the OS reading (a favicon cannot read `data-theme`/
+  `data-mode`; a test derives both palettes from source and fails on drift), and
+  `make favicons` rasterises it in a real headless Chrome into `favicon.ico`
+  (PNG-in-ICO) plus the 16/32/180/192/512 PNGs — the rasters keep the dark base,
+  since one file per size cannot adapt. A hand-maintained second copy of the icon
+  is the way the tab and the page drift apart, and a capture harness that writes a
+  blank or opaque-cornered file is worse than no harness. (2026-10-17)
 - **A game owns its image; the experience gallery is derived from the games** —
   `GameLink.image` is the single place the title→image link lives, and the card
   builds its tiles as `{ src: game.image, game }`, so an image path is never
