@@ -326,4 +326,14 @@ describe('section stylesheet', () => {
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
     expect(css).not.toMatch(/\brgba?\(/i)
   })
+
+  it('shows company logos in colour, with no greyscale filter', () => {
+    // The logos used to be filtered to grey until hover; the filter is gone, so
+    // the colour must never be re-introduced through a `grayscale` value.
+    const css = readFileSync(
+      path.join(path.dirname(fileURLToPath(import.meta.url)), 'sections.module.css'),
+      'utf8',
+    )
+    expect(css).not.toMatch(/grayscale/)
+  })
 })
