@@ -42,9 +42,9 @@ export const TILT_MAX = 0.5
 export const SPEED_MIN = 120
 export const SPEED_MAX = 280
 
-/** Head radius range (px). */
-export const HEAD_SIZE_MIN = 2
-export const HEAD_SIZE_MAX = 4
+/** Stroke width range (px). */
+export const LINE_WIDTH_MIN = 2
+export const LINE_WIDTH_MAX = 4
 
 /** Trail length as a fraction of the distance covered in a second. */
 export const TRAIL_LEN = 0.22
@@ -52,8 +52,6 @@ export const TRAIL_LEN = 0.22
 /** Lifetime range (s): long enough to cross the gutter and fade out on its own. */
 export const LIFE_MIN = 1.2
 export const LIFE_MAX = 2.6
-
-const TAU = Math.PI * 2
 
 /** The device pixel ratio, capped at `MAX_DPR` (never 0/NaN, at least 1). */
 export function dprFor(d: number | undefined): number {
@@ -89,11 +87,12 @@ export function alphaAt(life: number, maxLife: number): number {
 export interface Meteor {
   x: number
   y: number
-  /** Constant velocity (px/s); the trail trails the head straight back along it. */
+  /** Constant velocity (px/s); the tail trails the point straight back along it. */
   vx: number
   vy: number
   /** Constant heading (rad). Present so a test can reason about the direction. */
   angle: number
+  /** Stroke width (px). */
   size: number
   life: number
   maxLife: number
@@ -158,7 +157,7 @@ export function spawn(width: number, height: number, r: Random): Meteor {
     vx,
     vy,
     angle,
-    size: between(r, HEAD_SIZE_MIN, HEAD_SIZE_MAX),
+    size: between(r, LINE_WIDTH_MIN, LINE_WIDTH_MAX),
     // Start part-way through the life so the first frame is already a field,
     // not a synchronised fade-in of every trail at once.
     life: between(r, 0, maxLife * 0.9),
@@ -200,28 +199,20 @@ export function paint(
   // Clear the previous frame before drawing this one. Without it every trail
   // leaves a permanent streak.
   ctx.clearRect(0, 0, width, height)
+  ctx.strokeStyle = color
   for (let i = 0; i < field.meteors.length; i++) {
     const m = field.meteors[i]
-    const headX = m.x
-    const headY = m.y
-    const tailX = headX - m.vx * TRAIL_LEN
-    const tailY = headY - m.vy * TRAIL_LEN
+    const tailX = m.x - m.vx * TRAIL_LEN
+    const tailY = m.y - m.vy * TRAIL_LEN
 
-    const grad = ctx.createLinearGradient(tailX, tailY, headX, headY)
-    grad.addColorStop(0, 'rgba(0,0,0,0)')
-    grad.addColorStop(1, color)
+    // One clean straight streak: a uniform stroke from tail to head, with no
+    // round head and no gradient bulge — a line, not a tadpole.
     ctx.globalAlpha = PARTICLE_ALPHA * alphaAt(m.life, m.maxLife)
-    ctx.strokeStyle = grad
     ctx.lineWidth = m.size
     ctx.beginPath()
     ctx.moveTo(tailX, tailY)
-    ctx.lineTo(headX, headY)
+    ctx.lineTo(m.x, m.y)
     ctx.stroke()
-
-    ctx.fillStyle = color
-    ctx.beginPath()
-    ctx.arc(headX, headY, m.size * 0.6, 0, TAU)
-    ctx.fill()
   }
   ctx.globalAlpha = 1
 }

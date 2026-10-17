@@ -11,8 +11,8 @@ import {
   GUTTER_MAX,
   GUTTER_MIN,
   gutterForWidth,
-  HEAD_SIZE_MAX,
-  HEAD_SIZE_MIN,
+  LINE_WIDTH_MAX,
+  LINE_WIDTH_MIN,
   METEOR_MAX,
   METEOR_MIN,
   PARTICLE_ALPHA,
@@ -165,8 +165,8 @@ describe('spawn', () => {
       const speed = Math.hypot(m.vx, m.vy)
       expect(speed).toBeGreaterThanOrEqual(SPEED_MIN - 1e-9)
       expect(speed).toBeLessThanOrEqual(SPEED_MAX + 1e-9)
-      expect(m.size).toBeGreaterThanOrEqual(HEAD_SIZE_MIN)
-      expect(m.size).toBeLessThanOrEqual(HEAD_SIZE_MAX)
+      expect(m.size).toBeGreaterThanOrEqual(LINE_WIDTH_MIN)
+      expect(m.size).toBeLessThanOrEqual(LINE_WIDTH_MAX)
       // No curve state survives the rebuild.
       expect('turn' in m).toBe(false)
       expect('spread' in m).toBe(false)
@@ -283,24 +283,23 @@ describe('alphaAt', () => {
 })
 
 describe('paint', () => {
-  it('clears the frame, then draws one straight trail and one head per particle', () => {
+  it('clears the frame, then draws one clean straight line per trail', () => {
     const { ctx, events } = recordingContext()
     const field = createField(6, WIDTH, HEIGHT, seeded(2))
     paint(ctx, field, 'rgb(110 168 254)', WIDTH, HEIGHT)
     const ops = events.map((e) => e.op)
     expect(events[0]).toMatchObject({ op: 'clear', args: [0, 0, WIDTH, HEIGHT] })
+    // One uniform stroke per trail, drawn straight from tail to head.
     expect(ops.filter((op) => op === 'stroke')).toHaveLength(6)
-    expect(ops.filter((op) => op === 'fill')).toHaveLength(6)
-    expect(ops.filter((op) => op === 'arc')).toHaveLength(6)
-    // Straight, never curved: a lineTo trail, no quadraticCurveTo.
     expect(ops.filter((op) => op === 'lineTo')).toHaveLength(6)
+    // A line, not a tadpole: no curve, no round head, no gradient bulge.
     expect(ops).not.toContain('curveTo')
-    // Gradient runs from the tail toward the head (transparent -> accent).
-    expect(ops.filter((op) => op === 'gradient')).toHaveLength(6)
-    const stops = events.filter((e) => e.op === 'stop')
-    expect(stops.some((s) => s.style === 'rgba(0,0,0,0)')).toBe(true)
-    expect(stops.some((s) => s.style === 'rgb(110 168 254)')).toBe(true)
-    expect(events.some((e) => e.op === 'fill' && e.style === 'rgb(110 168 254)')).toBe(true)
+    expect(ops).not.toContain('arc')
+    expect(ops).not.toContain('fill')
+    expect(ops).not.toContain('gradient')
+    // The stroke carries the plain accent, not a gradient object.
+    const strokes = events.filter((e) => e.op === 'stroke')
+    expect(strokes.every((s) => s.style === 'rgb(110 168 254)')).toBe(true)
   })
 
   it('draws the tail behind the head along the velocity', () => {
@@ -320,7 +319,7 @@ describe('paint', () => {
     const { ctx, events } = recordingContext()
     const field = createField(20, WIDTH, HEIGHT, seeded(4))
     paint(ctx, field, 'rgb(110 168 254)', WIDTH, HEIGHT)
-    const draws = events.filter((e) => e.op === 'stroke' || e.op === 'fill')
+    const draws = events.filter((e) => e.op === 'stroke')
     expect(draws.length).toBeGreaterThan(0)
     for (const d of draws) {
       expect(d.alpha).toBeLessThanOrEqual(PARTICLE_ALPHA + 1e-9)
