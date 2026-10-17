@@ -113,7 +113,7 @@ describe('dprFor', () => {
 })
 
 describe('readAccent', () => {
-  it('prefers the chrome accent and falls back when it is blank', () => {
+  it('prefers the page accent and falls back when it is blank', () => {
     const style = { getPropertyValue: () => ' rgb(110 168 254) ' } as unknown as CSSStyleDeclaration
     expect(readAccent(style)).toBe('rgb(110 168 254)')
     const blank = { getPropertyValue: () => '   ' } as unknown as CSSStyleDeclaration

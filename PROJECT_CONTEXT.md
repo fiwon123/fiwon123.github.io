@@ -110,20 +110,18 @@ Each entry is settled; the reason is what stops it being re-opened.
   (`data-mode`), not a theme: a preset is an identity, a reading is how you read
   it, and folding them into one axis (the #100 proposal) would have made every
   preset a separate theme. (2026-10-16)
-- **The page is a light/dark reading column on a dark chrome frame** (#101) — the
-  palette splits into a **reading** set (`--color-bg`/`-surface`/`-fg`/`-fg-muted`/
-  `-border`, the centred column) and a **chrome** set (`--color-chrome-bg`/
-  `-surface`/`-fg`/`-muted`/`-border`/`-accent`, the page sides, header and
-  footer). Chrome is dark in **both** readings — the light/dark choice is a reading
-  feature, not a page-wide one — but keeps each preset's hue, so the frame still
-  has an identity. The frame carries its **own** accent because a reading accent is
-  tuned for the reading surface and the light ones fall under 3:1 on chrome
-  (studio 2.90, paper 2.79, violet 2.73): `tokens.test.ts` gates text on both
-  surfaces (4.5:1) and the chrome accent as a non-text boundary (3:1), and
-  `surfaces.test.ts` pins which selector paints which surface so the split cannot
-  silently revert. The particle field lives on the frame, so it reads the **chrome**
-  accent too (the reading accent is dark in light mode). The overlay pair is
-  unchanged. (2026-10-16)
+- **The whole page flips with the reading — one token set** (#112) — light/dark
+  changes header, footer, page sides, the content and the floating controls
+  together, so the palette is a single `--color-*` family and no
+  `--color-chrome-*` set exists. §101 had split the page into a dark
+  `--color-chrome-*` frame around a `--color-*` reading column; the frame read as
+  a card around the page (the "rectangle" the owner asked to remove), so the split
+  and the whole chrome token family are gone. The accent is the page accent, so
+  the particle field reads `--color-accent` (it changes with the reading again).
+  `tokens.test.ts` gates the particle contrast against the page surface, and
+  `surfaces.test.ts` pins that no chrome family survives, so the split cannot come
+  back silently. The overlay pair (`--color-overlay-*`) is unchanged — it is a
+  separate budget. (2026-10-17)
 - **Theme and dock are separate axes with separate storage keys**
   (`portfolio.v1.mode` and `portfolio.v1.dock`) — dark mode and whether the
   console is open are independent: a visitor can want either without the other,

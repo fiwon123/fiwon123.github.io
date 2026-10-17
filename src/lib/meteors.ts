@@ -62,13 +62,12 @@ export function dprFor(d: number | undefined): number {
 }
 
 /**
- * Read the **chrome** accent, falling back when the token is absent or blank.
- * The particles live on the dark chrome frame (#101), so the reading accent —
- * which is dark in light mode — would make them nearly invisible; the chrome
- * accent is the preset's bright-on-dark hue in both readings.
+ * Read the page accent, falling back when the token is absent or blank. The
+ * particles now sit on the page itself (the #101 chrome frame is gone), so they
+ * take the same accent the rest of the page uses.
  */
 export function readAccent(style: CSSStyleDeclaration): string {
-  const raw = style.getPropertyValue('--color-chrome-accent').trim()
+  const raw = style.getPropertyValue('--color-accent').trim()
   return raw.length > 0 ? raw : FALLBACK_COLOR
 }
 
