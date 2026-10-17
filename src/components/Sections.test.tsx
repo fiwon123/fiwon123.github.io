@@ -15,8 +15,6 @@ import { LanguageProvider } from '../i18n/LanguageProvider'
 import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { About, Experience, Hero, Projects } from './Sections'
 
-import styles from './sections.module.css'
-
 type FakeEntry = { isIntersecting: boolean }
 
 class FakeObserver {
