@@ -1,25 +1,41 @@
 {
-  "generatedAt": "2026-10-15T15:14:51.664Z",
+  "generatedAt": "2026-10-17T03:39:40.710Z",
   "repos": {
-    "fiwon123/eznit": {
-      "language": "Go",
-      "stars": 0,
-      "pushedAt": "2026-03-08T00:06:10Z"
-    },
-    "fiwon123/cthrone": {
-      "language": "Go",
-      "stars": 0,
-      "pushedAt": "2026-01-19T15:16:47Z"
-    },
-    "fiwon123/crower": {
-      "language": "Go",
-      "stars": 0,
-      "pushedAt": "2026-03-10T19:41:18Z"
-    },
-    "fiwon123/fiwon123.github.io": {
+    "fiwon123/ai-document-platform": {
       "language": "TypeScript",
-      "stars": 1,
-      "pushedAt": "2026-10-15T15:11:40Z"
+      "stars": 0,
+      "pushedAt": "2026-10-13T03:14:21Z",
+      "description": "Upload documents, extract and chunk text, generate embeddings (OpenAI or local models), search semantically with pgvector, and ask questions grounded in your documents with source attribution."
+    },
+    "fiwon123/ai-code-evaluation-platform": {
+      "language": "TypeScript",
+      "stars": 0,
+      "pushedAt": "2026-10-13T07:03:50Z",
+      "description": "AI code evaluation platform validates AI models using problem prompts and user-created tests."
+    },
+    "fiwon123/distributed-key-value-store": {
+      "language": "Go",
+      "stars": 0,
+      "pushedAt": "2026-10-14T07:24:02Z",
+      "description": "A minimal, educational distributed key-value store, built from scratch in Go with a hand-rolled Raft consensus algorithm."
+    },
+    "fiwon123/distributed-task-queue": {
+      "language": "Go",
+      "stars": 0,
+      "pushedAt": "2026-10-14T20:16:07Z",
+      "description": "A durable, PostgreSQL-backed distributed task queue in Go — educational, built from scratch."
+    },
+    "fiwon123/live-chat-server": {
+      "language": "Rust",
+      "stars": 0,
+      "pushedAt": "2026-10-13T05:51:51Z",
+      "description": "Real-time chat with a Rust backend and a React + TypeScript client. WebSockets, JWT auth, room-based access control, and message persistence in PostgreSQL."
+    },
+    "fiwon123/realtime-leaderboard": {
+      "language": "Rust",
+      "stars": 0,
+      "pushedAt": "2026-10-14T09:24:08Z",
+      "description": "A real-time leaderboard service — submit score events, read a player's rank, and page through the top of the board."
     }
   }
 }
