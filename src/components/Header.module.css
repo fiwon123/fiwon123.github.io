@@ -21,6 +21,10 @@
 
 .brand {
   grid-area: brand;
+  /* A grid item is blockified and stretches to fill its `1fr` track by default,
+     which turned the whole gap between the logo and the nav into a click target.
+     Shrink the anchor to its content. */
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
