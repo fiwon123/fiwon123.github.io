@@ -41,7 +41,14 @@ export const experience: ExperienceEntry[] = [
       { name: 'gog', url: 'https://www.gog.com/en/game/astrea_sixsided_oracles' },
       { name: 'epic', url: 'https://store.epicgames.com/p/astrea-six-sided-oracles-33c949' },
     ],
-    gallery: ['/projects/astrea.jpg'],
+    games: [
+      {
+        name: 'Astrea: Six-Sided Oracles',
+        site: 'https://www.akuparagames.com/game/astrea-six-sided-oracles/',
+        trailer: 'https://www.youtube.com/watch?v=y_wo2sVtK6Y',
+        image: '/projects/astrea.jpg',
+      },
+    ],
     tech: ['Unity', 'C#', 'BepInEx', 'Python'],
   },
   {
