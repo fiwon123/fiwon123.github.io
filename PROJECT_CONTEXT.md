@@ -78,6 +78,16 @@ Each entry is settled; the reason is what stops it being re-opened.
   `surfaces.test.ts` forbids literal hex in component CSS. A per-palette
   contrast test gates the glyph against every `--color-surface` at ≥ 3:1.
   (2026-10-17)
+- **The game-jams collection is one linked pill under the gallery, not per tile**
+  (#160) — `Project.collection` carries a bilingual label and an external URL,
+  rendered as a single anchor after the gallery images. A per-tile link would
+  have stolen the click target from the lightbox (tiles open the viewer by
+  design), and the collection is a property of the whole gallery, not of any one
+  image. It reuses the tech-tag pill styling (border, no tint, so no new
+  non-text contrast budget) with a new `:focus-visible` ring, because a lone
+  anchor carrying `.tag` has no descendant for the existing
+  `.tag:has(...)` rule.
+  (2026-10-17)
 - **CSS Modules + design tokens, not a utility framework** — the tokens are the
   single source of truth for colour, and the contrast tests parse
   `src/theme/tokens.css` directly to prove every preset meets AA. A utility
