@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 import { buildIco, pngSize } from '../../scripts/favicon-ico.mjs'
+import { rasterSvgSource } from '../../scripts/favicon-svg.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const read = (...parts: string[]) => readFileSync(path.join(repoRoot, ...parts), 'utf8')
@@ -22,13 +23,26 @@ function attrs(tag: string): Record<string, string> {
 function tags(source: string, name: string): string[] {
   return [...source.matchAll(new RegExp(`<${name}\\b[^>]*>`, 'g'))].map((m) => m[0])
 }
-/** The `--color-*` values of the studio-dark palette block. */
-function studioDark(): Record<string, string> {
-  const block = /\[data-theme='studio'\]\[data-mode='dark'\]\s*\{([^}]*)\}/.exec(tokens)
-  if (!block) throw new Error('studio-dark token block not found')
+/** The `--color-*` values of one studio palette block (`dark` or `light`). */
+function palette(mode: 'dark' | 'light'): Record<string, string> {
+  const block = new RegExp(
+    `\\[data-theme='studio'\\]\\[data-mode='${mode}'\\]\\s*\\{([^}]*)\\}`,
+  ).exec(tokens)
+  if (!block) throw new Error(`studio-${mode} token block not found`)
   return Object.fromEntries(
     [...block[1].matchAll(/(--color-[a-z-]+):\s*(#[0-9a-fA-F]{3,8})/g)].map((m) => [m[1], m[2]]),
   )
+}
+/** The `<style>` blocks of the SVG, split into their attributes and CSS. */
+function svgStyles(): { attrs: string; css: string }[] {
+  return [...svg.matchAll(/<style([^>]*)>([\s\S]*?)<\/style>/g)].map((match) => ({
+    attrs: match[1],
+    css: match[2],
+  }))
+}
+/** One `--color-*` value from a CSS block. */
+function cssVar(css: string, name: string): string | undefined {
+  return new RegExp(`${name}:\\s*(#[0-9a-fA-F]{3,8})`).exec(css)?.[1]
 }
 function parseIco(buffer: Buffer) {
   const count = buffer.readUInt16LE(4)
@@ -78,16 +92,43 @@ describe('favicon.svg matches the page logo', () => {
     }
   })
 
-  it('paints the box and the glyph with the studio-dark palette', () => {
-    const palette = studioDark()
+  it('paints from the studio-dark palette by default, and studio-light in a light scheme', () => {
+    // A favicon cannot read data-theme/data-mode, so it follows the OS reading:
+    // a dark base (the site's default) and a light override.
+    const styles = svgStyles()
+    const base = styles.find((style) => !/prefers-color-scheme/.test(style.attrs))
+    const light = styles.find((style) => /prefers-color-scheme:\s*light/.test(style.attrs))
+    expect(base, 'no default palette style').toBeTruthy()
+    expect(light, 'no light-scheme palette style').toBeTruthy()
+
+    const dark = palette('dark')
+    const bright = palette('light')
+    for (const key of ['--color-surface', '--color-border', '--color-accent']) {
+      expect(cssVar(base?.css ?? '', key), key).toBe(dark[key])
+      expect(cssVar(light?.css ?? '', key), key).toBe(bright[key])
+    }
+
+    // The shapes read the variables, so they take whichever palette is active.
     const box = attrs(tags(svg, 'rect')[0])
-    expect(box.fill).toBe(palette['--color-surface'])
-    expect(box.stroke).toBe(palette['--color-border'])
+    expect(box.fill).toBe('var(--color-surface)')
+    expect(box.stroke).toBe('var(--color-border)')
     for (const tag of tags(svg, 'path')) {
       const glyph = attrs(tag)
-      expect(glyph.stroke).toBe(palette['--color-accent'])
+      expect(glyph.stroke).toBe('var(--color-accent)')
       expect(glyph.fill).toBe('none')
     }
+  })
+})
+
+describe('rasterSvgSource keeps the fallback rasters on the default palette', () => {
+  it('drops the light-scheme style and leaves the dark base', () => {
+    const raster = rasterSvgSource(svg)
+    expect(raster).not.toMatch(/prefers-color-scheme/)
+    expect(raster).toMatch(/--color-accent:\s*#6ea8fe/)
+    // Geometry is untouched, so the rasters are still the page mark.
+    expect([...raster.matchAll(/d="([^"]+)"/g)].map((m) => m[1])).toEqual(
+      [...svg.matchAll(/d="([^"]+)"/g)].map((m) => m[1]),
+    )
   })
 })
 
@@ -179,7 +220,11 @@ describe('the favicon harness is wired up', () => {
   })
 
   it('parses the generator scripts', () => {
-    for (const script of ['scripts/favicons.mjs', 'scripts/favicon-ico.mjs']) {
+    for (const script of [
+      'scripts/favicons.mjs',
+      'scripts/favicon-ico.mjs',
+      'scripts/favicon-svg.mjs',
+    ]) {
       expect(() =>
         execFileSync(process.execPath, ['--check', script], { cwd: repoRoot }),
       ).not.toThrow()
