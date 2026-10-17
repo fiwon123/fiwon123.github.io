@@ -148,11 +148,14 @@ describe('document structure', () => {
     }
   })
 
-  it('has exactly one h1', () => {
+  it('has exactly one h1', async () => {
     renderApp()
     const headings = document.querySelectorAll('h1')
     expect(headings).toHaveLength(1)
-    expect(headings[0]?.textContent).toBe(en.hero.greeting)
+    // The greeting types itself out; wait for the visible text to settle on it.
+    await waitFor(() => expect(headings[0]?.textContent).toBe(en.hero.greeting), {
+      timeout: 3000,
+    })
   })
 
   it('does not show the introduction twice', () => {
