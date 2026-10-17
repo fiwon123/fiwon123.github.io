@@ -1,13 +1,12 @@
 # Screenshots
 
-The images in this directory are referenced from the project README (the home
-page with the terminal dock open and collapsed, in dark mode). They are committed,
-not generated on the fly, so a visitor sees the site before running it.
+The image in this directory is referenced from the project README (the home page
+in dark mode). It is committed, not generated on the fly, so a visitor sees the
+site before running it.
 
-| File                     | What it shows                           |
-| ------------------------ | --------------------------------------- |
-| `home-terminal-dark.png` | Terminal dock open, Studio preset, dark |
-| `home-browse-dark.png`   | Console collapsed, Studio preset, dark  |
+| File            | What it shows           |
+| --------------- | ----------------------- |
+| `home-dark.png` | Home page, Studio, dark |
 
 ## Regenerate
 
@@ -58,8 +57,8 @@ fine, the image does not.
 
 ## Dark only
 
-The README set is **dark** — the site's default — captured as two states (dock open
-and collapsed). Light/dark _verification_ is a throwaway visual-QA concern, not a
-committed artifact: a change is checked in both themes while it is made, but only
-the dark capture is published. See the visual-check rules in the project's agent
+The README set is **dark** — the site's default — captured as one state (the home
+page). Light/dark _verification_ is a throwaway visual-QA concern, not a committed
+artifact: a change is checked in both themes while it is made, but only the dark
+capture is published. See the visual-check rules in the project's agent
 instructions.

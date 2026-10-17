@@ -15,7 +15,7 @@ bloat — every section is rendered in the browser from typed content records.
 
 ## Main page
 
-![The portfolio home page with the terminal docked, in dark mode](docs/screenshots/home-terminal-dark.png)
+![The portfolio home page, in dark mode](docs/screenshots/home-dark.png)
 
 ## Purpose
 
@@ -28,12 +28,9 @@ the bilingual parity are all gated before anything is merged.
 
 ## Features
 
-- **Terminal-docked navigation** — a pure parser/history layer with EN/PT-BR
-  command aliases (`help`, `clear`, `about`, `projects`, `work`, …): a navigation
-  command focuses one section (`all` restores the page), and `theme`, `mode` and
-  `lang` change the preferences.
-- **One page, optional console** — every section always renders; the terminal
-  dock is toggled per visitor and remembered.
+- **One conventional page** — every section always renders; the header nav and
+  `#section` deep links scroll to a section, and the preference controls are the
+  one way to change theme, mode and language.
 - **Five theme presets** (Studio, Paper, Terminal, Violet, Ember) × light/dark
   (no system; dark is the default): the whole page flips together with the
   reading, applied before first paint so there is no flash of the wrong palette.
@@ -41,16 +38,12 @@ the bilingual parity are all gated before anything is merged.
 - **Repository cards** — language, stars and last-push date, read from a
   build-time snapshot (`npm run stats`), never from the browser.
 - **Accessible** — skip link, WCAG AA contrast enforced in tests, keyboard-operable
-  terminal, gallery, image viewer and back-to-top.
+  gallery, image viewer and back-to-top.
 - **Reduced-motion aware** — the particle layer and scroll reveals stand down.
 
 ## Screenshots
 
-The console collapses for visitors who would rather just read:
-
-![The portfolio with the terminal dock collapsed, in dark mode](docs/screenshots/home-browse-dark.png)
-
-Regenerate these with `make screenshots` (dark mode, the site's default) — see
+Regenerate the image with `make screenshots` (dark mode, the site's default) — see
 [`docs/screenshots/README.md`](docs/screenshots/README.md).
 
 ## Prerequisites
