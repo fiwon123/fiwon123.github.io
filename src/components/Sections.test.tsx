@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { about, experience, projects, TECHNOLOGIES } from '../content'
 import type { TechName } from '../content/types'
 import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
+import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { About, Experience, Hero, Projects } from './Sections'
 
@@ -135,6 +136,39 @@ describe('reveal wiring', () => {
     const paragraphs = container.querySelectorAll('p')
     expect(paragraphs.length).toBeGreaterThan(0)
     expect(paragraphs).toHaveLength(about.en.length)
+  })
+})
+
+describe('typed text (#132)', () => {
+  // The acceptance criterion is on the rendered output: assistive tech must read
+  // the whole string from the first frame, even though the visible layer is
+  // mid-word. An implementation that hides the text behind the timer would pass
+  // a hook test and fail a visitor.
+  it('carries the whole greeting on the h1 from the first frame', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Hero />)
+    const h1 = container.querySelector('h1')
+    expect(h1?.textContent).toBe(en.hero.greeting)
+    expect(h1?.querySelector('[aria-hidden="true"]')).not.toBeNull()
+  })
+
+  it('types only the first About paragraph, and shows it whole while typing', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<About />)
+    const paragraphs = [...container.querySelectorAll('p')]
+
+    // The first paragraph is typed — its visible layer is decorative and mid-run
+    // — but its real (hidden) copy already reads the full paragraph.
+    expect(paragraphs[0].textContent).toBe(about.en[0])
+    expect(paragraphs[0].querySelector('[aria-hidden="true"]')).not.toBeNull()
+
+    // Every other paragraph is plain text, with no decorative layer at all.
+    for (const paragraph of paragraphs.slice(1)) {
+      expect(paragraph.textContent).toBe(about.en[paragraphs.indexOf(paragraph)])
+      expect(paragraph.querySelector('[aria-hidden="true"]')).toBeNull()
+    }
   })
 })
 

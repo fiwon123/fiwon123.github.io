@@ -202,6 +202,16 @@ Each entry is settled; the reason is what stops it being re-opened.
   (WCAG 1.4.11) on `--color-surface` — which is why the tints are a separate
   token set gated by `tokens.test.ts` rather than a recolouring of the label.
   (2026-10-16)
+- **The hero is a centred column and its greeting types itself out** (#132) —
+  greeting, portrait, contact row, headline and stack, top to bottom and centred,
+  replacing the old thumbnail-beside-text flex row. The greeting (and the first
+  About paragraph) reveals one character at a time through `useTypewriter`, a
+  hand-rolled interval — no typing library. The effect is decoration over
+  content, never a gate in front of it: the whole string is in the document from
+  the first frame for assistive tech (a `srOnly` copy while the visible span
+  types), reduced motion shows it at once with no timer, and switching language
+  retypes the new string. The caret blinks only under
+  `prefers-reduced-motion: no-preference`. (2026-10-17)
 
 ## Topology
 

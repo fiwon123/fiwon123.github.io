@@ -6,19 +6,16 @@
 
 .hero {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 1.5rem;
-}
-
-.heroText {
-  min-width: 0;
 }
 
 .avatar {
   flex: none;
-  width: 128px;
-  height: 128px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--color-border);
@@ -27,18 +24,49 @@
 
 .heroTitle {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.25rem;
+}
+
+.heroRest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .heroSubtitle {
-  margin: 0.5rem 0 1rem;
+  margin: 0;
   font-size: 1.25rem;
   opacity: 0.9;
 }
 
 .heroStack {
-  margin: 0.5rem 0 1rem;
+  margin: 0;
   opacity: 0.85;
+}
+
+/* The typing caret: a static bar that blinks only when motion is welcome, so a
+   reduced-motion visitor never has a flashing one. */
+.caret {
+  display: inline-block;
+  width: 0.08em;
+  min-width: 2px;
+  height: 1em;
+  margin-left: 0.1em;
+  vertical-align: -0.15em;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caret {
+    animation: caret-blink 1s steps(1, end) infinite;
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .grid {
