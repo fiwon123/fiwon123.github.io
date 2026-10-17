@@ -261,12 +261,12 @@ describe('repository facts and game tiles (#20, #43)', () => {
     const cardFor = (name: string) =>
       cards.find((card) => card.querySelector('h3')?.textContent === name)
 
-    const withFacts = cardFor('Portfolio')
+    const withFacts = cardFor('AI Document Platform')
     expect(withFacts?.textContent).toContain('TypeScript')
     expect(withFacts?.textContent).toContain('★')
 
-    // A private project has no snapshot entry: the card keeps its static form.
-    expect(cardFor('Evolve Box')?.textContent).not.toContain('★')
+    // Games is itch-io, not GitHub; it has no snapshot entry.
+    expect(cardFor('Games')?.textContent).not.toContain('★')
   })
 
   it('gives every shipped title its own named gallery tile', () => {

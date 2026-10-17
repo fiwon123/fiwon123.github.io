@@ -109,6 +109,13 @@ export const TECHNOLOGIES: Record<TechName, Technology> = {
       'pt-BR': 'Um framework de plugins para mods de jogos Unity.',
     },
   },
+  Rust: {
+    url: 'https://www.rust-lang.org/',
+    blurb: {
+      en: 'A systems language focused on safety, performance, and concurrency.',
+      'pt-BR': 'Uma linguagem de sistemas focada em segurança, desempenho e concorrência.',
+    },
+  },
   Python: {
     url: 'https://www.python.org/',
     blurb: {

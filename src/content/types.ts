@@ -32,6 +32,7 @@ export type TechName =
   | 'Unity'
   | 'Game Maker'
   | 'Pico-8'
+  | 'Rust'
   | 'C#'
   | 'BepInEx'
   | 'Python'
@@ -88,6 +89,8 @@ export interface RepoStat {
   stars: number
   /** ISO 8601 timestamp of the last push, or `null` if GitHub omitted it. */
   pushedAt: string | null
+  /** Repository description from GitHub, or `null` if none. */
+  description?: string | null
 }
 
 /** Shape of `src/content/repoStats.json`, keyed by `owner/name`. */

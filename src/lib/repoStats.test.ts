@@ -5,10 +5,11 @@ import { formatUpdated, statFor } from './repoStats'
 
 describe('statFor', () => {
   it('returns the committed facts for a known repository', () => {
-    const stat = statFor('fiwon123/fiwon123.github.io')
+    const stat = statFor('fiwon123/ai-document-platform')
     expect(stat).toBeDefined()
     expect(stat?.language).toBe('TypeScript')
     expect(typeof stat?.stars).toBe('number')
+    expect(stat?.description).toBeDefined()
   })
 
   it('returns undefined for a repository the snapshot does not hold', () => {
@@ -20,7 +21,7 @@ describe('statFor', () => {
   })
 
   it('returns undefined for a private project (never snapshotted)', () => {
-    expect(statFor('fiwon123/evolve-box')).toBeUndefined()
+    expect(statFor('fiwon123/eznit')).toBeUndefined()
   })
 
   // Guards against a snapshot regenerated to an empty or gutted file: every
