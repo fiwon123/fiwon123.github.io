@@ -187,6 +187,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   in the Dockerfile** — so `check-sandbox.py` can execute the shipped file under
   `sh` with the account tooling stubbed, which is the only way to test it where
   Docker is unavailable. (2026-10-15)
+- **The mark is an "FI" monogram in a rounded tile** (#120) — two geometric
+  stroke paths (an `F` and an `I`) inside the token-painted box, so the header
+  logo and the tab icon are the same figure. It replaces the terminal-prompt
+  carets, which tied the identity to the console; the letters keep the two-path
+  shape the favicon test derives from `Logo.tsx`. (2026-10-17)
 - **The favicon is the page's own mark, and its rasters are generated, not drawn
   twice** — `public/favicon.svg` shares `Logo.tsx`'s geometry and is painted with
   the studio-dark palette (a test derives both from source and fails on drift),
