@@ -1,11 +1,11 @@
 import styles from './Logo.module.css'
 
 /**
- * The portfolio mark: an "FI" monogram in a rounded box. Each letter is one
- * geometric stroke `<path>`, so `public/favicon.svg` can mirror the same two
- * paths (a test derives both and fails on drift). Painted with theme tokens so
- * it matches whichever preset is active. Decorative — the accessible name comes
- * from the adjacent brand link.
+ * The portfolio mark: a node and its orbit in a rounded box. The orbit is one
+ * tilted ellipse and the node one small circle, each a single stroke `<path>`, so
+ * `public/favicon.svg` can mirror the same two paths (a test derives both and
+ * fails on drift). Painted with theme tokens so it matches whichever preset is
+ * active. Decorative — the accessible name comes from the adjacent brand link.
  */
 export function Logo({ size = 28 }: { size?: number }) {
   return (
@@ -18,10 +18,13 @@ export function Logo({ size = 28 }: { size?: number }) {
       focusable="false"
     >
       <rect className={styles.box} x="1" y="1" width="30" height="30" rx="7" />
-      {/* F: top arm and stem as one polyline, plus the mid arm. */}
-      <path className={styles.glyph} d="M13.5 8 H9 V24 M9 15.5 H12.5" />
-      {/* I: top serif, stem and bottom serif. */}
-      <path className={styles.glyph} d="M18.5 8 H24 M21.25 8 V24 M18.5 24 H24" />
+      {/* The orbit: a full ellipse drawn as two half arcs, tilted 20°. */}
+      <path
+        className={styles.glyph}
+        d="M7.07 19.25 A9.5 4.2 -20 0 1 24.93 12.75 A9.5 4.2 -20 0 1 7.07 19.25"
+      />
+      {/* The node: a small circle whose heavy stroke reads as a solid dot. */}
+      <path className={styles.glyph} d="M16 14.5 a1.5 1.5 0 0 0 0 3 a1.5 1.5 0 0 0 0 -3" />
     </svg>
   )
 }
