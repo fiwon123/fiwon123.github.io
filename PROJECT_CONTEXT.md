@@ -309,31 +309,31 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   widely spaced header nav (#118), the streaks redrawn as clean uniform lines
   (#121), the mark replaced by an "FI" monogram shared with the tab icon (#120),
   and the terminal retired entirely (#119).
-- **Done**: v1.10 — Hero, mark & polish — released to `main` (#147): the header
-  brand anchor kept off the nav gap (#129), company logos always in colour
-  (#130), the mark redrawn as a node and its orbit (#131), the centred hero
-  column whose greeting types itself out (#132), and the Astrea entry in the
-  Little Leo gallery (#133).
-- **Done**: v1.11 — Icon, sequence & repositories — released to `main` (#147):
-  the tab icon following the site theme (#139), the hero reveal sequenced
-  greeting → contacts → headline → stack (#140), the tech-tag tooltip that no
-  longer sticks on click focus (#141), and Projects rebuilt from the six pinned
-  repos with snapshot descriptions, the Rust track included (#142).
-- **In progress**: v1.12 — Feedback fixes — on `dev`: the Games gallery,
-  greeting-scoped typing and theme-following favicon restore (#148), and the
-  green `make check` restored after it (#150).
-- **Next**: release `dev` to `main` (the v1.11 deploy failed on the gate that
-  #150 fixed, so production still serves v1.8/v1.9), then the human-only
-  captures — `make screenshots` and `make favicons` — and, after that, the new
-  projects and language track below.
+- **Done**: v1.10 — Hero, mark & polish — released to `main` (#147, deployed
+  with #154): the header brand anchor kept off the nav gap (#129), company logos
+  always in colour (#130), the mark redrawn as a node and its orbit (#131), the
+  centred hero column whose greeting types itself out (#132), and the Astrea
+  entry in the Little Leo gallery (#133).
+- **Done**: v1.11 — Icon, sequence & repositories — released to `main` (#147,
+  deployed with #154): the tab icon following the site theme (#139), the hero
+  reveal sequenced greeting → contacts → headline → stack (#140), the tech-tag
+  tooltip that no longer sticks on click focus (#141), and Projects rebuilt from
+  the six pinned repos with snapshot descriptions, the Rust track included
+  (#142). The #147 deploy failed on the gate #150 later fixed, so #154 was the
+  first successful publish.
+- **Done**: v1.12 — Feedback fixes — released to `main` (#154): the Games
+  gallery, greeting-scoped typing and theme-following favicon restore (#148),
+  and the green `make check` restored after it (#150).
+- **Next**: the human-only captures — `make screenshots` and `make favicons` —
+  and a both-theme visual pass over the v1.10–v1.12 surface (neither runs in the
+  agent environment), then the new projects and language track below.
 
 ## Backlog
 
-`v1.10` and `v1.11` are released (milestones #11 and #12 closed); `v1.12` is the
-active milestone and holds the open work. Milestone tracking lives on GitHub
-(issue #2). The plan is to add new projects and continue the Rust track —
-deliberately _after_ the polish, so the additions land on a base that already
-looks finished.
+`v1.10`–`v1.12` are released (milestones #11–#13 closed) and production serves
+v1.12. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+add new projects and continue the Rust track — deliberately _after_ the polish,
+so the additions land on a base that already looks finished.
 
 ## Notes
 
