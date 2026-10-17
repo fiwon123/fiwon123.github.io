@@ -354,14 +354,19 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 - **Done**: v1.12 — Feedback fixes — released to `main` (#154): the Games
   gallery, greeting-scoped typing and theme-following favicon restore (#148),
   and the green `make check` restored after it (#150).
-- **Next**: the human-only captures — `make screenshots` and `make favicons` —
-  and a both-theme visual pass over the v1.10–v1.12 surface (neither runs in the
-  agent environment), then the new projects and language track below.
+- **Done**: v1.13 — Appearance & gallery feedback — released to `main` (#164):
+  the theme switch that cross-fades the page while tokens stay instant (#157),
+  the mode glyph forced to pure white in dark and pure black in light (#158),
+  the bilingual game-jams collection pill under the Games gallery (#160), and
+  the favicon rasters regenerated from the node-and-orbit mark (#159).
+- **Next**: the human-only `make screenshots` capture and a both-theme visual
+  pass over the v1.10–v1.13 surface (neither runs in the agent environment),
+  then the new projects and language track below.
 
 ## Backlog
 
-`v1.10`–`v1.12` are released (milestones #11–#13 closed) and production serves
-v1.12. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+`v1.10`–`v1.13` are released (milestones #11–#14 closed) and production serves
+v1.13. Milestone tracking lives on GitHub (the Milestones page). The plan is to
 add new projects and continue the Rust track — deliberately _after_ the polish,
 so the additions land on a base that already looks finished.
 
