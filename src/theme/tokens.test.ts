@@ -208,23 +208,43 @@ function parseModeBlocks(source: string): Record<string, string> {
   return values
 }
 
-describe('mode glyph', () => {
-  it('defines pure white in dark and pure black in light', () => {
+describe('mode glyph (#167)', () => {
+  it('is white in both readings, declared once in :root', () => {
+    // #167 supersedes #158: the glyph no longer flips white→black→white with
+    // the reading. One mode-independent literal means no per-mode block can
+    // resurrect the old pair.
+    expect(root['--color-mode-icon']).toBe('#ffffff')
     const modes = parseModeBlocks(css)
-    expect(modes['dark:--color-mode-icon']).toBe('#ffffff')
-    expect(modes['light:--color-mode-icon']).toBe('#000000')
+    expect(modes['dark:--color-mode-icon']).toBeUndefined()
+    expect(modes['light:--color-mode-icon']).toBeUndefined()
   })
 
-  it.each(palettes)(
-    '$preset/$mode keeps the mode glyph readable against the control surface',
-    ({ preset, mode, colors }) => {
-      const modes = parseModeBlocks(css)
-      const glyph = parseHex(modes[`${mode}:--color-mode-icon`])
-      const surface = parseHex(colors['--color-surface'])
-      const ratio = contrastRatio(glyph, surface)
+  it('sits on a dark chip, in both readings', () => {
+    const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
+    const glyph = parseHex(root['--color-mode-icon'] ?? '')
+    const ratio = contrastRatio(glyph, chip)
+    expect(
+      ratio,
+      `mode glyph vs chip ${root['--color-mode-btn-bg']} = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
+    ).toBeGreaterThanOrEqual(AA_NON_TEXT)
+    // The chip must actually be dark — a light one would make white vanish.
+    const luminance = (0.2126 * chip.r + 0.7152 * chip.g + 0.0722 * chip.b) / 255
+    expect(luminance).toBeLessThan(0.2)
+  })
+
+  it.each(palettes.filter(({ mode }) => mode === 'light'))(
+    '$preset/$mode keeps the chip readable against the page',
+    ({ preset, colors }) => {
+      // The chip replaces the old surface-coloured control, so it now has to
+      // clear 3:1 against the page it sits on — in the light reading it is a
+      // dark object on a pale page, in the dark reading it is near the border
+      // colour and only the border draws the boundary (as before).
+      const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
+      const page = parseHex(colors['--color-bg'])
+      const ratio = contrastRatio(chip, page)
       expect(
         ratio,
-        `${preset}/${mode}: mode glyph vs surface = ${ratio.toFixed(2)}:1`,
+        `${preset}/light: mode chip vs page = ${ratio.toFixed(2)}:1`,
       ).toBeGreaterThanOrEqual(AA_NON_TEXT)
     },
   )

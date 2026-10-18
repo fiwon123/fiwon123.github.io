@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
-import { MODE_STORAGE_KEY, PRESETS } from '../theme/presets'
+import { MODE_STORAGE_KEY, PRESETS, THEME_FADE_MS } from '../theme/presets'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Preferences } from './Preferences'
 
@@ -93,5 +93,40 @@ describe('Preferences', () => {
   it('uses the mode icon token in the mode icon styles', () => {
     const css = readFileSync(cssPath, 'utf8')
     expect(css).toMatch(/\.icon\s*\{[\s\S]*?color:\s*var\(--color-mode-icon\)/)
+  })
+
+  it('paints the button with the chip token, not a reading surface', () => {
+    const css = readFileSync(cssPath, 'utf8')
+    expect(css).toMatch(/\.mode\s*\{[\s\S]*?background:\s*var\(--color-mode-btn-bg\)/)
+    expect(css).not.toMatch(/\.mode\s*\{[\s\S]*?background:\s*var\(--color-surface\)/)
+  })
+
+  it('keeps the disc mounted and fades its fill with the reading', () => {
+    const { container } = renderPreferences()
+    const discs = () => container.querySelectorAll('circle')
+    // Ring + disc, always — the disc is never unmounted (#167).
+    expect(discs()).toHaveLength(2)
+    const disc = discs()[1]
+    // Default mode is dark, so the disc starts filled.
+    expect(disc.getAttribute('fill-opacity')).toBe('1')
+
+    fireEvent.click(
+      screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.dark}` }),
+    )
+    expect(discs()).toHaveLength(2)
+    expect(disc.getAttribute('fill-opacity')).toBe('0')
+
+    fireEvent.click(
+      screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.light}` }),
+    )
+    expect(discs()).toHaveLength(2)
+    expect(disc.getAttribute('fill-opacity')).toBe('1')
+  })
+
+  it('cross-fades the disc fill at the theme-fade duration, off under reduced motion', () => {
+    const css = readFileSync(cssPath, 'utf8')
+    expect(css).toMatch(new RegExp(`transition:[\\s\\S]*?fill-opacity\\s+${THEME_FADE_MS}ms`))
+    expect(css).toMatch(/prefers-reduced-motion:\s*reduce/)
+    expect(css).toMatch(/\.disc\s*\{[\s\S]*?transition:\s*none/)
   })
 })
