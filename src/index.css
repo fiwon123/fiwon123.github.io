@@ -41,6 +41,7 @@ html.js .reveal-visible {
       border-color 300ms ease,
       color 300ms ease,
       fill 300ms ease,
+      fill-opacity 300ms ease,
       stroke 300ms ease,
       outline-color 300ms ease;
   }

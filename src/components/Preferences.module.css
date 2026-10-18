@@ -48,8 +48,18 @@
   color: var(--color-mode-icon);
 }
 
-.punch {
-  fill: var(--color-surface);
+/* The disc is always in the DOM; only its opacity flips with the reading, so
+   the glyph cross-fades instead of snapping (issue 167). Duration matches the
+   page theme fade; under reduced motion the transition is never declared and
+   the fill simply changes. */
+.disc {
+  transition: fill-opacity 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc {
+    transition: none;
+  }
 }
 
 .select {
@@ -72,7 +82,7 @@
   justify-content: center;
   padding: var(--space-2);
   color: var(--color-fg);
-  background: var(--color-surface);
+  background: var(--color-mode-btn-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   cursor: pointer;

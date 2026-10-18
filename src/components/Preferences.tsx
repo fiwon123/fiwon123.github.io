@@ -21,13 +21,21 @@ const FLAGS: Record<Locale, string> = {
 
 /**
  * The appearance glyph: a circle that reflects the current mode — empty for
- * light, filled for dark.
+ * light, filled for dark. The disc is always in the DOM and only its opacity
+ * changes, so the fill cross-fades instead of snapping in and out (#167).
  */
 function ModeIcon({ mode }: { mode: Mode }) {
   return (
     <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
-      {mode === 'dark' ? <circle cx="12" cy="12" r="9" fill="currentColor" /> : null}
+      <circle
+        className={styles.disc}
+        cx="12"
+        cy="12"
+        r="9"
+        fill="currentColor"
+        fillOpacity={mode === 'dark' ? 1 : 0}
+      />
     </svg>
   )
 }
