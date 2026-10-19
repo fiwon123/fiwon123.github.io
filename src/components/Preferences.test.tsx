@@ -105,32 +105,35 @@ describe('Preferences', () => {
     expect(css).not.toMatch(/var\(--color-mode-icon\)/)
   })
 
-  it('keeps the disc mounted and fades its fill with the reading', () => {
+  it('keeps both glyphs mounted and cross-fades them with the reading', () => {
     const { container } = renderPreferences()
-    const discs = () => container.querySelectorAll('circle')
-    // Ring + disc, always — the disc is never unmounted (#167).
-    expect(discs()).toHaveLength(2)
-    const disc = discs()[1]
-    // Default mode is dark, so the disc starts filled.
-    expect(disc.getAttribute('fill-opacity')).toBe('1')
+    // Sun + moon, both always present — neither is ever unmounted (#167/#172).
+    const glyphs = () => container.querySelectorAll('svg [opacity]')
+    expect(glyphs()).toHaveLength(2)
+    const [sun, moon] = glyphs()
+    // Default mode is dark, so the sun is hidden and the moon shown.
+    expect(sun.getAttribute('opacity')).toBe('0')
+    expect(moon.getAttribute('opacity')).toBe('1')
 
     fireEvent.click(
       screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.dark}` }),
     )
-    expect(discs()).toHaveLength(2)
-    expect(disc.getAttribute('fill-opacity')).toBe('0')
+    expect(glyphs()).toHaveLength(2)
+    expect(sun.getAttribute('opacity')).toBe('1')
+    expect(moon.getAttribute('opacity')).toBe('0')
 
     fireEvent.click(
       screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.light}` }),
     )
-    expect(discs()).toHaveLength(2)
-    expect(disc.getAttribute('fill-opacity')).toBe('1')
+    expect(glyphs()).toHaveLength(2)
+    expect(sun.getAttribute('opacity')).toBe('0')
+    expect(moon.getAttribute('opacity')).toBe('1')
   })
 
-  it('cross-fades the disc fill at the theme-fade duration, off under reduced motion', () => {
+  it('cross-fades the glyphs at the theme-fade duration, off under reduced motion', () => {
     const css = readFileSync(cssPath, 'utf8')
-    expect(css).toMatch(new RegExp(`transition:[\\s\\S]*?fill-opacity\\s+${THEME_FADE_MS}ms`))
+    expect(css).toMatch(new RegExp(`transition:[\\s\\S]*?opacity\\s+${THEME_FADE_MS}ms`))
     expect(css).toMatch(/prefers-reduced-motion:\s*reduce/)
-    expect(css).toMatch(/\.disc\s*\{[\s\S]*?transition:\s*none/)
+    expect(css).toMatch(/\.glyph\s*\{[\s\S]*?transition:\s*none/)
   })
 })

@@ -68,16 +68,17 @@ Each entry is settled; the reason is what stops it being re-opened.
   both one theme behind — the tab icon and the canvas colour snap while the page
   fades, which is accepted as the cost of never desyncing the token readers.
   (2026-10-17)
-- **The appearance control is a bare circle — no chip, no border** (#170,
-  superseding #167) — the toggle is only its glyph: a ring that fills in the
-  dark reading, painted `currentColor` from the button's `--color-fg`, so it
-  needs no colour of its own — every palette already gates `--color-fg` against
-  `--color-bg` at AA, and `Preferences.test.ts` pins `background: none` and the
-  absence of any border/radius (and of the retired `--color-mode-*` tokens, all
-  deleted from `tokens.css`) so the chip cannot creep back. Hover tints the
-  glyph `--color-accent` in place of the old border hover; the focus-visible
-  accent outline and the accessible name are unchanged. The disc stays in the
-  DOM and only its `fill-opacity` flips, so the fill cross-fades at
+- **The appearance control is a bare button whose glyph names the current
+  reading — a sun in light, a moon in dark** (#170 + #172, superseding #167) —
+  the toggle has no chip, no border and no radius: it is only its glyph,
+  painted `currentColor` from the button's `--color-fg`, so it needs no colour
+  of its own — every palette already gates `--color-fg` against `--color-bg` at
+  AA, and `Preferences.test.tsx` pins `background: none` and the absence of any
+  border/radius (and of the retired `--color-mode-*` tokens, all deleted from
+  `tokens.css`) so the chip cannot creep back. Hover tints the glyph
+  `--color-accent` in place of the old border hover; the focus-visible accent
+  outline and the accessible name are unchanged. Both glyphs (sun, moon) stay
+  in the DOM and only their `opacity` flips, so the pair cross-fades at
   `THEME_FADE_MS` with the page rather than snapping; the transition is never
   declared under `prefers-reduced-motion`. (2026-10-19)
 - **The game-jams collection is one linked pill under the gallery, not per tile**

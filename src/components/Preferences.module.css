@@ -49,16 +49,16 @@
   flex: 0 0 auto;
 }
 
-/* The disc is always in the DOM; only its opacity flips with the reading, so
-   the glyph cross-fades instead of snapping (issue 167). Duration matches the
-   page theme fade; under reduced motion the transition is never declared and
-   the fill simply changes. */
-.disc {
-  transition: fill-opacity 300ms ease;
+/* Both glyphs (sun, moon) are always in the DOM; only their opacity flips
+   with the reading, so the pair cross-fades instead of snapping (issue 167,
+   glyphs from issue 172). Duration matches the page theme fade; under reduced
+   motion the transition is never declared and the change simply happens. */
+.glyph {
+  transition: opacity 300ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .disc {
+  .glyph {
     transition: none;
   }
 }
