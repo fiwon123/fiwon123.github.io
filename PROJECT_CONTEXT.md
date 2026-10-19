@@ -68,22 +68,19 @@ Each entry is settled; the reason is what stops it being re-opened.
   both one theme behind — the tab icon and the canvas colour snap while the page
   fades, which is accepted as the cost of never desyncing the token readers.
   (2026-10-17)
-- **The mode glyph is white on a dark chip, in both readings** (#167, superseding
-  #158) — the Appearance button's circle is `#ffffff` in **both** readings,
-  because a glyph that flips white → black → white on every toggle reads as the
-  icon changing identity, and the black reading was unwanted. A white glyph on a
-  pale page is invisible, so the contrast lives in the control, not the glyph:
-  the button paints `--color-mode-btn-bg` (`#1a1a1a`), a dark chip declared once
-  in `:root` and mode-independent, and the glyph never changes. In the dark
-  reading the chip sits near the border and `--color-border` draws the boundary,
-  as the surface-coloured control did before. The disc stays in the DOM and only
-  its `fill-opacity` flips, so the fill cross-fades at `THEME_FADE_MS` with the
-  page rather than snapping; the transition is never declared under
-  `prefers-reduced-motion`. Tokens stay mode-independent, so the 10-palette count
-  in `tokens.test.ts` is untouched; `surfaces.test.ts` still forbids literal hex
-  in component CSS; and a per-palette test gates the glyph against the chip
-  (≥ 3:1) and the chip against every light page background at ≥ 3:1.
-  (2026-10-18)
+- **The appearance control is a bare button whose glyph names the current
+  reading — a sun in light, a moon in dark** (#170 + #172, superseding #167) —
+  the toggle has no chip, no border and no radius: it is only its glyph,
+  painted `currentColor` from the button's `--color-fg`, so it needs no colour
+  of its own — every palette already gates `--color-fg` against `--color-bg` at
+  AA, and `Preferences.test.tsx` pins `background: none` and the absence of any
+  border/radius (and of the retired `--color-mode-*` tokens, all deleted from
+  `tokens.css`) so the chip cannot creep back. Hover tints the glyph
+  `--color-accent` in place of the old border hover; the focus-visible accent
+  outline and the accessible name are unchanged. Both glyphs (sun, moon) stay
+  in the DOM and only their `opacity` flips, so the pair cross-fades at
+  `THEME_FADE_MS` with the page rather than snapping; the transition is never
+  declared under `prefers-reduced-motion`. (2026-10-19)
 - **The game-jams collection is one linked pill under the gallery, not per tile**
   (#160) — `Project.collection` carries a bilingual label and an external URL,
   rendered as a single anchor after the gallery images. A per-tile link would
