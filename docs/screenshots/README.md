@@ -31,7 +31,7 @@ rendered. This harness **refuses to write an image it cannot trust** and exits
 non-zero:
 
 - it dumps the rendered DOM first and requires mount markers React can only
-  produce (`data-testid="particles"`, `class="skip-link"`, and per-capture ones) —
+  produce (`<canvas`, `class="skip-link"`, and per-capture ones) —
   a page that did not mount has none of them, so the capture is never taken;
 - it rejects a PNG below a size floor (a blank or single-colour image compresses
   far below it);
