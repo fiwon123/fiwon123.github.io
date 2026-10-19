@@ -40,24 +40,37 @@ interface Palette {
 
 const css = readFileSync(tokensPath, 'utf8')
 
+function declarationsOf(body: string): Record<string, string> {
+  const colors: Record<string, string> = {}
+  for (const declaration of body.split(';')) {
+    const [property, value] = declaration.split(':')
+    if (!property || !value) continue
+    const name = property.trim()
+    if (name.startsWith('--color-')) colors[name] = value.trim()
+  }
+  return colors
+}
+
 function parsePalettes(source: string): Palette[] {
   const palettes: Palette[] = []
+  const modeOverrides: Record<string, Record<string, string>> = {}
   const blockPattern = /([^{}]+)\{([^{}]*)\}/g
   let match: RegExpExecArray | null
   while ((match = blockPattern.exec(source)) !== null) {
     const [, selector, body] = match
     const preset = /\[data-theme='([a-z-]+)'\]/.exec(selector)?.[1]
     const mode = /\[data-mode='([a-z]+)'\]/.exec(selector)?.[1]
-    if (!preset || !mode) continue
-
-    const colors: Record<string, string> = {}
-    for (const declaration of body.split(';')) {
-      const [property, value] = declaration.split(':')
-      if (!property || !value) continue
-      const name = property.trim()
-      if (name.startsWith('--color-')) colors[name] = value.trim()
+    if (!mode) continue
+    if (!preset) {
+      // A mode-only block (e.g. the appearance control tokens) applies to
+      // every preset in that reading.
+      modeOverrides[mode] = { ...modeOverrides[mode], ...declarationsOf(body) }
+      continue
     }
-    palettes.push({ preset, mode, colors })
+    palettes.push({ preset, mode, colors: declarationsOf(body) })
+  }
+  for (const palette of palettes) {
+    palette.colors = { ...palette.colors, ...modeOverrides[palette.mode] }
   }
   return palettes
 }
@@ -208,43 +221,38 @@ function parseModeBlocks(source: string): Record<string, string> {
   return values
 }
 
-describe('mode glyph (#167)', () => {
-  it('is white in both readings, declared once in :root', () => {
-    // #167 supersedes #158: the glyph no longer flips white→black→white with
-    // the reading. One mode-independent literal means no per-mode block can
-    // resurrect the old pair.
-    expect(root['--color-mode-icon']).toBe('#ffffff')
+describe('mode glyph (#170)', () => {
+  it('is a white chip with a black glyph in light, the inverse in dark', () => {
+    // #170 supersedes #167: the control now flips with the reading — a white
+    // button with a black glyph in light, a dark chip with a white glyph in
+    // dark. Pinned so a per-mode block cannot drift silently.
     const modes = parseModeBlocks(css)
-    expect(modes['dark:--color-mode-icon']).toBeUndefined()
-    expect(modes['light:--color-mode-icon']).toBeUndefined()
+    expect(modes['light:--color-mode-btn-bg']).toBe('#ffffff')
+    expect(modes['light:--color-mode-icon']).toBe('#1a1a1a')
+    expect(modes['dark:--color-mode-btn-bg']).toBe('#1a1a1a')
+    expect(modes['dark:--color-mode-icon']).toBe('#ffffff')
   })
 
-  it('sits on a dark chip, in both readings', () => {
-    const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
-    const glyph = parseHex(root['--color-mode-icon'] ?? '')
-    const ratio = contrastRatio(glyph, chip)
-    expect(
-      ratio,
-      `mode glyph vs chip ${root['--color-mode-btn-bg']} = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-    ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-    // The chip must actually be dark — a light one would make white vanish.
-    const luminance = (0.2126 * chip.r + 0.7152 * chip.g + 0.0722 * chip.b) / 255
-    expect(luminance).toBeLessThan(0.2)
-  })
-
-  it.each(palettes.filter(({ mode }) => mode === 'light'))(
-    '$preset/$mode keeps the chip readable against the page',
-    ({ preset, colors }) => {
-      // The chip replaces the old surface-coloured control, so it now has to
-      // clear 3:1 against the page it sits on — in the light reading it is a
-      // dark object on a pale page, in the dark reading it is near the border
-      // colour and only the border draws the boundary (as before).
-      const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
+  it.each(palettes)(
+    '$preset/$mode keeps the glyph readable on its chip and on the page',
+    ({ preset, mode, colors }) => {
+      // The glyph is the identifying visual of the control: it must clear 3:1
+      // against the chip it sits on and against the page behind it, in both
+      // readings (the chip itself matches the page too closely to carry the
+      // boundary in either mode — #1a1a1a on #0e1116 is 1.09:1, #ffffff on
+      // #ffffff is 1.00:1 — so the glyph does the work).
+      const glyph = parseHex(colors['--color-mode-icon'] ?? '')
+      const chip = parseHex(colors['--color-mode-btn-bg'] ?? '')
       const page = parseHex(colors['--color-bg'])
-      const ratio = contrastRatio(chip, page)
+      const onChip = contrastRatio(glyph, chip)
       expect(
-        ratio,
-        `${preset}/light: mode chip vs page = ${ratio.toFixed(2)}:1`,
+        onChip,
+        `${preset}/${mode}: glyph vs chip = ${onChip.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
+      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
+      const onPage = contrastRatio(glyph, page)
+      expect(
+        onPage,
+        `${preset}/${mode}: glyph vs page = ${onPage.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
       ).toBeGreaterThanOrEqual(AA_NON_TEXT)
     },
   )

@@ -59,13 +59,9 @@
   --color-overlay-chrome-bg: #ffffff;
   --color-overlay-chrome-fg: #1a1a1a;
 
-  /* The appearance control (#167, superseding #158): a white glyph on a dark
-   * chip, in both readings — the button flips with the page like everything
-   * else, but the *chip* carries the contrast so the glyph itself never has to
-   * turn black. Mode-independent, declared once: white on this chip is 17.3:1,
-   * and `tokens.test.ts` gates the chip against every light page background.
-   * In the dark reading the chip reads as the surface and `--color-border`
-   * draws the boundary, exactly as before. */
+  /* The appearance control: button colors flip by mode for better visibility
+   * in light mode (white button with black icon). In dark mode, dark button
+   * with white icon. */
   --color-mode-icon: #ffffff;
   --color-mode-btn-bg: #1a1a1a;
 }
@@ -182,4 +178,17 @@
   --color-accent: #fb923c;
   --color-accent-contrast: #2a1408;
   --color-border: #38261d;
+}
+
+/* Mode-specific, declared last so they win the cascade over the preset blocks
+ * above: light reads as a white chip with a black glyph, dark as a dark chip
+ * with a white glyph. `tokens.test.ts` gates each pair at WCAG AA. */
+:root[data-mode='light'] {
+  --color-mode-icon: #1a1a1a;
+  --color-mode-btn-bg: #ffffff;
+}
+
+:root[data-mode='dark'] {
+  --color-mode-icon: #ffffff;
+  --color-mode-btn-bg: #1a1a1a;
 }
