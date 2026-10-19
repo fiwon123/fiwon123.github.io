@@ -40,37 +40,24 @@ interface Palette {
 
 const css = readFileSync(tokensPath, 'utf8')
 
-function declarationsOf(body: string): Record<string, string> {
-  const colors: Record<string, string> = {}
-  for (const declaration of body.split(';')) {
-    const [property, value] = declaration.split(':')
-    if (!property || !value) continue
-    const name = property.trim()
-    if (name.startsWith('--color-')) colors[name] = value.trim()
-  }
-  return colors
-}
-
 function parsePalettes(source: string): Palette[] {
   const palettes: Palette[] = []
-  const modeOverrides: Record<string, Record<string, string>> = {}
   const blockPattern = /([^{}]+)\{([^{}]*)\}/g
   let match: RegExpExecArray | null
   while ((match = blockPattern.exec(source)) !== null) {
     const [, selector, body] = match
     const preset = /\[data-theme='([a-z-]+)'\]/.exec(selector)?.[1]
     const mode = /\[data-mode='([a-z]+)'\]/.exec(selector)?.[1]
-    if (!mode) continue
-    if (!preset) {
-      // A mode-only block (e.g. the appearance control tokens) applies to
-      // every preset in that reading.
-      modeOverrides[mode] = { ...modeOverrides[mode], ...declarationsOf(body) }
-      continue
+    if (!preset || !mode) continue
+
+    const colors: Record<string, string> = {}
+    for (const declaration of body.split(';')) {
+      const [property, value] = declaration.split(':')
+      if (!property || !value) continue
+      const name = property.trim()
+      if (name.startsWith('--color-')) colors[name] = value.trim()
     }
-    palettes.push({ preset, mode, colors: declarationsOf(body) })
-  }
-  for (const palette of palettes) {
-    palette.colors = { ...palette.colors, ...modeOverrides[palette.mode] }
+    palettes.push({ preset, mode, colors })
   }
   return palettes
 }
@@ -206,57 +193,6 @@ function throughParticle(under: Rgb, particle: Rgb, alpha: number): Rgb {
   const mix = (over: number, below: number) => Math.round(over * alpha + below * (1 - alpha))
   return { r: mix(particle.r, under.r), g: mix(particle.g, under.g), b: mix(particle.b, under.b) }
 }
-
-function parseModeBlocks(source: string): Record<string, string> {
-  const withoutComments = source.replace(/\/\*[\s\S]*?\*\//g, '')
-  const values: Record<string, string> = {}
-  const modePattern = /:root\[data-mode='([a-z]+)'\]\s*\{([\s\S]*?)\}/g
-  let m: RegExpExecArray | null
-  while ((m = modePattern.exec(withoutComments)) !== null) {
-    const [, mode, body] = m
-    for (const declaration of body.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+)/g)) {
-      values[`${mode}:${declaration[1]}`] = declaration[2].trim()
-    }
-  }
-  return values
-}
-
-describe('mode glyph (#170)', () => {
-  it('is a white chip with a black glyph in light, the inverse in dark', () => {
-    // #170 supersedes #167: the control now flips with the reading — a white
-    // button with a black glyph in light, a dark chip with a white glyph in
-    // dark. Pinned so a per-mode block cannot drift silently.
-    const modes = parseModeBlocks(css)
-    expect(modes['light:--color-mode-btn-bg']).toBe('#ffffff')
-    expect(modes['light:--color-mode-icon']).toBe('#1a1a1a')
-    expect(modes['dark:--color-mode-btn-bg']).toBe('#1a1a1a')
-    expect(modes['dark:--color-mode-icon']).toBe('#ffffff')
-  })
-
-  it.each(palettes)(
-    '$preset/$mode keeps the glyph readable on its chip and on the page',
-    ({ preset, mode, colors }) => {
-      // The glyph is the identifying visual of the control: it must clear 3:1
-      // against the chip it sits on and against the page behind it, in both
-      // readings (the chip itself matches the page too closely to carry the
-      // boundary in either mode — #1a1a1a on #0e1116 is 1.09:1, #ffffff on
-      // #ffffff is 1.00:1 — so the glyph does the work).
-      const glyph = parseHex(colors['--color-mode-icon'] ?? '')
-      const chip = parseHex(colors['--color-mode-btn-bg'] ?? '')
-      const page = parseHex(colors['--color-bg'])
-      const onChip = contrastRatio(glyph, chip)
-      expect(
-        onChip,
-        `${preset}/${mode}: glyph vs chip = ${onChip.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-      const onPage = contrastRatio(glyph, page)
-      expect(
-        onPage,
-        `${preset}/${mode}: glyph vs page = ${onPage.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-    },
-  )
-})
 
 describe('particle background over the page', () => {
   it('draws below the measured contrast budget', () => {

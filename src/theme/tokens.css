@@ -58,12 +58,6 @@
   --color-overlay-scrim: rgb(0 0 0 / 82%);
   --color-overlay-chrome-bg: #ffffff;
   --color-overlay-chrome-fg: #1a1a1a;
-
-  /* The appearance control: button colors flip by mode for better visibility
-   * in light mode (white button with black icon). In dark mode, dark button
-   * with white icon. */
-  --color-mode-icon: #ffffff;
-  --color-mode-btn-bg: #1a1a1a;
 }
 
 /* The default reading: studio, dark. */
@@ -178,17 +172,4 @@
   --color-accent: #fb923c;
   --color-accent-contrast: #2a1408;
   --color-border: #38261d;
-}
-
-/* Mode-specific, declared last so they win the cascade over the preset blocks
- * above: light reads as a white chip with a black glyph, dark as a dark chip
- * with a white glyph. `tokens.test.ts` gates each pair at WCAG AA. */
-:root[data-mode='light'] {
-  --color-mode-icon: #1a1a1a;
-  --color-mode-btn-bg: #ffffff;
-}
-
-:root[data-mode='dark'] {
-  --color-mode-icon: #ffffff;
-  --color-mode-btn-bg: #1a1a1a;
 }

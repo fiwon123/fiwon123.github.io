@@ -90,15 +90,19 @@ describe('Preferences', () => {
     }
   })
 
-  it('uses the mode icon token in the mode icon styles', () => {
+  it('paints no chip on the mode button — only the circle shows', () => {
+    // The square chip was retired; the glyph alone is the control, so neither
+    // a background nor a border (or a radius) may creep back in.
     const css = readFileSync(cssPath, 'utf8')
-    expect(css).toMatch(/\.icon\s*\{[\s\S]*?color:\s*var\(--color-mode-icon\)/)
-  })
-
-  it('paints the button with the chip token, not a reading surface', () => {
-    const css = readFileSync(cssPath, 'utf8')
-    expect(css).toMatch(/\.mode\s*\{[\s\S]*?background:\s*var\(--color-mode-btn-bg\)/)
-    expect(css).not.toMatch(/\.mode\s*\{[\s\S]*?background:\s*var\(--color-surface\)/)
+    const modeRule = /\.mode\s*\{[^}]*\}/.exec(css)?.[0]
+    expect(modeRule).toBeTruthy()
+    expect(modeRule).toMatch(/background:\s*none/)
+    const borders = [...(modeRule ?? '').matchAll(/border(?:-radius)?:\s*([^;]+)/g)].map((match) =>
+      match[1].trim(),
+    )
+    expect(borders.filter((value) => value !== 'none' && value !== '0')).toEqual([])
+    expect(css).not.toMatch(/var\(--color-mode-btn-bg\)/)
+    expect(css).not.toMatch(/var\(--color-mode-icon\)/)
   })
 
   it('keeps the disc mounted and fades its fill with the reading', () => {

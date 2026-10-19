@@ -68,21 +68,18 @@ Each entry is settled; the reason is what stops it being re-opened.
   both one theme behind — the tab icon and the canvas colour snap while the page
   fades, which is accepted as the cost of never desyncing the token readers.
   (2026-10-17)
-- **The mode glyph flips with the reading: white chip with a black glyph in
-  light, dark chip with a white glyph in dark** (#170, superseding #167) — the
-  Appearance button now reads like the rest of the page: a light control on the
-  light reading, a dark one on the dark reading, so `:root` declares the pair
-  `--color-mode-btn-bg` / `--color-mode-icon` and two `:root[data-mode]` blocks
-  (declared last, so they win the cascade over the preset blocks) flip them. The
-  chip matches its own page too closely to carry the boundary in either reading
-  (`#1a1a1a` on `#0e1116` is 1.09:1, `#ffffff` on `#ffffff` is 1.00:1), so the
-  glyph is the identifying visual and `tokens.test.ts` gates it at ≥ 3:1 against
-  both the chip and the page in all 10 palettes, plus pins the four flipped
-  values. The disc stays in the DOM and only its `fill-opacity` flips, so the
-  fill cross-fades at `THEME_FADE_MS` with the page rather than snapping; the
-  transition is never declared under `prefers-reduced-motion`.
-  `surfaces.test.ts` still forbids literal hex in component CSS (the hex lives in
-  `tokens.css`). (2026-10-19)
+- **The appearance control is a bare circle — no chip, no border** (#170,
+  superseding #167) — the toggle is only its glyph: a ring that fills in the
+  dark reading, painted `currentColor` from the button's `--color-fg`, so it
+  needs no colour of its own — every palette already gates `--color-fg` against
+  `--color-bg` at AA, and `Preferences.test.ts` pins `background: none` and the
+  absence of any border/radius (and of the retired `--color-mode-*` tokens, all
+  deleted from `tokens.css`) so the chip cannot creep back. Hover tints the
+  glyph `--color-accent` in place of the old border hover; the focus-visible
+  accent outline and the accessible name are unchanged. The disc stays in the
+  DOM and only its `fill-opacity` flips, so the fill cross-fades at
+  `THEME_FADE_MS` with the page rather than snapping; the transition is never
+  declared under `prefers-reduced-motion`. (2026-10-19)
 - **The game-jams collection is one linked pill under the gallery, not per tile**
   (#160) — `Project.collection` carries a bilingual label and an external URL,
   rendered as a single anchor after the gallery images. A per-tile link would
