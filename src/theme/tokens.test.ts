@@ -194,62 +194,6 @@ function throughParticle(under: Rgb, particle: Rgb, alpha: number): Rgb {
   return { r: mix(particle.r, under.r), g: mix(particle.g, under.g), b: mix(particle.b, under.b) }
 }
 
-function parseModeBlocks(source: string): Record<string, string> {
-  const withoutComments = source.replace(/\/\*[\s\S]*?\*\//g, '')
-  const values: Record<string, string> = {}
-  const modePattern = /:root\[data-mode='([a-z]+)'\]\s*\{([\s\S]*?)\}/g
-  let m: RegExpExecArray | null
-  while ((m = modePattern.exec(withoutComments)) !== null) {
-    const [, mode, body] = m
-    for (const declaration of body.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+)/g)) {
-      values[`${mode}:${declaration[1]}`] = declaration[2].trim()
-    }
-  }
-  return values
-}
-
-describe('mode glyph (#167)', () => {
-  it('is white in both readings, declared once in :root', () => {
-    // #167 supersedes #158: the glyph no longer flips white→black→white with
-    // the reading. One mode-independent literal means no per-mode block can
-    // resurrect the old pair.
-    expect(root['--color-mode-icon']).toBe('#ffffff')
-    const modes = parseModeBlocks(css)
-    expect(modes['dark:--color-mode-icon']).toBeUndefined()
-    expect(modes['light:--color-mode-icon']).toBeUndefined()
-  })
-
-  it('sits on a dark chip, in both readings', () => {
-    const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
-    const glyph = parseHex(root['--color-mode-icon'] ?? '')
-    const ratio = contrastRatio(glyph, chip)
-    expect(
-      ratio,
-      `mode glyph vs chip ${root['--color-mode-btn-bg']} = ${ratio.toFixed(2)}:1 (needs ${AA_NON_TEXT})`,
-    ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-    // The chip must actually be dark — a light one would make white vanish.
-    const luminance = (0.2126 * chip.r + 0.7152 * chip.g + 0.0722 * chip.b) / 255
-    expect(luminance).toBeLessThan(0.2)
-  })
-
-  it.each(palettes.filter(({ mode }) => mode === 'light'))(
-    '$preset/$mode keeps the chip readable against the page',
-    ({ preset, colors }) => {
-      // The chip replaces the old surface-coloured control, so it now has to
-      // clear 3:1 against the page it sits on — in the light reading it is a
-      // dark object on a pale page, in the dark reading it is near the border
-      // colour and only the border draws the boundary (as before).
-      const chip = parseHex(root['--color-mode-btn-bg'] ?? '')
-      const page = parseHex(colors['--color-bg'])
-      const ratio = contrastRatio(chip, page)
-      expect(
-        ratio,
-        `${preset}/light: mode chip vs page = ${ratio.toFixed(2)}:1`,
-      ).toBeGreaterThanOrEqual(AA_NON_TEXT)
-    },
-  )
-})
-
 describe('particle background over the page', () => {
   it('draws below the measured contrast budget', () => {
     expect(PARTICLE_ALPHA).toBeGreaterThan(0)

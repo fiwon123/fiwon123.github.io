@@ -20,21 +20,33 @@ const FLAGS: Record<Locale, string> = {
 }
 
 /**
- * The appearance glyph: a circle that reflects the current mode — empty for
- * light, filled for dark. The disc is always in the DOM and only its opacity
- * changes, so the fill cross-fades instead of snapping in and out (#167).
+ * The appearance glyph: a sun for the light reading, a moon for the dark one
+ * (#172) — the icon names the mode the page is in, matching the accessible
+ * name. Both glyphs are always in the DOM and only their opacity changes, so
+ * the pair cross-fades instead of snapping in and out (#167).
  */
 function ModeIcon({ mode }: { mode: Mode }) {
   return (
     <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
-      <circle
-        className={styles.disc}
-        cx="12"
-        cy="12"
-        r="9"
-        fill="currentColor"
-        fillOpacity={mode === 'dark' ? 1 : 0}
+      <g className={styles.glyph} opacity={mode === 'light' ? 1 : 0}>
+        <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path
+          d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </g>
+      <path
+        className={styles.glyph}
+        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={mode === 'dark' ? 1 : 0}
       />
     </svg>
   )

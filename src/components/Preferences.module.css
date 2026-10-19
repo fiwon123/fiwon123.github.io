@@ -40,24 +40,25 @@
   gap: var(--space-2);
 }
 
+/* The glyph inherits the button's `--color-fg`, so it needs no colour of its
+   own: every palette already gates fg against the page. */
 .icon {
   display: block;
   width: 1.15rem;
   height: 1.15rem;
   flex: 0 0 auto;
-  color: var(--color-mode-icon);
 }
 
-/* The disc is always in the DOM; only its opacity flips with the reading, so
-   the glyph cross-fades instead of snapping (issue 167). Duration matches the
-   page theme fade; under reduced motion the transition is never declared and
-   the fill simply changes. */
-.disc {
-  transition: fill-opacity 300ms ease;
+/* Both glyphs (sun, moon) are always in the DOM; only their opacity flips
+   with the reading, so the pair cross-fades instead of snapping (issue 167,
+   glyphs from issue 172). Duration matches the page theme fade; under reduced
+   motion the transition is never declared and the change simply happens. */
+.glyph {
+  transition: opacity 300ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .disc {
+  .glyph {
     transition: none;
   }
 }
@@ -76,20 +77,22 @@
   outline-offset: 2px;
 }
 
+/* A bare circle: no chip, no border — the glyph itself is the control (issue
+   170). It inherits `--color-fg`, so the only contrast it needs is against the
+   page, which every palette gates. */
 .mode {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-2);
   color: var(--color-fg);
-  background: var(--color-mode-btn-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  background: none;
+  border: 0;
   cursor: pointer;
 }
 
 .mode:hover {
-  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .mode:focus-visible {
