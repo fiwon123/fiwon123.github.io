@@ -36,7 +36,11 @@ import { extname, join, resolve, sep } from 'node:path'
 // `expect` strings must appear in the rendered DOM — they are the fail-loud
 // guard, chosen so a page that did not mount (no React) cannot satisfy them.
 const PRESET = 'studio'
-const COMMON = ['data-testid="particles"', 'class="skip-link"', '<nav']
+// `<canvas` is the particle layer: the static shell ships no canvas, and
+// ParticleBackground renders one only after React mounts (it used to carry a
+// data-testid that the component no longer renders — the guard failed loud and
+// exposed the drift).
+const COMMON = ['<canvas', 'class="skip-link"', '<nav']
 //
 // There is one conventional page (no terminal), so one dark capture is the README
 // set: the site's default reading. Light/dark *verification* is a throwaway
