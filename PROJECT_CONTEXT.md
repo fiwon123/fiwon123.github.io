@@ -362,14 +362,21 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the mode glyph forced to pure white in dark and pure black in light (#158),
   the bilingual game-jams collection pill under the Games gallery (#160), and
   the favicon rasters regenerated from the node-and-orbit mark (#159).
+- **Done**: v1.14 — Appearance glyph — released to `main` (#169): the mode
+  glyph white on a dark chip in both readings, cross-fading (#167), retiring
+  the #158 literal.
+- **Done**: v1.15 — Mode button colors — released to `main` (#173, deployed):
+  the chip stripped from the appearance control so it is a bare button whose
+  glyph names the reading (#170), and the glyph redrawn as a sun in light / moon
+  in dark, both mounted and cross-fading (#172).
 - **Next**: the human-only `make screenshots` capture and a both-theme visual
-  pass over the v1.10–v1.13 surface (neither runs in the agent environment),
+  pass over the v1.10–v1.15 surface (neither runs in the agent environment),
   then the new projects and language track below.
 
 ## Backlog
 
-`v1.10`–`v1.13` are released (milestones #11–#14 closed) and production serves
-v1.13. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+`v1.10`–`v1.15` are released (milestones #11–#16 closed) and production serves
+v1.15. Milestone tracking lives on GitHub (the Milestones page). The plan is to
 add new projects and continue the Rust track — deliberately _after_ the polish,
 so the additions land on a base that already looks finished.
 
