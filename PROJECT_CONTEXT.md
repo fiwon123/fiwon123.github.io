@@ -369,9 +369,10 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the chip stripped from the appearance control so it is a bare button whose
   glyph names the reading (#170), and the glyph redrawn as a sun in light / moon
   in dark, both mounted and cross-fading (#172).
-- **Next**: the human-only `make screenshots` capture and a both-theme visual
-  pass over the v1.10–v1.15 surface (neither runs in the agent environment),
-  then the new projects and language track below.
+- **Next**: the new projects and language track below. (The human-only
+  `make screenshots` capture and the both-theme visual pass shipped together
+  with the #176/#177 screenshot work — the agent environment now runs headless
+  Chrome, so neither is human-only anymore.)
 
 ## Backlog
 
