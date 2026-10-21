@@ -5,15 +5,16 @@ export const experience: ExperienceEntry[] = [
     id: 'little-leo-games',
     company: 'Little Leo Games',
     logo: '/companies/little_leo_games.jpg',
-    role: { en: 'Unity Developer', 'pt-BR': 'Desenvolvedor Unity' },
-    period: { en: 'Oct. 2022 – Jul. 2024', 'pt-BR': 'Out. 2022 – Jul. 2024' },
+    role: { 'en-US': 'Unity Developer', 'pt-BR': 'Desenvolvedor Unity' },
+    period: { 'en-US': 'Oct. 2022 – Jul. 2024', 'pt-BR': 'Out. 2022 – Jul. 2024' },
     summary: {
-      en: 'Indie team behind **Astrea: Six-Sided Oracles** — gameplay systems, platform releases, and post-launch support.',
+      'en-US':
+        'Indie team behind **Astrea: Six-Sided Oracles** — gameplay systems, platform releases, and post-launch support.',
       'pt-BR':
         'Time indie por trás de **Astrea: Six-Sided Oracles** — sistemas de gameplay, lançamentos em plataformas e suporte pós-lançamento.',
     },
     highlights: {
-      en: [
+      'en-US': [
         'Ported the game to {xbox}',
         'Built UI systems and the {steam} integration',
         'Fixed gameplay and production bugs across development and release',
@@ -55,15 +56,16 @@ export const experience: ExperienceEntry[] = [
     id: 'vr-monkey',
     company: 'VR Monkey',
     logo: '/companies/vr_monkey.jpg',
-    role: { en: 'Unity Developer (VR)', 'pt-BR': 'Desenvolvedor Unity (VR)' },
-    period: { en: 'Nov. 2020 – Apr. 2023', 'pt-BR': 'Nov. 2020 – Abr. 2023' },
+    role: { 'en-US': 'Unity Developer (VR)', 'pt-BR': 'Desenvolvedor Unity (VR)' },
+    period: { 'en-US': 'Nov. 2020 – Apr. 2023', 'pt-BR': 'Nov. 2020 – Abr. 2023' },
     summary: {
-      en: 'Porting and tools developer for VR titles — cross-platform compatibility, build pipelines, and internal tooling.',
+      'en-US':
+        'Porting and tools developer for VR titles — cross-platform compatibility, build pipelines, and internal tooling.',
       'pt-BR':
         'Desenvolvedor de porting e ferramentas para títulos VR — compatibilidade entre plataformas, pipelines de build e ferramentas internas.',
     },
     highlights: {
-      en: [
+      'en-US': [
         'Ported VR games to {sony} PSVR / PSVR2 and other headsets',
         'Built internal tools that sped up build and platform-switching workflows',
         'Worked with shaders and rendering pipelines (URP / HDRP)',
@@ -124,14 +126,14 @@ export const experience: ExperienceEntry[] = [
     id: 'ilex-games',
     company: 'Ilex Games',
     logo: '/companies/ilex_games.jpg',
-    role: { en: 'Unity Developer', 'pt-BR': 'Desenvolvedor Unity' },
-    period: { en: 'Jun. 2020 – Aug. 2020', 'pt-BR': 'Jun. 2020 – Ago. 2020' },
+    role: { 'en-US': 'Unity Developer', 'pt-BR': 'Desenvolvedor Unity' },
+    period: { 'en-US': 'Jun. 2020 – Aug. 2020', 'pt-BR': 'Jun. 2020 – Ago. 2020' },
     summary: {
-      en: 'Mobile game support and optimisation — bug fixing, performance, and automation.',
+      'en-US': 'Mobile game support and optimisation — bug fixing, performance, and automation.',
       'pt-BR': 'Suporte e otimização de jogos mobile — correções, performance e automação.',
     },
     highlights: {
-      en: [
+      'en-US': [
         'Fixed issues and improved performance in a Unity mobile game',
         'Prepared and adapted builds for mobile platforms',
         'Standardised UI and gameplay behaviour across systems',
@@ -152,14 +154,14 @@ export const experience: ExperienceEntry[] = [
     id: 'unicamp-larcom',
     company: 'Unicamp LARCOM',
     logo: '/companies/unicamp.jpg',
-    role: { en: 'Unity Developer (VR)', 'pt-BR': 'Desenvolvedor Unity (VR)' },
-    period: { en: 'Oct. 2019 – May. 2020', 'pt-BR': 'Out. 2019 – Mai. 2020' },
+    role: { 'en-US': 'Unity Developer (VR)', 'pt-BR': 'Desenvolvedor Unity (VR)' },
+    period: { 'en-US': 'Oct. 2019 – May. 2020', 'pt-BR': 'Out. 2019 – Mai. 2020' },
     summary: {
-      en: '3D VR educational game — gameplay systems and backend integration.',
+      'en-US': '3D VR educational game — gameplay systems and backend integration.',
       'pt-BR': 'Jogo educacional 3D em VR — sistemas de gameplay e integração com backend.',
     },
     highlights: {
-      en: [
+      'en-US': [
         'Developed VR interaction features',
         'Exported builds to WebGL and mobile',
         'Integrated REST APIs for data exchange with server systems',

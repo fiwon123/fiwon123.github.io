@@ -116,25 +116,24 @@ Each entry is settled; the reason is what stops it being re-opened.
   anchor. One row, one source, no dead anchor. (2026-10-16)
 - **The preference controls carry their meaning in an icon, not a visible label**
   — the appearance is a single button that cycles light ↔ dark and the language a
-  select of flag + short code, so the bar reads without spelling out "Appearance"
+  select of short code, so the bar reads without spelling out "Appearance"
   and "Language"; the theme and language selects keep an accessible name (and the
   theme options name the presets). Each control keeps an accessible name — the
   mode button also a `title` — so dropping the label costs sighted users nothing
   that the icon does not say. (2026-10-16)
-- **The language flag is drawn, not typed** (#179) — it was the emoji `🇺🇸`/`🇧🇷`
-  inside the `<option>` text, and Windows ships no font that renders flag emoji
-  (Segoe UI Emoji omits the regional indicator pairs), so the control read
-  "US EN" / "BR PT-BR" there while mobile and Linux showed the flag. The flag is
-  now an inline SVG — the real 13-stripe, 50-star US flag and the real Brazilian
-  one, each in its own proportions — and it sits _beside_ the select, because a
-  native `<option>` holds text only. Two consequences are deliberate: the flag
-  is `aria-hidden` (the select's name and its short codes carry the meaning, so
-  the mark spends no contrast budget), and it is drawn in a fixed-width slot
-  with the artwork right-aligned inside it, so switching language changes the
-  flag and nothing else — a fluid slot would slide the whole preferences row
-  by the difference between the two flags' widths. The outline is drawn by the
-  flag itself rather than by a CSS border, so it hugs the flag instead of
-  fencing off the space a narrower flag leaves. (2026-10-21)
+- **The language control carries the code alone — no flag** (#182, superseding
+  #179) — it was the emoji `🇺🇸`/`🇧🇷` inside the `<option>` text, and Windows
+  ships no font that renders flag emoji (Segoe UI Emoji omits the regional
+  indicator pairs), so the control read "US EN" / "BR PT-BR" there while mobile
+  and Linux showed the flag. Replacing the emoji with a drawn SVG fixed the
+  rendering but kept the real cost: **a flag is artwork, not text**, so every
+  new language would mean drawing and maintaining a new national mark — real
+  proportions, real stars, a real diamond and disc — and "add a language"
+  would turn into a drawing project. The flag is gone; the select shows the
+  short code (`EN`, `PT-BR`), which comes from the locale string itself, so a
+  new language needs a dictionary and a locale entry and nothing else. The
+  select keeps its accessible name, so the control is still named for assistive
+  tech. (2026-10-21)
 - **Two theme axes: 5 presets × 2 readings, and no `system`** — `PRESETS` grew
   from Studio/Paper/Terminal to add Violet and Ember, and `MODES` collapsed from
   `light`/`dark`/`system` to `light`/`dark` (#102). `system` was a third of the
@@ -384,8 +383,9 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   glyph names the reading (#170), and the glyph redrawn as a sun in light / moon
   in dark, both mounted and cross-fading (#172).
 - **In progress**: v1.16 — Platform compatibility (milestone #17): the language
-  flag drawn as an SVG, so it renders on Windows as well as on the platforms
-  whose fonts carry flag emoji (#179).
+  control carries the short code alone, with no flag — the emoji flag fell back
+  to the letters "US"/"BR" on Windows (#179), and a drawn flag would make every
+  new language a drawing project (#182).
 - **Next**: the new projects and language track below. (The human-only
   `make screenshots` capture and the both-theme visual pass shipped together
   with the #176/#177 screenshot work — the agent environment now runs headless

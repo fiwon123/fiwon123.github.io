@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
 import { contact } from './content'
-import { en } from './i18n/en'
+import { enUS as en } from './i18n/en'
 import { LanguageProvider } from './i18n/LanguageProvider'
 import { ThemeProvider } from './theme/ThemeProvider'
 

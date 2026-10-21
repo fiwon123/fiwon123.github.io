@@ -1,7 +1,7 @@
 import type { Localized } from '../types'
 
 export const about: Localized<string[]> = {
-  en: [
+  'en-US': [
     "I'm a software developer with over five years of experience shipping games and the tools around them. Today I focus on backend services, automation, and developer tooling.",
     'I like turning complex or repetitive processes into simple, maintainable systems, so that teams spend their time delivering features instead of managing manual steps.',
   ],
