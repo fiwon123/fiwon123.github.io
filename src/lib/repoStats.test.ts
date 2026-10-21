@@ -39,7 +39,7 @@ describe('statFor', () => {
 describe('formatUpdated', () => {
   it('renders the month and year, in the active locale', () => {
     const iso = '2026-03-08T00:06:10Z'
-    expect(formatUpdated(iso, 'en')).toBe('Mar 2026')
+    expect(formatUpdated(iso, 'en-US')).toBe('Mar 2026')
     // pt-BR is a distinct rendering — a locale-ignoring implementation returns
     // "Mar 2026" for both, which this catches.
     const pt = formatUpdated(iso, 'pt-BR')
@@ -48,6 +48,6 @@ describe('formatUpdated', () => {
   })
 
   it('returns an unparseable timestamp unchanged rather than "Invalid Date"', () => {
-    expect(formatUpdated('not-a-date', 'en')).toBe('not-a-date')
+    expect(formatUpdated('not-a-date', 'en-US')).toBe('not-a-date')
   })
 })

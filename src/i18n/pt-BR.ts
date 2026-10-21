@@ -56,7 +56,7 @@ export const ptBR: Strings = {
   },
   language: {
     label: 'Idioma',
-    en: 'English',
+    'en-US': 'English',
     'pt-BR': 'Português (Brasil)',
   },
   preferences: {

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { en } from '../i18n/en'
+import { enUS } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { MODE_STORAGE_KEY, PRESETS, THEME_FADE_MS } from '../theme/presets'
 import { ThemeProvider } from '../theme/ThemeProvider'
@@ -32,26 +32,26 @@ afterEach(cleanup)
 describe('Preferences', () => {
   it('keeps the theme select with its label and every preset', () => {
     renderPreferences()
-    const theme = screen.getByRole('combobox', { name: en.theme.label })
+    const theme = screen.getByRole('combobox', { name: enUS.theme.label })
     expect(
       within(theme)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(PRESETS.map((preset) => en.theme.presets[preset]))
+    ).toEqual(PRESETS.map((preset) => enUS.theme.presets[preset]))
   })
 
   it('names the appearance button after the current mode', () => {
     renderPreferences()
     // Nothing stored, so the default mode is `dark`.
     expect(
-      screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.dark}` }),
+      screen.getByRole('button', { name: `${enUS.theme.modeLabel}: ${enUS.theme.modes.dark}` }),
     ).toBeTruthy()
   })
 
   it('cycles light → dark and persists each choice', () => {
     renderPreferences()
-    const name = (mode: keyof typeof en.theme.modes) =>
-      `${en.theme.modeLabel}: ${en.theme.modes[mode]}`
+    const name = (mode: keyof typeof enUS.theme.modes) =>
+      `${enUS.theme.modeLabel}: ${enUS.theme.modes[mode]}`
 
     // dark (default) → light → dark
     fireEvent.click(screen.getByRole('button', { name: name('dark') }))
@@ -65,42 +65,31 @@ describe('Preferences', () => {
 
   it('shows the language as a short code, with an accessible name', () => {
     renderPreferences()
-    const language = screen.getByRole('combobox', { name: en.language.label })
+    const language = screen.getByRole('combobox', { name: enUS.language.label })
     expect(
       within(language)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['EN', 'PT-BR'])
+    ).toEqual(['EN-US', 'PT-BR'])
   })
 
-  it('draws the flag instead of typing it, so it renders on Windows too', () => {
-    // Windows has no font with flag emoji: the emoji fell back to the letters
-    // "US"/"BR" there (#179). The flag is an SVG, so it is the same everywhere.
+  it('carries no flag — the code alone names the language', () => {
+    // A flag is artwork, not text: every new language would mean drawing and
+    // maintaining a new national mark (#182). The emoji flag was worse — it
+    // fell back to the letters "US"/"BR" on Windows, which has no flag-emoji
+    // font (#179). The code comes from the locale string, so it scales.
     const { container } = renderPreferences()
-    const flag = container.querySelector('[data-flag]')
-    expect(flag?.tagName.toLowerCase()).toBe('svg')
-    expect(flag?.getAttribute('data-flag')).toBe('en')
-    // The flag is decorative: the select's name and its options carry meaning.
-    expect(flag?.closest('[aria-hidden="true"]')).toBeTruthy()
-  })
-
-  it('follows the selected language with the flag', () => {
-    const { container } = renderPreferences()
-    fireEvent.change(screen.getByRole('combobox', { name: en.language.label }), {
-      target: { value: 'pt-BR' },
-    })
-    expect(container.querySelector('[data-flag]')?.getAttribute('data-flag')).toBe('pt-BR')
-  })
-
-  it('keeps no flag emoji in the language control', () => {
-    // The regression this pins: the emoji flag renders as "US"/"BR" on Windows.
-    const { container } = renderPreferences()
+    // No flag emoji...
     expect(container.textContent).not.toMatch(/[\u{1F1E6}-\u{1F1FF}]/u)
+    // ...and no drawn flag either.
+    expect(container.querySelector('[data-flag]')).toBeNull()
+    const language = screen.getByRole('combobox', { name: enUS.language.label })
+    expect(language.querySelector('svg')).toBeNull()
   })
 
   it('updates the document language when the language changes', () => {
     renderPreferences()
-    fireEvent.change(screen.getByRole('combobox', { name: en.language.label }), {
+    fireEvent.change(screen.getByRole('combobox', { name: enUS.language.label }), {
       target: { value: 'pt-BR' },
     })
     expect(document.documentElement.lang).toBe('pt-BR')
@@ -141,14 +130,14 @@ describe('Preferences', () => {
     expect(moon.getAttribute('opacity')).toBe('1')
 
     fireEvent.click(
-      screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.dark}` }),
+      screen.getByRole('button', { name: `${enUS.theme.modeLabel}: ${enUS.theme.modes.dark}` }),
     )
     expect(glyphs()).toHaveLength(2)
     expect(sun.getAttribute('opacity')).toBe('1')
     expect(moon.getAttribute('opacity')).toBe('0')
 
     fireEvent.click(
-      screen.getByRole('button', { name: `${en.theme.modeLabel}: ${en.theme.modes.light}` }),
+      screen.getByRole('button', { name: `${enUS.theme.modeLabel}: ${enUS.theme.modes.light}` }),
     )
     expect(glyphs()).toHaveLength(2)
     expect(sun.getAttribute('opacity')).toBe('0')

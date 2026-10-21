@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { en } from '../i18n/en'
+import { enUS as en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { Header } from './Header'

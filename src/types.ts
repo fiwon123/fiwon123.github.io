@@ -1,7 +1,7 @@
-/** The two languages the site ships. `en` is the source of truth. */
-export type Locale = 'en' | 'pt-BR'
+/** The two languages the site ships. `en-US` is the source of truth. */
+export type Locale = 'en-US' | 'pt-BR'
 
-export const LOCALES = ['en', 'pt-BR'] as const
+export const LOCALES = ['en-US', 'pt-BR'] as const
 
 /**
  * A value that carries both languages inline. Content is never split into one

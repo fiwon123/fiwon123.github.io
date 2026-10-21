@@ -21,7 +21,7 @@ function Probe() {
     <div>
       <span data-testid="nav-about">{t.nav.about}</span>
       <span data-testid="locale">{locale}</span>
-      <button type="button" onClick={() => setLocale(locale === 'en' ? 'pt-BR' : 'en')}>
+      <button type="button" onClick={() => setLocale(locale === 'en-US' ? 'pt-BR' : 'en-US')}>
         switch
       </button>
     </div>
@@ -30,7 +30,7 @@ function Probe() {
 
 beforeEach(() => {
   localStorage.clear()
-  document.documentElement.lang = 'en'
+  document.documentElement.lang = 'en-US'
 })
 
 afterEach(cleanup)
@@ -43,7 +43,7 @@ describe('LanguageProvider', () => {
       </LanguageProvider>,
     )
     expect(screen.getByTestId('nav-about').textContent).toBe('About')
-    expect(document.documentElement.lang).toBe('en')
+    expect(document.documentElement.lang).toBe('en-US')
   })
 
   it('switches strings, updates <html lang>, and persists the choice', () => {
@@ -74,6 +74,6 @@ describe('LanguageProvider', () => {
 
 describe('dictionaries', () => {
   it('define exactly the same keys in both locales', () => {
-    expect(collectKeys(dictionaries['pt-BR'])).toEqual(collectKeys(dictionaries.en))
+    expect(collectKeys(dictionaries['pt-BR'])).toEqual(collectKeys(dictionaries['en-US']))
   })
 })

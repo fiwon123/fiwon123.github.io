@@ -7,7 +7,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { GalleryItem } from '../content/types'
-import { en } from '../i18n/en'
+import { enUS as en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { zoomTransform, zoomTransformCss } from '../lib/lightbox'
 import { Gallery } from './Gallery'

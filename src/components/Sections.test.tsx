@@ -10,7 +10,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { about, experience, projects, TECHNOLOGIES } from '../content'
 import type { TechName } from '../content/types'
 import { LANGUAGE_STORAGE_KEY } from '../i18n/context'
-import { en } from '../i18n/en'
+import { enUS as en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { About, Experience, Hero, Projects } from './Sections'
@@ -137,7 +137,7 @@ describe('reveal wiring', () => {
     const { container } = renderSection(<About />)
     const paragraphs = container.querySelectorAll('p')
     expect(paragraphs.length).toBeGreaterThan(0)
-    expect(paragraphs).toHaveLength(about.en.length)
+    expect(paragraphs).toHaveLength(about['en-US'].length)
   })
 })
 
@@ -160,9 +160,9 @@ describe('typed text (#132)', () => {
     allowMotion()
     const { container } = renderSection(<About />)
     const paragraphs = [...container.querySelectorAll('p')]
-    expect(paragraphs.length).toBe(about.en.length)
+    expect(paragraphs.length).toBe(about['en-US'].length)
     for (const paragraph of paragraphs) {
-      expect(paragraph.textContent).toBe(about.en[paragraphs.indexOf(paragraph)])
+      expect(paragraph.textContent).toBe(about['en-US'][paragraphs.indexOf(paragraph)])
       expect(paragraph.querySelector('[aria-hidden="true"]')).toBeNull()
     }
   })
@@ -365,7 +365,7 @@ describe('tech tags (#98)', () => {
     const tag = tagAnchors(container)[0]
     expect(tag).toBeTruthy()
     const name = tag.textContent as TechName
-    const blurb = TECHNOLOGIES[name].blurb.en
+    const blurb = TECHNOLOGIES[name].blurb['en-US']
     expect(tag.getAttribute('aria-label')).toBe(`${name} — ${blurb}`)
     // The tooltip is present but hidden from assistive tech — the accessible
     // name already carries it, so it is not read twice.
@@ -398,7 +398,7 @@ describe('tech tags (#98)', () => {
     // an empty value the type cannot.
     for (const [name, tech] of Object.entries(TECHNOLOGIES)) {
       expect(tech.url, name).toMatch(/^https:\/\/\S+$/)
-      expect(tech.blurb.en.length, name).toBeGreaterThan(0)
+      expect(tech.blurb['en-US'].length, name).toBeGreaterThan(0)
       expect(tech.blurb['pt-BR'].length, name).toBeGreaterThan(0)
     }
     // And every name a card uses resolves — the runtime twin of the union.

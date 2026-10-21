@@ -1,9 +1,9 @@
 /**
- * English is the source of truth for every UI string. `Strings` is derived
- * from this object, and `pt-BR.ts` is typed against it — so a key added here
- * and not there fails `tsc`.
+ * English (United States) is the source of truth for every UI string. `Strings`
+ * is derived from this object, and `pt-BR.ts` is typed against it — so a key
+ * added here and not there fails `tsc`.
  */
-export const en = {
+export const enUS = {
   meta: {
     title: 'Felipe Inoue',
     description:
@@ -55,7 +55,7 @@ export const en = {
   },
   language: {
     label: 'Language',
-    en: 'English',
+    'en-US': 'English',
     'pt-BR': 'Português (Brasil)',
   },
   preferences: {
@@ -79,4 +79,4 @@ export const en = {
   },
 }
 
-export type Strings = typeof en
+export type Strings = typeof enUS
