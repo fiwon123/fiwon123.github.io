@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { en } from '../i18n/en'
+import { enUS as en } from '../i18n/en'
 import { LanguageProvider } from '../i18n/LanguageProvider'
 import { BACK_TO_TOP_THRESHOLD, BackToTop } from './BackToTop'
 

@@ -12,20 +12,20 @@ export interface LanguageContextValue {
 export const LanguageContext = createContext<LanguageContextValue | null>(null)
 
 export function isLocale(value: string | null): value is Locale {
-  return value === 'en' || value === 'pt-BR'
+  return value === 'en-US' || value === 'pt-BR'
 }
 
-/** Best-effort match of the browser's preferred languages. Defaults to `en`. */
+/** Best-effort match of the browser's preferred languages. Defaults to `en-US`. */
 export function detectLocale(): Locale {
-  if (typeof navigator === 'undefined') return 'en'
+  if (typeof navigator === 'undefined') return 'en-US'
   const preferred = navigator.languages?.length ? navigator.languages : [navigator.language]
   for (const language of preferred) {
     if (!language) continue
     const lower = language.toLowerCase()
     if (lower.startsWith('pt')) return 'pt-BR'
-    if (lower.startsWith('en')) return 'en'
+    if (lower.startsWith('en')) return 'en-US'
   }
-  return 'en'
+  return 'en-US'
 }
 
 export function readStoredLocale(): Locale | null {

@@ -21,7 +21,7 @@
 }
 
 /* The mode button and the language select carry their meaning in an icon and a
-   flag, so they have no visible label — but they still have an accessible one. */
+   code, so they have no visible label — but they still have an accessible one. */
 .srOnly {
   position: absolute;
   width: 1px;

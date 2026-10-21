@@ -13,12 +13,6 @@ const NEXT_MODE: Record<Mode, Mode> = {
   dark: 'light',
 }
 
-/** The flag shown beside the short code, one per language. */
-const FLAGS: Record<Locale, string> = {
-  en: '🇺🇸',
-  'pt-BR': '🇧🇷',
-}
-
 /**
  * The appearance glyph: a sun for the light reading, a moon for the dark one
  * (#172) — the icon names the mode the page is in, matching the accessible
@@ -106,7 +100,7 @@ export function Preferences() {
         >
           {LOCALES.map((value) => (
             <option key={value} value={value}>
-              {FLAGS[value]} {value.toUpperCase()}
+              {value.toUpperCase()}
             </option>
           ))}
         </select>
