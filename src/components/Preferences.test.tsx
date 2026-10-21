@@ -63,14 +63,39 @@ describe('Preferences', () => {
     expect(localStorage.getItem(MODE_STORAGE_KEY)).toBe('dark')
   })
 
-  it('shows the language as a flag and short code, with an accessible name', () => {
+  it('shows the language as a short code, with an accessible name', () => {
     renderPreferences()
     const language = screen.getByRole('combobox', { name: en.language.label })
     expect(
       within(language)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['🇺🇸 EN', '🇧🇷 PT-BR'])
+    ).toEqual(['EN', 'PT-BR'])
+  })
+
+  it('draws the flag instead of typing it, so it renders on Windows too', () => {
+    // Windows has no font with flag emoji: the emoji fell back to the letters
+    // "US"/"BR" there (#179). The flag is an SVG, so it is the same everywhere.
+    const { container } = renderPreferences()
+    const flag = container.querySelector('[data-flag]')
+    expect(flag?.tagName.toLowerCase()).toBe('svg')
+    expect(flag?.getAttribute('data-flag')).toBe('en')
+    // The flag is decorative: the select's name and its options carry meaning.
+    expect(flag?.closest('[aria-hidden="true"]')).toBeTruthy()
+  })
+
+  it('follows the selected language with the flag', () => {
+    const { container } = renderPreferences()
+    fireEvent.change(screen.getByRole('combobox', { name: en.language.label }), {
+      target: { value: 'pt-BR' },
+    })
+    expect(container.querySelector('[data-flag]')?.getAttribute('data-flag')).toBe('pt-BR')
+  })
+
+  it('keeps no flag emoji in the language control', () => {
+    // The regression this pins: the emoji flag renders as "US"/"BR" on Windows.
+    const { container } = renderPreferences()
+    expect(container.textContent).not.toMatch(/[\u{1F1E6}-\u{1F1FF}]/u)
   })
 
   it('updates the document language when the language changes', () => {

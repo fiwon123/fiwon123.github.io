@@ -121,6 +121,20 @@ Each entry is settled; the reason is what stops it being re-opened.
   theme options name the presets). Each control keeps an accessible name — the
   mode button also a `title` — so dropping the label costs sighted users nothing
   that the icon does not say. (2026-10-16)
+- **The language flag is drawn, not typed** (#179) — it was the emoji `🇺🇸`/`🇧🇷`
+  inside the `<option>` text, and Windows ships no font that renders flag emoji
+  (Segoe UI Emoji omits the regional indicator pairs), so the control read
+  "US EN" / "BR PT-BR" there while mobile and Linux showed the flag. The flag is
+  now an inline SVG — the real 13-stripe, 50-star US flag and the real Brazilian
+  one, each in its own proportions — and it sits _beside_ the select, because a
+  native `<option>` holds text only. Two consequences are deliberate: the flag
+  is `aria-hidden` (the select's name and its short codes carry the meaning, so
+  the mark spends no contrast budget), and it is drawn in a fixed-width slot
+  with the artwork right-aligned inside it, so switching language changes the
+  flag and nothing else — a fluid slot would slide the whole preferences row
+  by the difference between the two flags' widths. The outline is drawn by the
+  flag itself rather than by a CSS border, so it hugs the flag instead of
+  fencing off the space a narrower flag leaves. (2026-10-21)
 - **Two theme axes: 5 presets × 2 readings, and no `system`** — `PRESETS` grew
   from Studio/Paper/Terminal to add Violet and Ember, and `MODES` collapsed from
   `light`/`dark`/`system` to `light`/`dark` (#102). `system` was a third of the
@@ -369,6 +383,9 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the chip stripped from the appearance control so it is a bare button whose
   glyph names the reading (#170), and the glyph redrawn as a sun in light / moon
   in dark, both mounted and cross-fading (#172).
+- **In progress**: v1.16 — Platform compatibility (milestone #17): the language
+  flag drawn as an SVG, so it renders on Windows as well as on the platforms
+  whose fonts carry flag emoji (#179).
 - **Next**: the new projects and language track below. (The human-only
   `make screenshots` capture and the both-theme visual pass shipped together
   with the #176/#177 screenshot work — the agent environment now runs headless
@@ -377,7 +394,8 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
 ## Backlog
 
 `v1.10`–`v1.15` are released (milestones #11–#16 closed) and production serves
-v1.15. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+v1.15; v1.16 (milestone #17) is the platform-compatibility pass in flight.
+Milestone tracking lives on GitHub (the Milestones page). The plan is to
 add new projects and continue the Rust track — deliberately _after_ the polish,
 so the additions land on a base that already looks finished.
 
