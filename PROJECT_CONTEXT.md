@@ -403,20 +403,23 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   the chip stripped from the appearance control so it is a bare button whose
   glyph names the reading (#170), and the glyph redrawn as a sun in light / moon
   in dark, both mounted and cross-fading (#172).
-- **In progress**: v1.16 — Platform compatibility (milestone #17): the language
-  control carries the short code alone, with no flag — the emoji flag fell back
-  to the letters "US"/"BR" on Windows (#179), and a drawn flag would make every
-  new language a drawing project (#182).
-- **Next**: the new projects and language track below. (The human-only
-  `make screenshots` capture and the both-theme visual pass shipped together
-  with the #176/#177 screenshot work — the agent environment now runs headless
-  Chrome, so neither is human-only anymore.)
+- **Done**: v1.16 — Platform compatibility — released to `main` (#185, deployed;
+  milestone #17 closed): the language control carries the short code alone, with
+  no flag — the emoji flag fell back to the letters "US"/"BR" on Windows (#179),
+  and a drawn flag would make every new language a drawing project (#182).
+- **Done**: v1.17 — Search visibility — released to `main` (#188, `2e1c4eb`,
+  deployed; milestone #18 closed): the head leads with the raster icons and lists
+  the theme-aware SVG last, so Google Search has an icon it can read (#186). The
+  result is not visible yet — Google's own copy of the icon is still the old
+  design, and the Cloudflare challenge still answers `403` to every icon request
+  but the cached `/favicon.ico`, so it waits on the owner's Cloudflare rule and a
+  Search Console reindex.
+- **Next**: the new projects and language track below.
 
 ## Backlog
 
-`v1.10`–`v1.15` are released (milestones #11–#16 closed) and production serves
-v1.15; v1.16 (milestone #17) is the platform-compatibility pass in flight.
-Milestone tracking lives on GitHub (the Milestones page). The plan is to
+`v1.10`–`v1.17` are released (milestones #11–#18 closed) and production serves
+v1.17. Milestone tracking lives on GitHub (the Milestones page). The plan is to
 add new projects and continue the Rust track — deliberately _after_ the polish,
 so the additions land on a base that already looks finished.
 
