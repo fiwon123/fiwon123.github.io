@@ -133,21 +133,58 @@ describe('rasterSvgSource keeps the fallback rasters on the default palette', ()
 })
 
 describe('index.html favicon order', () => {
-  it('lists the SVG first, then the raster fallbacks', () => {
-    const head = read('index.html')
-    const order = (...needles: string[]) => needles.map((needle) => head.indexOf(needle))
-    const [svgIndex, icoIndex, png32, png16, apple] = order(
-      'href="/favicon.svg"',
-      'href="/favicon.ico"',
-      'href="/favicon-32x32.png"',
-      'href="/favicon-16x16.png"',
-      'href="/apple-touch-icon.png"',
+  const head = read('index.html')
+  const icons = [...head.matchAll(/<link\b[^>]*\srel="icon"[^>]*>/g)].map((match) =>
+    attrs(match[0]),
+  )
+
+  it('leads with the rasters and ends the icon list with the theme-aware SVG', () => {
+    expect(icons.map((icon) => icon.href)).toEqual([
+      '/favicon.ico',
+      '/favicon-192x192.png',
+      '/favicon-32x32.png',
+      '/favicon-16x16.png',
+      '/favicon.svg',
+    ])
+    expect(icons[icons.length - 1].type).toBe('image/svg+xml')
+  })
+
+  it('offers Google Search a raster icon larger than 48px', () => {
+    // Google Search reads BMP/GIF/ICO/PNG/JPEG/PPM/TIFF and never SVG, and it
+    // recommends more than 48px. A head whose only real candidates are the 16
+    // and 32px PNGs (or, worse, the SVG) is the shape that leaves a globe next
+    // to the result — so the large raster is pinned here, not left to taste.
+    const raster = /^image\/(?:png|jpeg|gif|bmp|tiff)$/
+    const large = icons.filter((icon) => {
+      const size = Number.parseInt(icon.sizes ?? '', 10)
+      return raster.test(icon.type ?? '') && Number.isFinite(size) && size > 48
+    })
+    expect(large.map((icon) => icon.href)).toEqual(['/favicon-192x192.png'])
+    for (const icon of large) {
+      expect(existsSync(path.join(repoRoot, 'public', icon.href)), icon.href).toBe(true)
+    }
+  })
+
+  it('never puts the SVG first, where a crawler that cannot read it stops', () => {
+    expect(icons[0]?.href).not.toBe('/favicon.svg')
+    expect(head.indexOf('href="/apple-touch-icon.png"')).toBeGreaterThan(
+      head.indexOf('href="/favicon.svg"'),
     )
-    for (const index of [svgIndex, icoIndex, png32, png16, apple]) expect(index).toBeGreaterThan(-1)
-    expect(svgIndex).toBeLessThan(icoIndex)
-    expect(icoIndex).toBeLessThan(png32)
-    expect(png32).toBeLessThan(png16)
-    expect(png16).toBeLessThan(apple)
+  })
+
+  it('keeps the scalable claim on the SVG alone', () => {
+    // `sizes="any"` means "scalable". On the ICO it would tie with the SVG and
+    // win by position, so the browser would paint the static raster instead of
+    // the theme-aware icon `setFavicon()` writes.
+    const ico = icons.find((icon) => icon.href === '/favicon.ico')
+    expect(ico?.sizes).toBe('16x16 32x32')
+    expect(icons.filter((icon) => icon.sizes === 'any').map((icon) => icon.href)).toEqual([
+      '/favicon.svg',
+    ])
+  })
+
+  it('declares the canonical URL the apex and www share', () => {
+    expect(head).toMatch(/<link\b[^>]*\srel="canonical"[^>]*\shref="https:\/\/felipeinoue\.com\/"/)
   })
 })
 
@@ -189,8 +226,8 @@ describe('the committed icon set', () => {
     ['favicon-16x16.png', 16],
     ['favicon-32x32.png', 32],
     ['apple-touch-icon.png', 180],
-    ['android-chrome-192x192.png', 192],
-    ['android-chrome-512x512.png', 512],
+    ['favicon-192x192.png', 192],
+    ['favicon-512x512.png', 512],
   ] as const
 
   it('ships every raster at its declared size', () => {

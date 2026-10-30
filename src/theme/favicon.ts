@@ -42,11 +42,22 @@ export function currentFaviconColors(root: Element = document.documentElement) {
   }
 }
 
+/**
+ * Repaint the tab icon with the live theme.
+ *
+ * The head carries several icon entries: the rasters first, because a browser
+ * needs one and Google Search reads raster icons only, and the theme-aware SVG
+ * last. So the rewrite has to name the SVG entry — taking the first
+ * `link[rel~="icon"]` would replace a raster fallback with an SVG a crawler
+ * cannot use, and the icon would silently fall out of search results again.
+ */
 export function setFavicon(root: Element = document.documentElement) {
   const colors = currentFaviconColors(root)
   const svg = faviconSvg(colors)
   const href = toDataUri(svg)
-  const link = document.querySelector('link[rel~="icon"]')
+  const link =
+    document.querySelector<HTMLLinkElement>('link[rel~="icon"][type="image/svg+xml"]') ??
+    document.querySelector<HTMLLinkElement>('link[rel~="icon"]')
   if (link instanceof HTMLLinkElement) {
     link.href = href
   }
