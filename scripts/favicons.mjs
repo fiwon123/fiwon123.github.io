@@ -34,14 +34,16 @@ import { buildIco, pngSize } from './favicon-ico.mjs'
 import { rasterSvgSource } from './favicon-svg.mjs'
 
 // ── CONFIG ───────────────────────────────────────────────────────────────────
-// One entry per committed raster. The PNGs are the browser/OS fallbacks; the SVG
-// is preferred and listed first in index.html. `favicon.ico` packs the 16 and 32.
+// One entry per committed raster. The 192px PNG is the entry Google Search reads
+// (it takes raster icons only, larger than 48px) and the rest are the browser/OS
+// fallbacks around it; `index.html` lists the theme-aware SVG last. `favicon.ico`
+// packs the 16 and 32.
 const SIZES = [
   { size: 16, file: 'favicon-16x16.png' },
   { size: 32, file: 'favicon-32x32.png' },
   { size: 180, file: 'apple-touch-icon.png' },
-  { size: 192, file: 'android-chrome-192x192.png' },
-  { size: 512, file: 'android-chrome-512x512.png' },
+  { size: 192, file: 'favicon-192x192.png' },
+  { size: 512, file: 'favicon-512x512.png' },
 ]
 const ICO = { file: 'favicon.ico', sizes: [16, 32] }
 // A corner may be faintly touched by antialiasing; a corner this opaque means the

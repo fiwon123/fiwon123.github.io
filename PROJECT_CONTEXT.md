@@ -58,6 +58,27 @@ build-time snapshot, and fonts and images are served from this origin.
 
 Each entry is settled; the reason is what stops it being re-opened.
 
+- **The head lists the rasters first and the theme-aware SVG last** (#186) —
+  Google Search builds the icon beside a result from `rel="icon"` and
+  `apple-touch-icon`, and it reads **BMP, GIF, ICO, PNG, JPEG, PPM and TIFF
+  only — never SVG** — recommending an icon larger than 48×48. The head
+  therefore leads with `favicon.ico`, then the 192/32/16 px PNGs, and closes the
+  icon list with `favicon.svg`: a crawler that cannot read the SVG has already
+  been handed three files it can, and the 192 px raster is the one Search uses.
+  That raster used to exist only in `site.webmanifest`, which is not an icon
+  candidate, and the SVG used to be first — which is exactly the shape that
+  leaves a globe next to the result. `setFavicon()` names the SVG entry
+  (`link[rel~="icon"][type="image/svg+xml"]`) instead of taking the first icon
+  link, because rewriting a raster fallback to a data-URI SVG would undo this;
+  `favicons.test.ts` pins the order, the ≥48 px raster and the SVG's non-first
+  place. The tab icon is unaffected — browsers pick the scalable entry wherever
+  it sits, which is why the ICO declares its real sizes (`16x16 32x32`) instead
+  of `any`: a raster claiming to be scalable would tie with the SVG and win by
+  position, and the browser would paint the static raster instead of the
+  theme-aware icon. The head also declares
+  `<link rel="canonical" href="https://felipeinoue.com/">`, since the apex and
+  `www` both answer. (2026-10-29)
+
 - **A theme switch cross-fades the page; the tokens still change instantly**
   (#157) — `index.css` gates a wildcard colour transition on an `html.theme-fade`
   class that `ThemeProvider` adds for exactly `THEME_FADE_MS` (300 ms, pinned to
@@ -429,6 +450,13 @@ so the additions land on a base that already looks finished.
   it precedes the nav and that its `href` resolves to exactly one element, because
   a skip link that exists only as CSS and a translated string (which is how it went
   missing once) is invisible to every role-based test.
+- **The domain is proxied through Cloudflare, so a challenge can cover the
+  static files too** — Googlebot-Image has to fetch the icon file itself, and a
+  challenge (a `403` with `cf-mitigated: challenge`) on `/favicon*` or
+  `/apple-touch-icon.png` hides the icon from search results even when the markup
+  is right. The challenge page carries `noindex`, so it must never be what
+  Googlebot receives. Cloudflare also serves a managed `robots.txt` for this
+  zone; there is no `robots.txt` in the repo. (2026-10-29)
 - **README images are committed, not generated on the fly**, and are reproduced by
   `make screenshots` (`scripts/screenshots.mjs`). The harness refuses to write a
   capture that did not render, so a blank image can never be committed silently.
