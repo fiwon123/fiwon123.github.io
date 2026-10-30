@@ -8,7 +8,7 @@ export const ptBR: Strings = {
   meta: {
     title: 'Felipe Inoue',
     description:
-      'Felipe Inoue — engenheiro de backend e ferramentas para desenvolvedores. Vindo do desenvolvimento de jogos, hoje construo serviços, automações e as ferramentas do dia a dia dos times.',
+      'Felipe Inoue — engenheiro de software backend, com foco em APIs, plataforma, ferramentas para desenvolvedores e automação com IA. Vindo do desenvolvimento de jogos, hoje construo os serviços e as ferramentas do dia a dia dos times.',
   },
   nav: {
     about: 'Sobre',
@@ -18,12 +18,14 @@ export const ptBR: Strings = {
   },
   hero: {
     greeting: 'Olá, eu sou Felipe Inoue',
-    headline: 'Backend e ferramentas para desenvolvedores',
+    headline:
+      'Engenheiro de Software Backend | Engenheiro de APIs e Plataforma | Ferramentas para Desenvolvedores | Automação com IA',
     stack: 'Go · Python · TypeScript · Docker',
     avatarAlt: 'Retrato de Felipe Inoue',
   },
   sections: {
-    about: 'Sobre',
+    // The section heading, not the nav label — see the note in `en.ts`.
+    about: 'Sobre mim',
     experience: 'Experiência',
     projects: 'Projetos',
     skills: 'Habilidades',
