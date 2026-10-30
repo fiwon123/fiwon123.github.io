@@ -139,6 +139,19 @@ describe('reveal wiring', () => {
     expect(paragraphs.length).toBeGreaterThan(0)
     expect(paragraphs).toHaveLength(about['en-US'].length)
   })
+
+  // The heading and the header nav link used to share `nav.about`, so renaming
+  // the section renamed the nav with it. The heading reads its own key now; a
+  // refactor that points it back at `nav.about` would silently collapse the two
+  // labels into one again, which no string test would catch.
+  it('names the about heading from the section key, not the nav label', () => {
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<About />)
+    const heading = container.querySelector('h2')
+    expect(en.sections.about).not.toBe(en.nav.about)
+    expect(heading?.textContent).toBe(en.sections.about)
+  })
 })
 
 describe('typed text (#132)', () => {

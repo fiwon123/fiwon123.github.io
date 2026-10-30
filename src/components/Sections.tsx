@@ -189,7 +189,7 @@ export function About() {
   const paragraphs = about[locale]
   return (
     <section ref={ref} id="about" className={revealClass(styles.section, revealed)}>
-      <h2>{t.nav.about}</h2>
+      <h2>{t.sections.about}</h2>
       {paragraphs.map((paragraph, index) => (
         <p key={index}>{paragraph}</p>
       ))}

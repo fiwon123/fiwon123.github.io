@@ -7,7 +7,7 @@ export const enUS = {
   meta: {
     title: 'Felipe Inoue',
     description:
-      'Felipe Inoue — backend and developer-tooling engineer. A games background, now building services, automation and the tools teams run on.',
+      'Felipe Inoue — backend software engineer working on APIs, platform, developer tools and AI automation. A games background, now building the services and tools teams run on.',
   },
   nav: {
     about: 'About',
@@ -17,12 +17,15 @@ export const enUS = {
   },
   hero: {
     greeting: "Hi, I'm Felipe Inoue",
-    headline: 'Backend & developer tooling',
+    headline:
+      'Backend Software Engineer | API & Platform Engineer | Developer Tools | AI Automation',
     stack: 'Go · Python · TypeScript · Docker',
     avatarAlt: 'Portrait of Felipe Inoue',
   },
   sections: {
-    about: 'About',
+    // The section heading, not the nav label: `nav.about` stays short so the
+    // header keeps its rhythm, while the heading can say what the section is.
+    about: 'About me',
     experience: 'Experience',
     projects: 'Projects',
     skills: 'Skills',
