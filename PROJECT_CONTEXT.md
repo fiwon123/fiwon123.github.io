@@ -72,16 +72,6 @@ Each entry is settled; the reason is what stops it being re-opened.
   preferences fieldset, and hides the wordmark below `40rem` so the row fits the
   smallest phones. `Header.test.tsx` and `Preferences.test.tsx` pin the rules
   (jsdom has no layout), and the visual verdict belongs to the owner. (2026-11-09)
-- **Support is a labeled row under the hero contacts, not a second icon row**
-  (#195) — Ko-fi and GitHub Sponsors are text pills below the contact chips,
-  because funding is a different offer from reaching someone and the ask has to
-  be read, which a brand mark alone does not say. `SupportLink` carries no icon,
-  the labels are brand names identical in both languages, and only the row's
-  accessible name is localised. The row is a **sibling** of `#contact`, not a
-  child, so that element keeps holding exactly the `contact` links the tests
-  count. The pill reuses the contact-chip material (surface + border, accent on
-  hover/focus) with no tint, so no new non-text contrast budget exists.
-  (2026-11-09)
 - **The three long-term projects lead the Projects list** (#197) — eznit,
   cthrone and crower come first in `src/content/projects.ts`, because the array
   order is the render order and those are the projects being built now; the

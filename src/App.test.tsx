@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
-import { contact, support } from './content'
+import { contact } from './content'
 import { enUS as en } from './i18n/en'
 import { LanguageProvider } from './i18n/LanguageProvider'
 import { ThemeProvider } from './theme/ThemeProvider'
@@ -98,36 +98,6 @@ describe('contact links', () => {
     // The single contact row is the hero's, and it still holds every link.
     const hero = document.getElementById('contact') as HTMLElement
     expect(within(hero).getAllByRole('link')).toHaveLength(contact.length)
-  })
-})
-
-describe('support links', () => {
-  it('offers each way to support the work, with the word visible', () => {
-    renderApp()
-    for (const entry of support) {
-      const link = screen.getByRole('link', { name: entry.label })
-      expect(link.getAttribute('href')).toBe(entry.url)
-      expect(link.getAttribute('target')).toBe('_blank')
-      expect(link.getAttribute('rel')).toBe('noopener noreferrer')
-      // The label is the visible text here — the ask is said, not drawn.
-      expect(link.textContent).toBe(entry.label)
-    }
-  })
-
-  it('sits under the contact icons, outside the contact element', () => {
-    renderApp()
-    const hero = document.getElementById('top') as HTMLElement
-    const contactRow = document.getElementById('contact') as HTMLElement
-    const list = within(hero).getByRole('list', { name: en.a11y.support })
-    // The contact element keeps exactly its own links: the support row is a
-    // sibling, so "the contact row holds every contact link" stays a real test.
-    expect(contactRow.contains(list)).toBe(false)
-    expect(within(contactRow).queryAllByRole('link')).toHaveLength(contact.length)
-    // And the footer carries none of them.
-    const footer = document.querySelector('footer') as HTMLElement
-    for (const entry of support) {
-      expect(within(footer).queryByRole('link', { name: entry.label })).toBeNull()
-    }
   })
 })
 

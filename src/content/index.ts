@@ -1,6 +1,6 @@
 export { about } from './about'
-export { contact, support } from './contact'
+export { contact } from './contact'
 export { experience } from './experience'
 export { projects } from './projects'
 export { TECHNOLOGIES } from './technologies'
-export type { ContactLink, ExperienceEntry, Project, ProjectSource, SupportLink } from './types'
+export type { ContactLink, ExperienceEntry, Project, ProjectSource } from './types'
