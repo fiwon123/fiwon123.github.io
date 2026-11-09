@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { about, contact, experience, projects, TECHNOLOGIES } from '../content'
+import { about, contact, experience, projects, support, TECHNOLOGIES } from '../content'
 import type { ExperienceEntry, GalleryItem, TechName } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
 import { formatUpdated, statFor } from '../lib/repoStats'
@@ -52,6 +52,32 @@ export function ContactRow() {
             <span className={styles.tip} aria-hidden="true">
               {link.label}
             </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/**
+ * The ways to support the work, under the hero contact icons (#195). The links
+ * carry visible labels — the ask has to be said, and an icon-only control would
+ * not say it — and they live outside `#contact`, so that element stays one
+ * source of contact links.
+ */
+export function SupportRow() {
+  const t = useT()
+  return (
+    <ul className={styles.support} aria-label={t.a11y.support}>
+      {support.map((link) => (
+        <li key={link.id}>
+          <a
+            className={styles.supportLink}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.label}
           </a>
         </li>
       ))}
@@ -173,6 +199,7 @@ export function Hero() {
         <div id="contact">
           <ContactRow />
         </div>
+        <SupportRow />
         <div className={styles.heroRest}>
           <h2 className={styles.heroSubtitle}>{t.hero.headline}</h2>
           <p className={styles.heroStack}>{t.hero.stack}</p>

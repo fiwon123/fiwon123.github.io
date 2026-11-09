@@ -72,6 +72,7 @@ export const enUS = {
   a11y: {
     skipToContent: 'Skip to content',
     mainNav: 'Main',
+    support: 'Support me',
     openImage: 'Open image',
     lightbox: 'Image viewer',
     close: 'Close',

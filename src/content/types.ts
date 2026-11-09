@@ -142,3 +142,14 @@ export interface ContactLink {
   /** Brand icon key, resolved by the icon component. */
   icon: string
 }
+
+/**
+ * A way to support the work, shown under the hero contacts. The label is the
+ * visible text — the ask has to be said, and a brand mark alone would not say
+ * it — so there is no icon here.
+ */
+export interface SupportLink {
+  id: string
+  label: string
+  url: string
+}
