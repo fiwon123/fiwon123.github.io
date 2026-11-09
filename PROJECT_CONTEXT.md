@@ -58,6 +58,27 @@ build-time snapshot, and fonts and images are served from this origin.
 
 Each entry is settled; the reason is what stops it being re-opened.
 
+- **A landscape phone keeps the header in one row; portrait keeps its stack**
+  (#196) — the single `max-width: 48rem` breakpoint used to stack brand / nav /
+  controls, which is right for a narrow portrait screen and wrong for landscape:
+  the viewport is short, not narrow, so the stack ate most of the height while
+  the wrapping nav and preference fieldset turned the two dropdowns into a
+  vertical pile. A landscape block
+  (`orientation: landscape`, `max-height: 33rem`, `max-width: 60rem`), placed
+  after the stacking rule so it wins on source order at equal specificity,
+  restores the row with `grid-template-columns: auto 1fr auto` — not the page's
+  `1fr auto 1fr`, whose two equal side tracks squeeze the controls at the
+  narrowest widths — sets `flex-wrap: nowrap` on the nav, the actions and the
+  preferences fieldset, and hides the wordmark below `40rem` so the row fits the
+  smallest phones. `Header.test.tsx` and `Preferences.test.tsx` pin the rules
+  (jsdom has no layout), and the visual verdict belongs to the owner. (2026-11-09)
+- **The three long-term projects lead the Projects list** (#197) — eznit,
+  cthrone and crower come first in `src/content/projects.ts`, because the array
+  order is the render order and those are the projects being built now; the
+  finished experiments follow. Their repositories are in the
+  `scripts/repo-stats.mjs` list, so the committed snapshot carries their
+  language, stars and last push like the other cards. (2026-11-09)
+
 - **The head lists the rasters first and the theme-aware SVG last** (#186) —
   Google Search builds the icon beside a result from `rel="icon"` and
   `apple-touch-icon`, and it reads **BMP, GIF, ICO, PNG, JPEG, PPM and TIFF
