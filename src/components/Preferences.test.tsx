@@ -150,4 +150,16 @@ describe('Preferences', () => {
     expect(css).toMatch(/prefers-reduced-motion:\s*reduce/)
     expect(css).toMatch(/\.glyph\s*\{[\s\S]*?transition:\s*none/)
   })
+
+  it('keeps the controls on one line on a landscape phone', () => {
+    // The header is one row in landscape (#196); a wrapping fieldset is what
+    // turned the two dropdowns into a vertical pile. jsdom has no layout, so the
+    // media-query rules are the testable surface.
+    const css = readFileSync(cssPath, 'utf8')
+    const start = css.indexOf('@media (orientation: landscape)')
+    expect(start).toBeGreaterThan(-1)
+    const block = css.slice(start)
+    expect(block).toMatch(/\.preferences\s*\{[\s\S]*?flex-wrap:\s*nowrap/)
+    expect(block).toMatch(/\.select\s*\{[\s\S]*?padding:/)
+  })
 })
