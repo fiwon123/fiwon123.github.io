@@ -131,6 +131,19 @@ describe('reveal wiring', () => {
     expect(projectTree.querySelectorAll('article')).toHaveLength(projects.length)
   })
 
+  it('lists the long-term projects first, in order', () => {
+    // The array is the render order, and these three are what is being built
+    // now (issue 197) — they lead the section instead of trailing the finished
+    // experiments.
+    withoutObserver()
+    allowMotion()
+    const { container } = renderSection(<Projects />)
+    const names = [...container.querySelectorAll('article h3')].map(
+      (heading) => heading.textContent,
+    )
+    expect(names.slice(0, 3)).toEqual(['eznit', 'cthrone', 'crower'])
+  })
+
   it('renders every about paragraph, so none is dropped by the wrapper', () => {
     withoutObserver()
     allowMotion()

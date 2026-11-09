@@ -14,6 +14,10 @@ import { fileURLToPath } from 'node:url'
 
 /** Public repositories worth showing facts for, as `owner/name`. */
 const REPOS = [
+  // The long-term projects first, so their cards carry facts too (issue 197).
+  'fiwon123/eznit',
+  'fiwon123/cthrone',
+  'fiwon123/crower',
   'fiwon123/ai-document-platform',
   'fiwon123/ai-code-evaluation-platform',
   'fiwon123/distributed-key-value-store',
