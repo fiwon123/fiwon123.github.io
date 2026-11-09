@@ -1,6 +1,51 @@
 import type { Project } from './types'
 
 export const projects: Project[] = [
+  // The three long-term projects, first by design (issue 197): they are what is
+  // being built now, so the array order — which is the render order — leads with
+  // them and the finished experiments follow.
+  {
+    id: 'eznit',
+    name: 'eznit',
+    description: {
+      'en-US':
+        'Self-hosted file storage you control: a Go API, a CLI and a web UI for uploading, listing and retrieving your own files, indexed in PostgreSQL.',
+      'pt-BR':
+        'Armazenamento de arquivos auto-hospedado que voc\u00ea controla: uma API em Go, um CLI e uma interface web para enviar, listar e recuperar seus pr\u00f3prios arquivos, indexados no PostgreSQL.',
+    },
+    tech: ['Go', 'Postgres', 'React', 'Vite'],
+    source: 'github',
+    url: 'https://github.com/fiwon123/eznit',
+    repo: 'fiwon123/eznit',
+  },
+  {
+    id: 'cthrone',
+    name: 'cthrone',
+    description: {
+      'en-US':
+        'Chat that needs no account, no server and no cloud: two devices, one command, encrypted end to end \u2014 from a terminal or from the app.',
+      'pt-BR':
+        'Chat que n\u00e3o precisa de conta, servidor nem nuvem: dois dispositivos, um comando, criptografado de ponta a ponta \u2014 pelo terminal ou pelo aplicativo.',
+    },
+    tech: ['Go'],
+    source: 'github',
+    url: 'https://github.com/fiwon123/cthrone',
+    repo: 'fiwon123/cthrone',
+  },
+  {
+    id: 'crower',
+    name: 'crower',
+    description: {
+      'en-US':
+        'A cross-platform terminal file manager and command-alias manager: turn any command into a shortcut, chain multi-step workflows, and share them in a file.',
+      'pt-BR':
+        'Gerenciador de arquivos de terminal e de aliases de comando multiplataforma: transforme qualquer comando em atalho, encadeie fluxos de v\u00e1rias etapas e compartilhe-os em um arquivo.',
+    },
+    tech: ['Go'],
+    source: 'github',
+    url: 'https://github.com/fiwon123/crower',
+    repo: 'fiwon123/crower',
+  },
   {
     id: 'ai-document-platform',
     name: 'AI Document Platform',

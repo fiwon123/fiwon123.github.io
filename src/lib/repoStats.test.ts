@@ -20,8 +20,9 @@ describe('statFor', () => {
     expect(statFor(undefined)).toBeUndefined()
   })
 
-  it('returns undefined for a private project (never snapshotted)', () => {
-    expect(statFor('fiwon123/eznit')).toBeUndefined()
+  it('returns undefined for a project whose repository is not snapshotted', () => {
+    // A private or not-yet-collected repository keeps the static card.
+    expect(statFor('fiwon123/not-snapshotted')).toBeUndefined()
   })
 
   // Guards against a snapshot regenerated to an empty or gutted file: every
