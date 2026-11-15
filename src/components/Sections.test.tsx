@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { act, cleanup, render } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -262,9 +262,13 @@ describe('repository facts and game tiles (#20, #43)', () => {
 
     const withFacts = cardFor('AI Document Platform')
     expect(withFacts?.textContent).toContain('TypeScript')
-    expect(withFacts?.textContent).toContain('★')
+    expect(withFacts?.querySelector('time')).not.toBeNull()
+    // The star count was dropped: every repo in the snapshot had zero stars, so
+    // the card showed "★ 0" — a number that says nothing about the work.
+    expect(withFacts?.textContent).not.toContain('★')
 
-    // Games is itch-io, not GitHub; it has no snapshot entry.
+    // Games is itch-io, not GitHub; it has no snapshot entry, so no facts line.
+    expect(cardFor('Games')?.querySelector('time')).toBeNull()
     expect(cardFor('Games')?.textContent).not.toContain('★')
   })
 
@@ -310,6 +314,45 @@ describe('repository facts and game tiles (#20, #43)', () => {
     }
     // {sony} on VR Monkey has no URL, so it stays an icon, not a dead link.
     expect(container.querySelector('a[aria-label="PlayStation"]')).toBeNull()
+  })
+})
+
+describe('hero portrait viewer (#208)', () => {
+  it('opens the portrait in the image viewer under the portrait name', () => {
+    withoutObserver()
+    allowMotion()
+    renderSection(<Hero />)
+    const portrait = screen.getByRole('button', {
+      name: `${en.a11y.openImage}: ${en.hero.avatarAlt}`,
+    })
+    // The button carries the name, so the image inside must not repeat it.
+    expect(portrait.querySelector('img')?.getAttribute('alt')).toBe('')
+    // The magnifier is an affordance for sighted visitors, not content.
+    expect(portrait.querySelector('[aria-hidden="true"]')).not.toBeNull()
+
+    fireEvent.click(portrait)
+
+    const dialog = screen.getByRole('dialog')
+    expect(dialog.getAttribute('aria-label')).toBe(`${en.a11y.lightbox}: ${en.hero.avatarAlt}`)
+    // One image has no position to report: no "1 / 1" chip under the portrait.
+    expect(dialog.textContent).not.toContain('1 / 1')
+  })
+
+  it('closes on Escape and hands focus back to the portrait', async () => {
+    withoutObserver()
+    allowMotion()
+    renderSection(<Hero />)
+    const portrait = screen.getByRole('button', {
+      name: `${en.a11y.openImage}: ${en.hero.avatarAlt}`,
+    })
+    portrait.focus()
+    fireEvent.click(portrait)
+    expect(screen.getByRole('dialog')).toBeTruthy()
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    // Closing a modal must not drop the visitor at the top of the document.
+    expect(document.activeElement).toBe(portrait)
   })
 })
 

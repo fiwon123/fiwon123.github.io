@@ -34,7 +34,15 @@ describe('self-hosted fonts', () => {
 })
 
 describe('avatar', () => {
-  it('ships the portrait the hero points at', () => {
-    expect(existsSync(path.join(repoRoot, 'public/avatar/felipeinoue-512.jpg'))).toBe(true)
+  it('ships the portrait the hero points at, as a real JPEG', () => {
+    const file = path.join(repoRoot, 'public/avatar/felipeinoue-512.jpg')
+    expect(existsSync(file)).toBe(true)
+    const bytes = readFileSync(file)
+    // The bytes, not the extension: a PNG renamed to `.jpg` shipped once already,
+    // and a static server would hand it out as `image/jpeg`.
+    expect([...bytes.subarray(0, 3)]).toEqual([0xff, 0xd8, 0xff])
+    // The hero paints it at 160 px, so a multi-megabyte source is weight nobody
+    // sees. 120 KB leaves room for a detailed 512 px photo.
+    expect(bytes.byteLength).toBeLessThan(120 * 1024)
   })
 })

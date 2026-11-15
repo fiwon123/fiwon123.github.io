@@ -77,7 +77,16 @@ Each entry is settled; the reason is what stops it being re-opened.
   order is the render order and those are the projects being built now; the
   finished experiments follow. Their repositories are in the
   `scripts/repo-stats.mjs` list, so the committed snapshot carries their
-  language, stars and last push like the other cards. (2026-11-09)
+  language and last push like the other cards. (2026-11-09)
+- **A repository card shows no star count** (#206) — every repo in the snapshot
+  had zero stars, so each GitHub card rendered `★ 0`: a number that says nothing
+  about the work and reads as a warning. The count is gone from the card, from
+  `RepoStat` and from `scripts/repo-stats.mjs`, because the snapshot is kept to
+  exactly what a card renders and a field nobody shows is dead weight. The
+  figure was never live — `npm run stats` is a manual refresh, so a star gained
+  after the last run would not appear anyway. `repoStats.test.ts` and
+  `Sections.test.tsx` now pin the absence, so the star cannot creep back with a
+  stale snapshot. (2026-11-15)
 
 - **The head lists the rasters first and the theme-aware SVG last** (#186) —
   Google Search builds the icon beside a result from `rel="icon"` and
@@ -240,7 +249,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   keeps working when the API is down. (2026-10-15)
 - **The avatar and fonts are served from this origin**, never hot-linked —
   self-hosting removes a third-party request, a layout shift, and a dependency on
-  someone else's uptime and licence terms. (2026-10-15)
+  someone else's uptime and licence terms. The committed portrait is a 512×512
+  JPEG derived from the owner's source photo (1254×1254, 2 MB, which is not
+  committed): the hero paints it at 160 px, so the source would be weight nobody
+  sees. `branding.test.ts` gates the bytes — JPEG magic and under 120 KB — after a
+  PNG named `.jpg` shipped once. (2026-10-15, updated 2026-11-15)
 - **The dev sandbox adopts the account that already owns the host uid** rather
   than refusing to build — `node:22-bookworm` ships uid 1000 and so does nearly
   every single-user Linux host, so refusing a claimed uid made the _default_
@@ -307,6 +320,20 @@ Each entry is settled; the reason is what stops it being re-opened.
   visible span types), reduced motion shows it at once with no timer, and
   switching language retypes the new string. The caret blinks only under
   `prefers-reduced-motion: no-preference`. (2026-10-17)
+- **The portrait is a one-image gallery, not a second viewer** (#208) — the hero
+  portrait is a `<button>` that opens the same `Lightbox` the experience and
+  project galleries use, with a module-level `PORTRAIT` array so the image list
+  never changes identity. Reusing the viewer is the point: it already owns the
+  keyboard contract, the focus return, the scroll lock and the FLIP from the
+  clicked element, so the portrait grows out of the circle and Escape hands focus
+  back to it with no new modal code. The magnifier is a chip on the corner of the
+  portrait, `aria-hidden` because the button carries the name
+  (`Open image: Portrait of Felipe Inoue`, the gallery's convention), and the
+  inner `<img>` keeps an empty `alt` so the name is not read twice; the chip
+  appears on hover and focus and stays visible under `(hover: none)`, where there
+  is no pointer to reveal it. A one-image viewer has no position, so `Lightbox`
+  gained `showPosition` (default `true`, galleries keep their chip) and drops the
+  `— 1` suffix from the image's `alt` when there is nothing to number. (2026-11-15)
 
 ## Topology
 

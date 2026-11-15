@@ -53,7 +53,6 @@ function fetchRepo(fullName) {
   if (data.private) return null
   return {
     language: data.language ?? null,
-    stars: data.stargazers_count ?? 0,
     pushedAt: data.pushed_at ?? null,
     description: typeof data.description === 'string' ? data.description.trim() || null : null,
   }
@@ -66,7 +65,7 @@ function buildSnapshot() {
     const entry = fetchRepo(fullName)
     if (entry) {
       repos[fullName] = entry
-      console.log(`  ${fullName} — ${entry.language ?? 'unknown'}, stars ${entry.stars}`)
+      console.log(`  ${fullName} — ${entry.language ?? 'unknown'}`)
     } else {
       console.warn(`  ${fullName} — private, skipped (card falls back to static)`)
     }

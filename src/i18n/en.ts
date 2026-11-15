@@ -39,7 +39,6 @@ export const enUS = {
     source: 'Source',
     link: 'Link',
     private: 'Private',
-    stars: 'Stars',
     updated: 'Updated',
     games: 'Games',
     gamePage: 'Game page',

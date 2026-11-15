@@ -94,7 +94,6 @@ export interface Project {
  */
 export interface RepoStat {
   language: string | null
-  stars: number
   /** ISO 8601 timestamp of the last push, or `null` if GitHub omitted it. */
   pushedAt: string | null
   /** Repository description from GitHub, or `null` if none. */
