@@ -123,18 +123,19 @@ function RepoFacts({ repo }: { repo: string | undefined }) {
   const { locale } = useLanguage()
   const stat = statFor(repo)
   if (!stat) return null
+  // Nothing to say is better than an empty line with a card's spacing.
+  const updated = stat.pushedAt ? (
+    <>
+      {t.labels.updated}{' '}
+      <time dateTime={stat.pushedAt}>{formatUpdated(stat.pushedAt, locale)}</time>
+    </>
+  ) : null
+  if (!stat.language && !updated) return null
   return (
     <p className={styles.meta}>
-      {stat.language && `${stat.language} · `}
-      <span className={styles.srOnly}>{t.labels.stars} </span>
-      <span aria-hidden="true">★</span> {stat.stars}
-      {stat.pushedAt && (
-        <>
-          {' · '}
-          {t.labels.updated}{' '}
-          <time dateTime={stat.pushedAt}>{formatUpdated(stat.pushedAt, locale)}</time>
-        </>
-      )}
+      {stat.language}
+      {stat.language && updated && ' · '}
+      {updated}
     </p>
   )
 }

@@ -77,7 +77,16 @@ Each entry is settled; the reason is what stops it being re-opened.
   order is the render order and those are the projects being built now; the
   finished experiments follow. Their repositories are in the
   `scripts/repo-stats.mjs` list, so the committed snapshot carries their
-  language, stars and last push like the other cards. (2026-11-09)
+  language and last push like the other cards. (2026-11-09)
+- **A repository card shows no star count** (#206) — every repo in the snapshot
+  had zero stars, so each GitHub card rendered `★ 0`: a number that says nothing
+  about the work and reads as a warning. The count is gone from the card, from
+  `RepoStat` and from `scripts/repo-stats.mjs`, because the snapshot is kept to
+  exactly what a card renders and a field nobody shows is dead weight. The
+  figure was never live — `npm run stats` is a manual refresh, so a star gained
+  after the last run would not appear anyway. `repoStats.test.ts` and
+  `Sections.test.tsx` now pin the absence, so the star cannot creep back with a
+  stale snapshot. (2026-11-15)
 
 - **The head lists the rasters first and the theme-aware SVG last** (#186) —
   Google Search builds the icon beside a result from `rel="icon"` and
