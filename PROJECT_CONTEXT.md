@@ -316,6 +316,20 @@ Each entry is settled; the reason is what stops it being re-opened.
   visible span types), reduced motion shows it at once with no timer, and
   switching language retypes the new string. The caret blinks only under
   `prefers-reduced-motion: no-preference`. (2026-10-17)
+- **The portrait is a one-image gallery, not a second viewer** (#208) — the hero
+  portrait is a `<button>` that opens the same `Lightbox` the experience and
+  project galleries use, with a module-level `PORTRAIT` array so the image list
+  never changes identity. Reusing the viewer is the point: it already owns the
+  keyboard contract, the focus return, the scroll lock and the FLIP from the
+  clicked element, so the portrait grows out of the circle and Escape hands focus
+  back to it with no new modal code. The magnifier is a chip on the corner of the
+  portrait, `aria-hidden` because the button carries the name
+  (`Open image: Portrait of Felipe Inoue`, the gallery's convention), and the
+  inner `<img>` keeps an empty `alt` so the name is not read twice; the chip
+  appears on hover and focus and stays visible under `(hover: none)`, where there
+  is no pointer to reveal it. A one-image viewer has no position, so `Lightbox`
+  gained `showPosition` (default `true`, galleries keep their chip) and drops the
+  `— 1` suffix from the image's `alt` when there is nothing to number. (2026-11-15)
 
 ## Topology
 

@@ -433,6 +433,25 @@ describe('Lightbox modal contract', () => {
     expect(screen.getByRole('dialog').textContent).toContain('1 / 1')
   })
 
+  it('drops the position chip when a single-image viewer asks for no position', () => {
+    render(
+      <LanguageProvider>
+        <Lightbox
+          items={plainItems(['/avatar/felipeinoue-512.jpg'])}
+          index={0}
+          title="Portrait of Felipe Inoue"
+          showPosition={false}
+          onClose={() => {}}
+          onNavigate={() => {}}
+        />
+      </LanguageProvider>,
+    )
+    const dialog = screen.getByRole('dialog')
+    expect(dialog.textContent).not.toContain('1 / 1')
+    // Without a position there is no "— 1" suffix to read out either.
+    expect(dialog.querySelector('img')?.getAttribute('alt')).toBe('Portrait of Felipe Inoue')
+  })
+
   it('closes with the close button', async () => {
     const onClose = vi.fn()
     render(
