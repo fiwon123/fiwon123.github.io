@@ -35,7 +35,7 @@ the bilingual parity are all gated before anything is merged.
   (no system; dark is the default): the whole page flips together with the
   reading, applied before first paint so there is no flash of the wrong palette.
 - **Bilingual** — EN and PT-BR, with the document language kept in sync.
-- **Repository cards** — language, stars and last-push date, read from a
+- **Repository cards** — language and last-push date, read from a
   build-time snapshot (`npm run stats`), never from the browser.
 - **Accessible** — skip link, WCAG AA contrast enforced in tests, keyboard-operable
   gallery, image viewer and back-to-top.

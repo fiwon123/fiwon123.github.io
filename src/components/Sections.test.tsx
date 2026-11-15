@@ -262,9 +262,13 @@ describe('repository facts and game tiles (#20, #43)', () => {
 
     const withFacts = cardFor('AI Document Platform')
     expect(withFacts?.textContent).toContain('TypeScript')
-    expect(withFacts?.textContent).toContain('★')
+    expect(withFacts?.querySelector('time')).not.toBeNull()
+    // The star count was dropped: every repo in the snapshot had zero stars, so
+    // the card showed "★ 0" — a number that says nothing about the work.
+    expect(withFacts?.textContent).not.toContain('★')
 
-    // Games is itch-io, not GitHub; it has no snapshot entry.
+    // Games is itch-io, not GitHub; it has no snapshot entry, so no facts line.
+    expect(cardFor('Games')?.querySelector('time')).toBeNull()
     expect(cardFor('Games')?.textContent).not.toContain('★')
   })
 

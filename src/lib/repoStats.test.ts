@@ -8,8 +8,9 @@ describe('statFor', () => {
     const stat = statFor('fiwon123/ai-document-platform')
     expect(stat).toBeDefined()
     expect(stat?.language).toBe('TypeScript')
-    expect(typeof stat?.stars).toBe('number')
     expect(stat?.description).toBeDefined()
+    // The card renders language and last push; a star count no longer ships.
+    expect(stat).not.toHaveProperty('stars')
   })
 
   it('returns undefined for a repository the snapshot does not hold', () => {
