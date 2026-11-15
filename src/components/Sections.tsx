@@ -1,8 +1,9 @@
-import type { ComponentPropsWithoutRef } from 'react'
+import { useState, type ComponentPropsWithoutRef } from 'react'
 
 import { about, contact, experience, projects, TECHNOLOGIES } from '../content'
 import type { ExperienceEntry, GalleryItem, TechName } from '../content/types'
 import { useLanguage, useT } from '../i18n/hooks'
+import type { Rect } from '../lib/lightbox'
 import { formatUpdated, statFor } from '../lib/repoStats'
 import { HERO_TYPE_SPEED_MS } from '../lib/typewriter'
 import { useReveal } from '../lib/useReveal'
@@ -10,6 +11,7 @@ import { useTypewriter } from '../lib/useTypewriter'
 import { BrandIcon, type BrandIconName } from './BrandIcon'
 import { Gallery } from './Gallery'
 import { InlineMarkup } from './InlineMarkup'
+import { Lightbox } from './Lightbox'
 
 import styles from './sections.module.css'
 
@@ -99,6 +101,13 @@ function TechTags({ label, tech }: { label: string; tech: TechName[] }) {
 }
 
 /**
+ * The hero portrait as a one-image gallery, so the same viewer that serves the
+ * experience and project galleries can open it. A module constant keeps the list
+ * identity stable, so opening the viewer never looks like a new set of images.
+ */
+const PORTRAIT: GalleryItem[] = [{ src: '/avatar/felipeinoue-512.jpg' }]
+
+/**
  * A section or card that fades in once, as it scrolls into view.
  */
 function RevealSection({ className, ...rest }: ComponentPropsWithoutRef<'section'>) {
@@ -156,6 +165,7 @@ export function Hero() {
   const [ref, revealed] = useReveal<HTMLElement>()
   // Only the greeting types. The rest reveal with the section.
   const greeting = useTypewriter(t.hero.greeting, { start: revealed, speedMs: HERO_TYPE_SPEED_MS })
+  const [viewer, setViewer] = useState<{ origin: Rect | null } | null>(null)
 
   return (
     <section ref={ref} id="top" tabIndex={-1} className={revealClass(styles.section, revealed)}>
@@ -163,14 +173,38 @@ export function Hero() {
         <h1 className={styles.heroTitle}>
           <TypedText text={t.hero.greeting} typed={greeting.typed} done={greeting.done} />
         </h1>
-        <img
-          className={styles.avatar}
-          src="/avatar/felipeinoue-512.jpg"
-          alt={t.hero.avatarAlt}
-          width={160}
-          height={160}
-          decoding="async"
-        />
+        <button
+          type="button"
+          className={styles.avatarButton}
+          onClick={(event) => setViewer({ origin: event.currentTarget.getBoundingClientRect() })}
+          aria-label={`${t.a11y.openImage}: ${t.hero.avatarAlt}`}
+        >
+          <img
+            className={styles.avatar}
+            src={PORTRAIT[0].src}
+            alt=""
+            width={160}
+            height={160}
+            decoding="async"
+          />
+          <span className={styles.avatarZoom} aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m15.5 15.5 5 5" />
+            </svg>
+          </span>
+        </button>
+        {viewer && (
+          <Lightbox
+            items={PORTRAIT}
+            index={0}
+            title={t.hero.avatarAlt}
+            origin={viewer.origin}
+            showPosition={false}
+            onClose={() => setViewer(null)}
+            onNavigate={() => {}}
+          />
+        )}
         <div id="contact">
           <ContactRow />
         </div>

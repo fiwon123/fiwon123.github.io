@@ -26,6 +26,12 @@ type LightboxProps = {
   title: string
   /** The clicked thumbnail's viewport rect, so the image grows out of the tile. */
   origin?: Rect | null
+  /**
+   * Whether to show the `1 / 12` position chip. A one-image viewer (the hero
+   * portrait) has no position to report, so it hides a line that would read as
+   * "1 / 1" under a single picture.
+   */
+  showPosition?: boolean
   onClose: () => void
   onNavigate: (index: number) => void
 }
@@ -55,7 +61,15 @@ const FOCUSABLE =
  * fades the scrim out, then unmounts — the timer is a guarantee, not a hint, so
  * a missed transition can never leave the page locked.
  */
-export function Lightbox({ items, index, title, origin, onClose, onNavigate }: LightboxProps) {
+export function Lightbox({
+  items,
+  index,
+  title,
+  origin,
+  showPosition = true,
+  onClose,
+  onNavigate,
+}: LightboxProps) {
   const t = useT()
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -237,7 +251,7 @@ export function Lightbox({ items, index, title, origin, onClose, onNavigate }: L
               className={styles.image}
               style={origin && !imageReady ? { opacity: 0 } : undefined}
               src={item.src}
-              alt={`${title} — ${index + 1}`}
+              alt={multiple ? `${title} — ${index + 1}` : title}
               decoding="async"
               onLoad={(e) => {
                 const img = e.currentTarget
@@ -309,9 +323,11 @@ export function Lightbox({ items, index, title, origin, onClose, onNavigate }: L
           </div>
         )}
 
-        <p className={styles.caption} aria-live="polite">
-          {positionLabel(index, items.length)}
-        </p>
+        {showPosition && (
+          <p className={styles.caption} aria-live="polite">
+            {positionLabel(index, items.length)}
+          </p>
+        )}
       </div>
     </div>,
     document.body,
