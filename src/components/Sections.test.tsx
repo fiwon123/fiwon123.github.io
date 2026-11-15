@@ -352,7 +352,11 @@ describe('hero portrait viewer (#208)', () => {
     fireEvent.keyDown(document, { key: 'Escape' })
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     // Closing a modal must not drop the visitor at the top of the document.
-    expect(document.activeElement).toBe(portrait)
+    // Focus is handed back from a passive-effect cleanup, which React flushes
+    // after the dialog has left the DOM — so this has to wait for it. Sampling
+    // `activeElement` once, right after the dialog disappears, races that flush
+    // and failed on CI while passing locally.
+    await waitFor(() => expect(document.activeElement).toBe(portrait))
   })
 })
 
