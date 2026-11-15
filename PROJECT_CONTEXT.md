@@ -249,7 +249,11 @@ Each entry is settled; the reason is what stops it being re-opened.
   keeps working when the API is down. (2026-10-15)
 - **The avatar and fonts are served from this origin**, never hot-linked —
   self-hosting removes a third-party request, a layout shift, and a dependency on
-  someone else's uptime and licence terms. (2026-10-15)
+  someone else's uptime and licence terms. The committed portrait is a 512×512
+  JPEG derived from the owner's source photo (1254×1254, 2 MB, which is not
+  committed): the hero paints it at 160 px, so the source would be weight nobody
+  sees. `branding.test.ts` gates the bytes — JPEG magic and under 120 KB — after a
+  PNG named `.jpg` shipped once. (2026-10-15, updated 2026-11-15)
 - **The dev sandbox adopts the account that already owns the host uid** rather
   than refusing to build — `node:22-bookworm` ships uid 1000 and so does nearly
   every single-user Linux host, so refusing a claimed uid made the _default_
