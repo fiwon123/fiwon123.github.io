@@ -462,12 +462,28 @@ scripts/           # Gates and tooling (check-sandbox.py, check-docs.py, fetch-f
   design, and the Cloudflare challenge still answers `403` to every icon request
   but the cached `/favicon.ico`, so it waits on the owner's Cloudflare rule and a
   Search Console reindex.
+- **Done**: v1.18 — Positioning — released to `main` (#193, `3f84c79`, deployed;
+  milestone #19 closed): the hero headline repositioned and About rewritten in
+  both languages (#191), with the docs sync #189 riding along on `dev` (#190).
+- **Done**: v1.19 — Landscape & long-term work — released to `main` (#204,
+  `b79b8e0`, deployed; milestone #20 closed): a landscape phone keeps its header
+  in one row (#196), the three long-term repositories — eznit, cthrone and crower
+  — lead Projects with their snapshot facts (#197), and the support row was
+  removed entirely (#202) after the owner rejected it, having shipped and been
+  reverted inside the same release (#195; #201 closed as superseded).
+- **Done**: v1.20 — Cards & portrait — released to `main` (#210, `39f1866`,
+  deployed; milestone #21 closed): the repository cards drop the star count
+  (#206), since every snapshot entry had zero and the number was never live; the
+  hero portrait becomes a one-image gallery that opens the existing viewer with a
+  magnifier chip (#208); and the portrait itself is replaced with the owner's new
+  photo, committed as a 512×512 JPEG derived from a 2 MB source and gated on its
+  bytes (#205).
 - **Next**: the new projects and language track below.
 
 ## Backlog
 
-`v1.10`–`v1.17` are released (milestones #11–#18 closed) and production serves
-v1.17. Milestone tracking lives on GitHub (the Milestones page). The plan is to
+`v1.10`–`v1.20` are released (milestones #11–#21 closed) and production serves
+v1.20. Milestone tracking lives on GitHub (the Milestones page). The plan is to
 add new projects and continue the Rust track — deliberately _after_ the polish,
 so the additions land on a base that already looks finished.
 
