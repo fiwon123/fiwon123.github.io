@@ -97,9 +97,13 @@ upgraded on the host (`make opencode-upgrade`).
 
 ## Assets
 
-- `public/avatar/felipeinoue-512.jpg` — the hero portrait, downloaded from the
-  GitHub profile. Re-download it when the profile photo changes:
-  `curl -fsSL "https://github.com/fiwon123.png?size=512" -o public/avatar/felipeinoue-512.jpg`
+- `public/avatar/felipeinoue-512.jpg` — the hero portrait, a real 512×512 JPEG
+  (~30 KB) derived from the owner's photo with
+  `convert <source> -strip -resize 512x512 -quality 88 -sampling-factor 4:2:0
+  public/avatar/felipeinoue-512.jpg`. The source photo is deliberately not
+  committed: it is several megabytes in a feature that paints the image at
+  160 px. `branding.test.ts` fails on a `.jpg` that is not a JPEG, or one over
+  120 KB.
 - `public/fonts/` — self-hosted Space Grotesk and JetBrains Mono (SIL OFL 1.1);
   see `public/fonts/README.md`.
 - `src/assets/icons/` — brand marks, painted with a CSS mask so they take the
